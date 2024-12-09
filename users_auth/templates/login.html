@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-center justify-content-center bg-transparent " style="margin: 5rem 0 0;">
+    <div class="card shadow-lg rounded-3 p-4" style="width: 100%; max-width: 400px; margin: 1rem;">
+        <h2 class="text-center mb-4 text-dark">Login </h2>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-danger">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="POST" class="needs-validation" novalidate>
+            {% csrf_token %}
+
+            <!-- Username Field -->
+            <div class="mb-3">
+                <label for="username" class="form-label text-dark">Username</label>
+                <input id="username" name="username" type="text" class="form-control" placeholder="Enter your username" required>
+            </div>
+
+            <!-- Password Field -->
+            <div class="mb-3">
+                <label for="password" class="form-label text-dark">Password</label>
+                <input id="password" name="password" type="password" class="form-control" placeholder="Enter your password" required>
+            </div>
+
+            <!-- Forgot Password -->
+            <div class="mb-3 d-flex justify-content-between">
+                <a href="#" class="text-primary text-decoration-none small">Forgot Password?</a>
+            </div>
+
+            <!-- Login Button -->
+            <button type="submit" class="btn btn-primary w-100 py-2 mt-2">
+                Login
+            </button>
+        </form>
+
+        <p class="text-center mt-3 small text-muted">
+            Don't have an account? 
+            <a href="#" class="text-primary text-decoration-none">Sign up</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

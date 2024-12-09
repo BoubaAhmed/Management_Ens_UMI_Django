@@ -1,0 +1,47 @@
+{% extends 'core/base_dashboard.html' %}
+{% block content %}
+<div class="container">
+    <h2>notes</h2>
+    <a href="{% url 'create_note' %}" class="btn btn-warning btn-sm">Create</a>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>etudiant</th>
+                <th>module</th>
+                <th>note_ds</th>
+                <th>note_tp</th>
+                <th>note_exam</th>
+                <th>note_finale</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for note in notes %}
+            <tr>
+                <td>{{ note.etudiant }}</td>
+                <td>{{ note.module }}</td>
+                <td>{{ note.note_ds }}</td>
+                <td>{{ note.note_tp }}</td>
+                <td>{{ note.note_exam }}</td>
+                <td>{{ note.note_finale }}</td>
+                <td>
+                    <a href="{% url 'note_detail' note.id %}" class="btn btn-warning btn-sm">view</a>
+                    <a href="{% url 'edit_note' note.id %}" class="btn btn-warning btn-sm">Edit</a>
+                    <a href="{% url 'delete_note' note.id %}" class="btn btn-danger btn-sm"
+                       onclick="return confirm('Are you sure?');">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="pagination">
+        {% for page_num in notes.paginator.page_range %}
+        {% if notes.number == page_num %}
+        <span class="current">{{ page_num }}</span>
+        {% else %}
+        <a href="?page={{ page_num }}">{{ page_num }}</a>
+        {% endif %}
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

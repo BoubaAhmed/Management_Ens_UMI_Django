@@ -1,0 +1,12 @@
+<!-- templates/module/module_confirm_delete.html -->
+{% extends 'core/base_dashboard.html' %}
+
+{% block content %}
+<h2>Confirmation de Suppression</h2>
+<p>Voulez-vous vraiment supprimer {{ module.nom }} {{ module.desription }} ?</p>
+<form method="POST">
+    {% csrf_token %}
+    <button type="submit">Confirmer</button>
+    <a href="{% url 'module_list' %}">Annuler</a>
+</form>
+{% endblock %}

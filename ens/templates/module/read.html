@@ -1,0 +1,13 @@
+<!-- templates/module/read.html -->
+{% extends 'core/base_dashboard.html' %}
+
+{% block content %}
+<h2>Détails module</h2>
+<p><strong>Nom :</strong> {{ module.nom }}</p>
+<p><strong>description :</strong> {{ module.description }}</p>
+<p><strong>semestre :</strong> {{ module.semestre }}</p>
+<p><strong>enseignant :</strong> {{ module.enseignant }}</p>
+<p><strong>coefficient :</strong> {{ module.coefficient }}</p>
+
+<a href="{% url 'module_list' %}">Retour à la liste</a>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends 'core/base_dashboard.html' %}
+{% block content %}
+<div class="container">
+    <h2>modules</h2>
+    <a href="{% url 'create_module' %}" class="btn btn-warning btn-sm">Create</a>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Nom</th>
+                <th>description</th>
+                <th>enseignant</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for module in modules %}
+            <tr>
+                <td>{{ module }}</td>
+                <td>{{ module.description }}</td>
+                <td>{{ module.enseignant }}</td>
+                <td>
+                    <a href="{% url 'module_detail' module.id %}" class="btn btn-warning btn-sm">view</a>
+                    <a href="{% url 'edit_module' module.id %}" class="btn btn-warning btn-sm">Edit</a>
+                    <a href="{% url 'delete_module' module.id %}" class="btn btn-danger btn-sm"
+                       onclick="return confirm('Are you sure?');">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="pagination">
+        {% for page_num in modules.paginator.page_range %}
+        {% if modules.number == page_num %}
+        <span class="current">{{ page_num }}</span>
+        {% else %}
+        <a href="?page={{ page_num }}">{{ page_num }}</a>
+        {% endif %}
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

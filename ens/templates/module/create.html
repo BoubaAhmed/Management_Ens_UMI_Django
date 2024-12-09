@@ -1,0 +1,151 @@
+{% extends 'core/base_dashboard.html' %}
+
+{% block page_title %} 
+    <b>Créer un Module</b>
+{% endblock %}
+
+{% block style %}
+<style>
+    .form-module {
+        background-color: #FBFBFB;
+        font-size: 0.9rem;
+    }
+    .form-module .form-control {
+        border: 2px solid transparent;
+    }
+    .form-module .form-control:focus {
+        border: 2px solid rgb(9, 255, 0);
+    }
+    .error-text {
+        color: #ff0000;
+        font-weight: bold;
+        font-size: 0.9rem;
+        display: block;
+    }
+    .alert {
+        padding: 10px;
+        border-radius: 5px;
+        font-weight: bold;
+    }
+    .alert-danger {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+    .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-2 rounded shadow p-3 w-50 form-module">
+    <form method="post" enctype="multipart/form-data" class="needs-validation">
+        {% csrf_token %}
+
+        <!-- Django Messages -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} mt-2">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Form Errors -->
+        {% if form.non_field_errors %}
+            {% for error in form.non_field_errors %}
+                <div class="alert alert-danger">{{ error }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="row g-3">
+            <!-- Semestre -->
+            <div class="col-md-6">
+                <label for="{{ form.semestre.id_for_label }}" class="form-label">Semestre</label>
+                {{ form.semestre }}
+                {% if form.semestre.errors %}
+                    {% for error in form.semestre.errors %}
+                        <span class="error-text">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <!-- Coefficient -->
+            <div class="col-md-6">
+                <label for="{{ form.coefficient.id_for_label }}" class="form-label">Coefficient</label>
+                {{ form.coefficient }}
+                {% if form.coefficient.errors %}
+                    {% for error in form.coefficient.errors %}
+                        <span class="error-text">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <!-- Filière -->
+            <div class="col-md-6">
+                <label for="{{ form.filiere.id_for_label }}" class="form-label">Filière</label>
+                {{ form.filiere }}
+                {% if form.filiere.errors %}
+                    {% for error in form.filiere.errors %}
+                        <span class="error-text">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <!-- Enseignant -->
+            <div class="col-md-6">
+                <label for="{{ form.enseignant.id_for_label }}" class="form-label">Enseignant</label>
+                {{ form.enseignant }}
+                {% if form.enseignant.errors %}
+                    {% for error in form.enseignant.errors %}
+                        <span class="error-text">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <!-- Code Module -->
+            <div class="col-md-6">
+                <label for="{{ form.code.id_for_label }}" class="form-label">Code Module</label>
+                {{ form.code }}
+                {% if form.code.errors %}
+                    {% for error in form.code.errors %}
+                        <span class="error-text">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <!-- Nom du Module -->
+            <div class="col-md-6">
+                <label for="{{ form.nom.id_for_label }}" class="form-label">Nom du Module</label>
+                {{ form.nom }}
+                {% if form.nom.errors %}
+                    {% for error in form.nom.errors %}
+                        <span class="error-text">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <!-- Description -->
+            <div class="col-md-12">
+                <label for="{{ form.description.id_for_label }}" class="form-label">Description</label>
+                {{ form.description }}
+                {% if form.description.errors %}
+                    {% for error in form.description.errors %}
+                        <span class="error-text">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="mt-4 text-end">
+            <a href="{% url 'module_list' %}" class="btn btn-secondary btn-sm">
+                <i class="bi bi-arrow-left"></i> Cancel
+            </a>
+            <button type="submit" class="btn btn-success btn-sm">
+                <i class="bi bi-save"></i> Save
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

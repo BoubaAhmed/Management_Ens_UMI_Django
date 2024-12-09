@@ -1,0 +1,98 @@
+{% extends 'core/base_dashboard.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="container mt-4">    
+    <!-- Row 1: Stats -->
+    <div class="row text-center mb-4">
+        <div class="col-md-3">
+            <div class="card p-3">
+                <h5>Total Users</h5>
+                <p>{{ total_users }}</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card p-3">
+                <h5>Encadrants</h5>
+                <p>{{ encadrants_count }}</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card p-3">
+                <h5>Enseignants</h5>
+                <p>{{ enseignants_count }}</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card p-3">
+                <h5>Total Students</h5>
+                <p>{{ total_students }}</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Row 2: Charts -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <canvas id="studentsStatusChart"></canvas>
+        </div>
+        <div class="col-md-6">
+            <canvas id="modulesSemesterChart"></canvas>
+        </div>
+    </div>
+    
+    <!-- Row 3: Latest Content -->
+    <div class="row">
+        <div class="col-md-6">
+            <h5>Latest Article</h5>
+            {% if latest_article %}
+            <div class="card p-3">
+                <h6>{{ latest_article.title }}</h6>
+                <p>{{ latest_article.snippet }}</p>
+            </div>
+            {% else %}
+            <p>No articles available.</p>
+            {% endif %}
+        </div>
+        <div class="col-md-6">
+            <h5>Performance</h5>
+            <ul>
+                {% for note in avg_notes_per_module %}
+                <li>{{ note.module__nom }}: {{ note.avg_finale|floatformat:2 }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Students by Status Chart
+    const ctx1 = document.getElementById('studentsStatusChart').getContext('2d');
+    new Chart(ctx1, {
+        type: 'pie',
+        data: {
+            labels: [{% for status in students_by_status %}"{{ status.statut }}"{% if not forloop.last %}, {% endif %}{% endfor %}],
+            datasets: [{
+                label: 'Students by Status',
+                data: [{% for status in students_by_status %}{{ status.count }}{% if not forloop.last %}, {% endif %}{% endfor %}],
+                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+            }]
+        }
+    });
+
+    // Modules by Semester Chart
+    const ctx2 = document.getElementById('modulesSemesterChart').getContext('2d');
+    new Chart(ctx2, {
+        type: 'bar',
+        data: {
+            labels: [{% for semester in modules_by_semester %}"{{ semester.semestre }}"{% if not forloop.last %}, {% endif %}{% endfor %}],
+            datasets: [{
+                label: 'Modules by Semester',
+                data: [{% for semester in modules_by_semester %}{{ semester.count }}{% if not forloop.last %}, {% endif %}{% endfor %}],
+                backgroundColor: '#36A2EB',
+            }]
+        }
+    });
+</script>
+
+{% endblock %}

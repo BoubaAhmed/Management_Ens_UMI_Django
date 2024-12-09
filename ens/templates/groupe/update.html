@@ -1,0 +1,12 @@
+<!-- templates/groupe/update.html -->
+{% extends 'core/base_dashboard.html' %}
+
+{% block content %}
+<h2>Modifier groupe</h2>
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Mettre à Jour</button>
+</form>
+<a href="{% url 'groupe_list' %}">Retour à la liste</a>
+{% endblock %}

@@ -1,0 +1,120 @@
+html, body {
+    height: 100%;
+    overflow: hidden;
+    font-family: 'Lato', sans-serif;
+}
+
+
+/* Sidebar styling */
+.sidebar {
+    width: 220px;
+    height: 100%;
+    background-color: #ffffff; /* Dark gray */
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem 0;
+}
+
+/* Logo styling */
+.sidebar-logo {
+    width: 50%; /* Make it proportional */
+    max-width: 200px;
+    height: auto;
+    margin-bottom: 2rem;
+}
+
+/* Nav links */
+.sidebar .nav-link {
+    color: #000000;
+    font-size: 1rem;
+    font-weight: 450;
+    margin: 0.5rem 0;
+    text-align: center;
+}
+.nav-link:hover i {
+    color: #355F2E; /* Bootstrap primary blue */
+}
+
+/* Active link styling */
+.nav-link.active {
+    background-color: #007bff; /* Bootstrap primary blue */
+    color: #fff; /* White text */
+}
+
+.nav-link.active i {
+    color: #fff; /* White icon */
+}
+.profile-link {
+    color: #000000;
+    font-size: 1rem;
+    font-weight: 500;
+    text-align: center;
+    text-decoration: none;
+}
+
+.nav-link:hover {
+    background-color: #81BFDA; /* Darker gray for hover effect */
+    border-radius: 0.5rem;
+}
+
+/* Logout button */
+.logout-btn {
+    margin-top: auto;
+}
+
+.logout-btn .btn {
+    width: 100%;
+    font-weight: bold;
+    background-color: #dc3545; /* Bootstrap danger color */
+    color: #fff;
+    border: none;
+}
+
+.logout-btn .btn:hover {
+    background-color: #c82333; /* Slightly darker red */
+}
+
+/* Main content */
+.main-content {
+    margin-left: 220px; /* Sidebar width */
+    padding: 0rem;
+    height: 100%;
+    overflow-y: auto;
+    background-color: #ECEBDE !important; /* Light gray */
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: static;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .sidebar-logo {
+        margin-bottom: 0;
+        margin-right: auto;
+        padding-left: 1rem;
+    }
+
+    .nav {
+        flex-direction: row;
+        margin: 0;
+    }
+
+    .main-content {
+        margin-left: 0;
+        padding: 1rem;
+    }
+
+    .logout-btn {
+        margin: 0 1rem;
+    }
+}
+

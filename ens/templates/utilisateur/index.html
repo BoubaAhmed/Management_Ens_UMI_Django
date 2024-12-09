@@ -1,0 +1,261 @@
+{% extends 'core/base_dashboard.html' %}
+
+{% block page_title %} 
+    <b>Utilisateurs</b>
+{% endblock %}
+{% block style %}
+<style>
+    .users-table{
+        font-size: 0.9rem; 
+        border-radius: 10px; 
+        overflow: hidden; 
+        border: 1px solid #ddd;
+    }
+    .users-table thead tr th{
+        color: #9694FF;
+    }
+    #searchInput,#roleSelect{
+        border: none;
+        font-size: 0.9rem;
+    }
+    .pagination .page-item .page-link{
+        background-color: #fff;
+        color: black;
+        border: none;
+        border-radius: 5px;
+        font-family: 'Caveat',sans-serif;
+        font-size: 0.8rem;
+    }
+    .pagination .page-item.active .page-link {
+        background-color: #0A5EB0;
+        color: #fff;
+        font-weight: bold;
+    }
+    .pagination .page-item.disabled .page-link {
+        color: #450303;
+        pointer-events: none;
+        background-color: #9AA6B2;
+    }
+    .pagination .page-link:hover {
+        background-color: #f8f9fa;
+        color: #0056b3;
+    }
+    #searchButton{
+        background-color: #0A5EB0;
+        color: white;
+    }
+    #searchButton:hover{
+        background-color: transparent;
+        color: #0A5EB0;
+        border: 1px solid #0A5EB0;
+    }
+    #clearBtn{
+        background-color: #AE445A;
+        color: white;
+    }
+    #clearBtn:hover{
+        background-color: transparent;
+        color: #AE445A;
+        border: 1px solid #AE445A;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert" id="message-{{ forloop.counter }}">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+    
+    <div class="d-flex justify-content-between align-items-center">
+        <!-- Search Form -->
+        <form method="get" class="d-flex me-auto" id="searchForm">
+            <input type="text" id="searchInput" name="search" class="me-2 rounded p-1 shadow-sm" placeholder="Search..." value="{{ search_query }}">
+            <select id="roleSelect" name="role" class="rounded me-2">
+                <option value="">All Roles</option>
+                <option value="encadrant" {% if filter_role == 'encadrant' %}selected{% endif %}>Encadrant</option>
+                <option value="enseignant" {% if filter_role == 'enseignant' %}selected{% endif %}>Enseignant</option>
+            </select>
+            <button type="submit" class="btn px-2 btn-sm" id="searchButton">
+                <i class="bi bi-search me-1"></i> Search
+            </button>
+            <button type="button" id="clearBtn" class="btn btn-sm ms-2">
+                <i class="bi bi-x-circle me-1"></i> Clear
+            </button>
+        </form>
+        
+        
+    
+        <!-- Add Button -->
+        <div class="d-flex align-items-center">
+            <!-- Add User Button -->
+            <a href="{% url 'create_utilisateur' %}" class="btn btn-success btn-sm me-2">
+                <i class="bi bi-person-plus me-1"></i> Ajouter
+            </a>
+        
+            <!-- Export Button -->
+            <a href="{% url 'export_utilisateurs' %}" class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-file-earmark-arrow-up me-1"></i> Export
+            </a>
+        </div>
+        
+    </div>
+    
+    <table class="table users-table table-hover mt-2">
+        <thead>
+            <tr >
+                <th>Nom</th>
+                <th>Email</th>
+                <th>Tele</th>
+                <th>Specialite</th>
+                <th>Statut</th>
+                <th>Compte</th>
+                <th>Role</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody style="font-family: 'Parkinsans', sans-serif;">
+            {% for utilisateur in utilisateurs %}
+                <tr>
+                    <td>
+                        {% if utilisateur.image %}
+                            <img src="{{ utilisateur.image.url }}" style="border: 2px solid #FF7F3E;" alt="Profile Image" class="rounded-circle me-2" width="30" height="30">
+                        {% else %}
+                            <i class="bi bi-person-circle me-2" style="font-size: 25px; width: 25px; height: 25px; line-height: 25px;color: #432E54;"></i>
+                        {% endif %}
+                        {{ utilisateur }}
+                    </td>
+                    <td>{{ utilisateur.email }}</td>
+                    <td>{{ utilisateur.telephone }}</td>
+                    <td>{{ utilisateur.specialite|slice:":30" }}</td>                    
+                    <td>{{ utilisateur.statut }}</td>
+                    <td>
+                        {% if utilisateur.is_active %}
+                            <span class="text-success">
+                                <i class="bi bi-check-circle-fill me-1"></i> Activé
+                            </span>
+                        {% else %}
+                            <span class="text-danger">
+                                <i class="bi bi-x-circle-fill me-1"></i> désactivé
+                            </span>
+                        {% endif %}
+                    </td>                    
+                    <td>
+                        {% if utilisateur.is_encadrant %}
+                            Encadrant
+                        {% elif utilisateur.is_enseignant %}
+                            Enseignant
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </td>
+                    <td class="text-center">
+                        <div class="dropdown">
+                            <button class="btn  btn-sm" type="button" title="Actions" id="actionDropdown{{ utilisateur.id }}" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-three-dots"></i>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="actionDropdown{{ utilisateur.id }}">
+                                <li><a class="dropdown-item" href="{% url 'utilisateur_detail' utilisateur.id %}">View</a></li>
+                                <li><a class="dropdown-item" href="{% url 'edit_utilisateur' utilisateur.id %}">Edit</a></li>
+                                <li><a class="dropdown-item text-danger" href="{% url 'delete_utilisateur' utilisateur.id %}">Delete</a></li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="8" class="text-center">No utilisateurs found</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <nav>
+        <ul class="pagination justify-content-center">
+            {% if utilisateurs.has_previous %}
+                <li class="page-item me-1">
+                    <a class="page-link" href="?page=1" aria-label="First">
+                        <span aria-hidden="true">&laquo;&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item me-auto">
+                    <a class="page-link" href="?page={{ utilisateurs.previous_page_number }}" aria-label="Previous">
+                        <span aria-hidden="true">Previous</span>
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item disabled me-1">
+                    <span class="page-link">&laquo;&laquo;</span>
+                </li>
+                <li class="page-item disabled me-auto">
+                    <span class="page-link">Previous</span>
+                </li>
+            {% endif %}
+        
+            {% for num in utilisateurs.paginator.page_range %}
+                {% if utilisateurs.number == num %}
+                    <li class="page-item mx-1 active"><span class="page-link">{{ num }}</span></li>
+                {% else %}
+                    <li class="page-item mx-1"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                {% endif %}
+            {% endfor %}
+        
+            {% if utilisateurs.has_next %}
+                <li class="page-item ms-auto">
+                    <a class="page-link" href="?page={{ utilisateurs.next_page_number }}" aria-label="Next">
+                        <span aria-hidden="true">Next</span>
+                    </a>
+                </li>
+                <li class="page-item ms-1">
+                    <a class="page-link" href="?page={{ utilisateurs.paginator.num_pages }}" aria-label="Last">
+                        <span aria-hidden="true">&raquo;&raquo;</span>
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item disabled ms-auto">
+                    <span class="page-link">Next</span>
+                </li>
+                <li class="page-item disabled ms-1">
+                    <span class="page-link">&raquo;&raquo;</span>
+                </li>
+            {% endif %}
+        </ul>
+        
+    </nav>
+
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+        setTimeout(() => {
+            const messages = document.querySelectorAll('[id^="message-"]');
+            messages.forEach((msg) => {
+                msg.parentNode.removeChild(msg);
+            });
+        }, 10000);  // Automatically remove messages after 10 seconds
+    });
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchInput');
+        const roleSelect = document.getElementById('roleSelect');
+        const searchForm = document.getElementById('searchForm');
+        const clearBtn = document.getElementById('clearBtn');
+        // Automatically submit form when a role is selected
+        roleSelect.addEventListener('change', function() {
+            searchForm.submit();
+        });
+
+        // Clear button functionality
+        clearBtn.addEventListener('click', function() {
+            searchInput.value = '';
+            roleSelect.value = '';
+            searchForm.submit();  // Automatically refresh the form
+        });
+    });       
+</script>
+{% endblock %}

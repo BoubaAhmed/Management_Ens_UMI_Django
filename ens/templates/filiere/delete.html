@@ -1,0 +1,12 @@
+<!-- templates/utilisateur/utilisateur_confirm_delete.html -->
+{% extends 'core/base_dashboard.html' %}
+
+{% block content %}
+<h2>Confirmation de Suppression</h2>
+<p>Voulez-vous vraiment supprimer {{ filiere.nom }} {{ filiere.description }} ?</p>
+<form method="POST">
+    {% csrf_token %}
+    <button type="submit">Confirmer</button>
+    <a href="{% url 'filiere_list' %}">Annuler</a>
+</form>
+{% endblock %}

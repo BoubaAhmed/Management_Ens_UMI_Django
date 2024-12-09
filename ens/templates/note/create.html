@@ -1,0 +1,129 @@
+{% extends 'core/base_dashboard.html' %}
+
+{% block page_title %} 
+    <b>Créer une Note</b>
+{% endblock %}
+
+{% block style %}
+<style>
+    .form-note {
+        background-color: #FBFBFB;
+        font-size: 0.9rem;
+    }
+    .form-note .form-control {
+        border: 2px solid transparent;
+    }
+    .form-note .form-control:focus {
+        border: 2px solid rgb(9, 255, 0);
+    }
+    .error-text {
+        color: #ff0000;
+        font-weight: bold;
+        font-size: 0.9rem;
+        display: block;
+    }
+    .alert {
+        padding: 10px;
+        border-radius: 5px;
+        font-weight: bold;
+    }
+    .alert-danger {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+    .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-2 rounded shadow p-3 w-50 form-note">
+    <form method="post" enctype="multipart/form-data" class="needs-validation">
+        {% csrf_token %}
+
+        <!-- Django Messages -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} mt-2">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Form Errors -->
+        {% if form.non_field_errors %}
+            {% for error in form.non_field_errors %}
+                <div class="alert alert-danger">{{ error }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="row g-3">
+            <!-- Étudiant -->
+            <div class="col-md-6">
+                <label for="{{ form.etudiant.id_for_label }}" class="form-label">Étudiant</label>
+                {{ form.etudiant }}
+                {% if form.etudiant.errors %}
+                    {% for error in form.etudiant.errors %}
+                        <span class="error-text">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <!-- Module -->
+            <div class="col-md-6">
+                <label for="{{ form.module.id_for_label }}" class="form-label">Module</label>
+                {{ form.module }}
+                {% if form.module.errors %}
+                    {% for error in form.module.errors %}
+                        <span class="error-text">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <!-- Note DS -->
+            <div class="col-md-6">
+                <label for="{{ form.note_ds.id_for_label }}" class="form-label">Note DS</label>
+                {{ form.note_ds }}
+                {% if form.note_ds.errors %}
+                    {% for error in form.note_ds.errors %}
+                        <span class="error-text">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <!-- Note TP -->
+            <div class="col-md-6">
+                <label for="{{ form.note_tp.id_for_label }}" class="form-label">Note TP</label>
+                {{ form.note_tp }}
+                {% if form.note_tp.errors %}
+                    {% for error in form.note_tp.errors %}
+                        <span class="error-text">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <!-- Note Exam -->
+            <div class="col-md-6">
+                <label for="{{ form.note_exam.id_for_label }}" class="form-label">Note Exam</label>
+                {{ form.note_exam }}
+                {% if form.note_exam.errors %}
+                    {% for error in form.note_exam.errors %}
+                        <span class="error-text">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="mt-4 text-end">
+            <a href="{% url 'note_list' %}" class="btn btn-secondary btn-sm">
+                <i class="bi bi-arrow-left"></i> Cancel
+            </a>
+            <button type="submit" class="btn btn-success btn-sm">
+                <i class="bi bi-save"></i> Save
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

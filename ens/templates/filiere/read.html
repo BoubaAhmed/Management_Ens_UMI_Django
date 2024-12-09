@@ -1,0 +1,11 @@
+<!-- templates/utilisateur/read.html -->
+{% extends 'core/base_dashboard.html' %}
+
+{% block content %}
+<h2>Détails filiere</h2>
+<p><strong>Nom :</strong> {{ filiere.nom }}</p>
+<p><strong>description :</strong> {{ filiere.description }}</p>
+<p><strong>encadrant :</strong> {{ filiere.encadrant }}</p>
+
+<a href="{% url 'filiere_list' %}">Retour à la liste</a>
+{% endblock %}

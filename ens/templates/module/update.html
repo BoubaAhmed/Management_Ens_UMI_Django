@@ -1,0 +1,12 @@
+<!-- templates/module/update.html -->
+{% extends 'core/base_dashboard.html' %}
+
+{% block content %}
+<h2>Modifier module</h2>
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Mettre à Jour</button>
+</form>
+<a href="{% url 'module_list' %}">Retour à la liste</a>
+{% endblock %}

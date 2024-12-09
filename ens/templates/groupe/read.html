@@ -1,0 +1,10 @@
+<!-- templates/groupe/read.html -->
+{% extends 'core/base_dashboard.html' %}
+
+{% block content %}
+<h2>Détails groupe</h2>
+<p><strong>Nom :</strong> {{ groupe.nom }}</p>
+<p><strong>filiere :</strong> {{ groupe.filiere }}</p>
+
+<a href="{% url 'groupe_list' %}">Retour à la liste</a>
+{% endblock %}

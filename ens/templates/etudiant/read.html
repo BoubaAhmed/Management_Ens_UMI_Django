@@ -1,0 +1,13 @@
+<!-- templates/utilisateur/read.html -->
+{% extends 'core/base_dashboard.html' %}
+
+{% block content %}
+<h2>Détails Etudiant</h2>
+<p><strong>Nom :</strong> {{ etudiant.nom }}</p>
+<p><strong>Prénom :</strong> {{ etudiant.prenom }}</p>
+<p><strong>Email :</strong> {{ etudiant.email }}</p>
+<p><strong>Statut :</strong> {{ etudiant.statut }}</p>
+<p><strong>cni :</strong> {{ etudiant.cni }}</p>
+
+<a href="{% url 'etudiant_list' %}">Retour à la liste</a>
+{% endblock %}

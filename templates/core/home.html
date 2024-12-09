@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home | Ecole Normale Supérieure Meknès - المدرسة العليا للأساتذة مكناس - Université ENS Meknès{% endblock %}
+
+{% block content %}
+<style>
+    #imageCarousel .carousel-inner img {
+        max-height: 450px; /* Maintain the height limit */
+        object-fit: cover; /* Ensure the image fits without distortion */
+    }
+
+    #imageCarousel .carousel-caption {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        background: rgba(0, 0, 0, 0.6);
+        padding: 20px;
+        max-width: 90%;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        word-wrap: break-word; /* Ensure text wraps to the next line */
+        overflow-wrap: break-word; /* For better cross-browser compatibility */
+        line-height: 1.5;
+    }
+    
+
+    #imageCarousel .carousel-caption h5,
+    #imageCarousel .carousel-caption p {
+        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7); /* Better readability */
+    }
+</style>
+
+<div class="container-fluid text-center">
+    <!-- Slider Section -->
+    <div id="imageCarousel" class="carousel slide mb-5" data-bs-ride="carousel" data-bs-interval="3000">
+        <div class="carousel-inner">
+            {% for slide in slides %}
+                <div class="carousel-item  {% if forloop.first %}active{% endif %}">
+                    <img src="{{ slide.image }}" class="d-block w-100 rounded" alt="{{ slide.title }}">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>{{ slide.title }}</h5>
+                        <div>{{ slide.description | safe }}</div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Carousel Controls -->
+        <button class="carousel-control-prev" type="button" data-bs-target="#imageCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#imageCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+
+    <div class="container my-5">
+        <h2 class="text-center mb-4">Articles</h2>
+        <div class="row">
+            {% for article in articles %}
+                <div class="col-md-3 col-sm-6 mb-4">
+                    <div class="card h-100">
+                        <img src="{{ article.image }}"  class="card-img-top"  style="height: 200px; object-fit: cover;"  alt="{{ article.title }}">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">{{ article.title }}</h5>
+                            <p class="card-text text-truncate" style="max-height: 80px;">{{ article.description | safe }}</p>
+                            <a href="{{ article.id }}" class="btn btn-primary mt-auto">Lire la suite</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+</div>
+{% endblock %}
