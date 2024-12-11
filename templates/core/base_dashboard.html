@@ -66,10 +66,10 @@
 
     <!-- Main Content -->
     <div class="main-content px-3">
-        <nav class=" navbar navbar-expand-lg   py-2 mb-4 " style="background-color: transparent;">
+        <nav class=" navbar navbar-expand-lg mt-2 mb-4 px-2 rounded shadow" style="background-color: #fff;">
             <div class="w-100 d-flex justify-content-between align-items-center">
-                <a class="navbar-brand font-weight-bold" href="#">{% block page_title %} Dashboard {% endblock %}</a>
-                <div class="collapse navbar-collapse " id="navbarNav">
+                <a class="navbar-brand font-weight-bold " style="font-size: 0.9rem;font-family: 'Parkinsans', sans-serif;font-weight: bold;" href="#">{% block page_title %} Dashboard {% endblock %}</a>
+                <div class="collapse navbar-collapse  " id="navbarNav">
                     <ul class="navbar-nav ms-auto me-2">
                         {% if user.is_authenticated %}
                             <li class="nav-item dropdown">
@@ -99,7 +99,13 @@
                 </div>
             </div>
         </nav>
+        {% if messages %}
+            {% for message in messages %}
+                <p style="font-size: 0.8rem;font-weight: bold;" class="d-flex align-items-center p-0" id="message-{{ forloop.counter }}">{{ message }} </p>
+            {% endfor %}
+        {% endif %}
         {% block content %}
+        
        
         {% endblock %}
     </div>
@@ -115,5 +121,8 @@
     </script>
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    {% block script %}
+
+    {% endblock %}
 </body>
 </html>

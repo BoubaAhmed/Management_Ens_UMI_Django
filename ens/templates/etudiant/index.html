@@ -1,76 +1,103 @@
 {% extends 'core/base_dashboard.html' %}
 
+{% block page_title %}
+    Étudiants
+{% endblock %}
+
 {% block content %}
 <div class="container">
-    <h2 class="mb-4">Étudiants</h2>
-    <a href="{% url 'create_etudiant' %}" class="btn btn-warning btn-sm mb-3">Ajouter un Étudiant</a>
+    <div class="row">
+        <div class="col-3">
+            <a href="{% url 'create_etudiant' %}" class="btn btn-warning btn-sm mb-3">Ajouter un Étudiant</a>
 
-    <!-- Dropdown for selecting Filiere -->
-    <form method="get" class="mb-3">
-        <div class="form-group">
-            <label for="filiere-select">Sélectionnez une Filière :</label>
-            <select id="filiere-select" name="filiere_id" class="form-control w-25 d-inline-block" onchange="this.form.submit()">
-                {% for filiere in filieres %}
-                <option value="{{ filiere.id }}" {% if filiere == selected_filiere %}selected{% endif %}>
-                    {{ filiere.nom }}
-                </option>
-                {% endfor %}
-            </select>
+            <form method="get" class="mb-3">
+                <!-- Dropdown pour sélectionner une Filière -->
+                <div class="form-group">
+                    <label for="filiere-select">Sélectionnez une Filière :</label>
+                    <select id="filiere-select" name="filiere_id" class="form-control" onchange="resetGroupAndSubmit(this)">
+                        <option value="" disabled {% if not selected_filiere %}selected{% endif %}>
+                            -- Choisissez une Filière --
+                        </option>
+                        {% for filiere in filieres %}
+                            <option value="{{ filiere.id }}" {% if filiere == selected_filiere %}selected{% endif %}>
+                                {{ filiere.nom }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Dropdown pour sélectionner un Groupe -->
+                {% if groupes %}
+                    <div class="form-group">
+                        <label for="groupe-select">Sélectionnez un Groupe :</label>
+                        <select id="groupe-select" name="groupe_id" class="form-control" onchange="this.form.submit()">
+                            <option value="" disabled {% if not selected_groupe %}selected{% endif %}>
+                                -- Choisissez un Groupe --
+                            </option>
+                            {% for groupe in groupes %}
+                                <option value="{{ groupe.id }}" {% if groupe == selected_groupe %}selected{% endif %}>
+                                    {{ groupe.nom }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                {% endif %}
+            </form>
+
+            {% if selected_filiere %}
+                <p><strong>Filière sélectionnée : </strong>{{ selected_filiere.nom }}</p>
+            {% endif %}
+            {% if selected_groupe %}
+                <p><strong>Groupe sélectionné : </strong>{{ selected_groupe.nom }}</p>
+            {% endif %}
         </div>
 
-        <!-- Dropdown for selecting Groupe -->
-        {% if groupes %}
-        <div class="form-group">
-            <label for="groupe-select">Sélectionnez un Groupe :</label>
-            <select id="groupe-select" name="groupe_id" class="form-control w-25 d-inline-block" onchange="this.form.submit()">
-                {% for groupe in groupes %}
-                <option value="{{ groupe.id }}" {% if groupe == selected_groupe %}selected{% endif %}>
-                    {{ groupe.nom }}
-                </option>
-                {% endfor %}
-            </select>
+        <div class="col-9">
+            {% if etudiants %}
+                <table class="table table-striped">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Nom</th>
+                            <th>Email</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for etudiant in etudiants %}
+                            <tr>
+                                <td>{{ etudiant.nom }} {{ etudiant.prenom }}</td>
+                                <td>{{ etudiant.email }}</td>
+                                <td>{{ etudiant.statut }}</td>
+                                <td>
+                                    <a href="{% url 'etudiant_detail' etudiant.id %}" class="btn btn-info btn-sm">Détails</a>
+                                    <a href="{% url 'edit_etudiant' etudiant.id %}" class="btn btn-secondary btn-sm">Modifier</a>
+                                    <a href="{% url 'delete_etudiant' etudiant.id %}" class="btn btn-danger btn-sm"
+                                       onclick="return confirm('Voulez-vous supprimer cet étudiant ?');">
+                                        Supprimer
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="alert alert-warning mt-4">
+                    Aucun étudiant trouvé dans ce groupe.
+                </div>
+            {% endif %}
         </div>
-        {% endif %}
-    </form>
-
-    <!-- Displaying Students -->
-    {% if etudiants %}
-    <h4 class="mb-3">
-        Filière : <span class="text-primary">{{ selected_filiere.nom }}</span><br>
-        Groupe : <span class="text-primary">{{ selected_groupe.nom }}</span>
-    </h4>
-
-    <table class="table table-striped">
-        <thead class="thead-dark">
-            <tr>
-                <th>Nom</th>
-                <th>Email</th>
-                <th>Statut</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for etudiant in etudiants %}
-            <tr>
-                <td>{{ etudiant.nom }} {{ etudiant.prenom }}</td>
-                <td>{{ etudiant.email }}</td>
-                <td>{{ etudiant.statut }}</td>
-                <td>
-                    <a href="{% url 'etudiant_detail' etudiant.id %}" class="btn btn-info btn-sm">Détails</a>
-                    <a href="{% url 'edit_etudiant' etudiant.id %}" class="btn btn-secondary btn-sm">Modifier</a>
-                    <a href="{% url 'delete_etudiant' etudiant.id %}" class="btn btn-danger btn-sm" 
-                       onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet étudiant ?');">
-                       Supprimer
-                    </a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% else %}
-    <div class="alert alert-warning mt-4" role="alert">
-        Aucun étudiant trouvé dans ce groupe.
     </div>
-    {% endif %}
 </div>
+
+<script>
+    function resetGroupAndSubmit(selectElement) {
+        const form = selectElement.form;
+        const groupeSelect = form.querySelector("#groupe-select");
+        if (groupeSelect) {
+            groupeSelect.value = "";
+        }
+        form.submit();
+    }
+</script>
 {% endblock %}

@@ -84,15 +84,26 @@ class EtudiantForm(forms.ModelForm):
         }
 
 
-# ------------------ Formulaire Note ------------------
 class NoteForm(forms.ModelForm):
     class Meta:
         model = Note
         fields = ['etudiant', 'module', 'note_ds', 'note_tp', 'note_exam']
         widgets = {
-            'etudiant': forms.Select(attrs={'class': 'form-control'}),
-            'module': forms.Select(attrs={'class': 'form-control'}),
+            'etudiant': forms.Select(attrs={'class': 'form-control', 'disabled': 'disabled'}),
+            'module': forms.Select(attrs={'class': 'form-control', 'disabled': 'disabled'}),
             'note_ds': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01', 'placeholder': 'DS'}),
             'note_tp': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01', 'placeholder': 'TP'}),
             'note_exam': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01', 'placeholder': 'Exam'}),
         }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        note_ds = cleaned_data.get('note_ds')
+        note_tp = cleaned_data.get('note_tp')
+        note_exam = cleaned_data.get('note_exam')
+
+        for field, value in [('DS', note_ds), ('TP', note_tp), ('Exam', note_exam)]:
+            if value is not None and (value < 0 or value > 20):
+                raise forms.ValidationError(f"La note pour {field} doit être entre 0 et 20.")
+
+        return cleaned_data

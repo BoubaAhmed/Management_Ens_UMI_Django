@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 from django.db.models import UniqueConstraint
 from django.core.exceptions import ValidationError
 import re
+from decimal import Decimal
 
 # ------------------ Gestionnaire Utilisateur ------------------
 class UtilisateurManager(BaseUserManager):
@@ -152,13 +153,24 @@ class Etudiant(models.Model):
 # ------------------ Notes ------------------
 class Note(models.Model):
     etudiant = models.ForeignKey(Etudiant, on_delete=models.CASCADE)
-    module = models.ForeignKey(Module, on_delete=models.CASCADE)
+    module = models.ForeignKey(Module, on_delete=models.CASCADE) 
     note_ds = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     note_tp = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     note_exam = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     note_finale = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
 
+    class Meta:
+        unique_together = ('etudiant', 'module')  # Empêcher la duplication des notes pour un étudiant et un module.
+
     def save(self, *args, **kwargs):
+        # Calcul de la note finale uniquement si toutes les notes nécessaires sont présentes
         if self.note_ds is not None and self.note_exam is not None:
-            self.note_finale = self.note_ds * 0.3 + (self.note_tp or 0) * 0.2 + self.note_exam * 0.5
+            self.note_finale = (
+                (Decimal(self.note_ds) * Decimal('0.3')) +
+                (Decimal(self.note_tp or 0) * Decimal('0.2')) +
+                (Decimal(self.note_exam) * Decimal('0.5'))
+            )
         super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.etudiant} - {self.module} - {self.note_finale}"

@@ -44,4 +44,9 @@ urlpatterns = [
     path('note/create/', views.create_note, name='create_note'),
     path('note/edit/<int:pk>/', views.edit_note, name='edit_note'),
     path('note/delete/<int:pk>/', views.delete_note, name='delete_note'),
+
+    path('get-groupes/', views.get_groupes, name='get_groupes'),
+    path('get-etudiants/', views.get_etudiants, name='get_etudiants'),
+    path('get-modules/', views.get_modules, name='get_modules'),
+    
 ]

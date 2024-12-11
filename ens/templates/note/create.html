@@ -1,8 +1,6 @@
 {% extends 'core/base_dashboard.html' %}
 
-{% block page_title %} 
-    <b>Créer une Note</b>
-{% endblock %}
+{% block page_title %}Créer une Note{% endblock %}
 
 {% block style %}
 <style>
@@ -20,7 +18,6 @@
         color: #ff0000;
         font-weight: bold;
         font-size: 0.9rem;
-        display: block;
     }
     .alert {
         padding: 10px;
@@ -39,7 +36,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="container mt-2 rounded shadow p-3 w-50 form-note">
+<div class="container mt-2 rounded shadow p-3 w-75 form-note">
     <form method="post" enctype="multipart/form-data" class="needs-validation">
         {% csrf_token %}
 
@@ -51,79 +48,137 @@
                 </div>
             {% endfor %}
         {% endif %}
-
-        <!-- Form Errors -->
-        {% if form.non_field_errors %}
+            <!-- Form Errors -->
+            {% if form.non_field_errors %}
             {% for error in form.non_field_errors %}
                 <div class="alert alert-danger">{{ error }}</div>
             {% endfor %}
         {% endif %}
 
-        <div class="row g-3">
-            <!-- Étudiant -->
-            <div class="col-md-6">
-                <label for="{{ form.etudiant.id_for_label }}" class="form-label">Étudiant</label>
-                {{ form.etudiant }}
-                {% if form.etudiant.errors %}
-                    {% for error in form.etudiant.errors %}
-                        <span class="error-text">{{ error }}</span>
-                    {% endfor %}
-                {% endif %}
-            </div>
+        <!-- Filière Dropdown -->
+        <label for="filiere" class="form-label mt-2">Filière</label>
+        <select id="filiere" name="filiere" class="form-control mt-2">
+            <option value="">Select Filière</option>
+            {% for filiere in filieres %}
+                <option value="{{ filiere.id }}">{{ filiere.nom }}</option>
+            {% endfor %}
+        </select>
 
-            <!-- Module -->
-            <div class="col-md-6">
-                <label for="{{ form.module.id_for_label }}" class="form-label">Module</label>
-                {{ form.module }}
-                {% if form.module.errors %}
-                    {% for error in form.module.errors %}
-                        <span class="error-text">{{ error }}</span>
-                    {% endfor %}
-                {% endif %}
-            </div>
+        <!-- Module Dropdown -->
+        <label for="module" class="form-label mt-3">Module</label>
+        <select id="module" name="module" class="form-control mt-2"></select>
 
-            <!-- Note DS -->
-            <div class="col-md-6">
-                <label for="{{ form.note_ds.id_for_label }}" class="form-label">Note DS</label>
-                {{ form.note_ds }}
-                {% if form.note_ds.errors %}
-                    {% for error in form.note_ds.errors %}
-                        <span class="error-text">{{ error }}</span>
-                    {% endfor %}
-                {% endif %}
-            </div>
+        <!-- Groupe Dropdown -->
+        <label for="groupe" class="form-label mt-3">Groupe</label>
+        <select id="groupe" name="groupe" class="form-control mt-2"></select>
 
-            <!-- Note TP -->
-            <div class="col-md-6">
-                <label for="{{ form.note_tp.id_for_label }}" class="form-label">Note TP</label>
-                {{ form.note_tp }}
-                {% if form.note_tp.errors %}
-                    {% for error in form.note_tp.errors %}
-                        <span class="error-text">{{ error }}</span>
-                    {% endfor %}
-                {% endif %}
-            </div>
+        <!-- Étudiant Dropdown -->
+        <label for="etudiant" class="form-label mt-3">Étudiant</label>
+        <select id="etudiant" name="etudiant" class="form-control mt-2"></select>
 
-            <!-- Note Exam -->
-            <div class="col-md-6">
-                <label for="{{ form.note_exam.id_for_label }}" class="form-label">Note Exam</label>
-                {{ form.note_exam }}
-                {% if form.note_exam.errors %}
-                    {% for error in form.note_exam.errors %}
-                        <span class="error-text">{{ error }}</span>
-                    {% endfor %}
-                {% endif %}
-            </div>
-        </div>
+        <!-- Hidden input to capture selected Étudiant dynamically -->
+        <input type="hidden" id="selected_etudiant" class="selected_etudiant" name="etudiant">
+        <input type="hidden" id="selected_module" class="selected_module" name="module">
 
+        <!-- Notes -->
+        <label for="{{ form.note_ds.id_for_label }}" class="form-label mt-3">Note DS</label>
+        {{ form.note_ds }}
+        {% if form.note_ds.errors %}
+            {% for error in form.note_ds.errors %}
+                <span class="error-text">{{ error }}</span>
+            {% endfor %}
+        {% endif %}
+
+        <label for="{{ form.note_tp.id_for_label }}" class="form-label mt-3">Note TP</label>
+        {{ form.note_tp }}
+        {% if form.note_tp.errors %}
+            {% for error in form.note_tp.errors %}
+                <span class="error-text">{{ error }}</span>
+            {% endfor %}
+        {% endif %}
+
+        <label for="{{ form.note_exam.id_for_label }}" class="form-label mt-3">Note Exam</label>
+        {{ form.note_exam }}
+        {% if form.note_exam.errors %}
+            {% for error in form.note_exam.errors %}
+                <span class="error-text">{{ error }}</span>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Buttons -->
         <div class="mt-4 text-end">
             <a href="{% url 'note_list' %}" class="btn btn-secondary btn-sm">
-                <i class="bi bi-arrow-left"></i> Cancel
+                <i class="bi bi-arrow-left"></i> Annuler
             </a>
             <button type="submit" class="btn btn-success btn-sm">
-                <i class="bi bi-save"></i> Save
+                <i class="bi bi-save"></i> Enregistrer
             </button>
         </div>
     </form>
 </div>
+{% endblock %}
+
+{% block script %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        // When Filière is selected
+        $('#filiere').change(function() {
+            const filiereId = $(this).val();
+
+            if (filiereId) {
+                // Fetch Modules
+                $.get('{% url "get_modules" %}', {'filiere_id': filiereId}, function(modules) {
+                    $('#module').empty().append('<option value="">Select Module</option>');
+                    modules.forEach(function(module) {
+                        $('#module').append('<option value="'+module.id+'">'+module.nom+'</option>');
+                    });
+                });
+
+                // Fetch Groupes
+                $.get('{% url "get_groupes" %}', {'filiere_id': filiereId}, function(groupes) {
+                    $('#groupe').empty().append('<option value="">Select Groupe</option>');
+                    groupes.forEach(function(groupe) {
+                        $('#groupe').append('<option value="'+groupe.id+'">'+groupe.nom+'</option>');
+                    });
+                    
+                    // Empty the Étudiants dropdown
+                    $('#etudiant').empty().append('<option value="">Select Étudiant</option>');
+                    $('#selected_etudiant').val('');  
+                });
+            }
+        });
+
+        // When Groupe is selected
+        $('#groupe').change(function() {
+            const groupeId = $(this).val();
+
+            if (groupeId) {
+                $.get('{% url "get_etudiants" %}', {'groupe_id': groupeId}, function(etudiants) {
+                    $('#etudiant').empty().append('<option value="">Select Étudiant</option>');
+                    etudiants.forEach(function(etudiant) {
+                        $('#etudiant').append('<option value="'+etudiant.id+'">'+etudiant.nom+'</option>');
+                    });
+
+                    // Bind selected Étudiant to hidden input
+                    $('#etudiant').change(function() {
+                        $('.selected_etudiant').val($(this).val());
+                    });
+                });
+            }
+        });
+
+        // Bind selected Module to hidden input
+        $('#module').change(function() {
+            const selectedModule = $(this).val();
+            $('.selected_module').val(selectedModule);
+        });
+
+        $('#etudiant').change(function() {
+            $('.selected_etudiant').val($(this).val());
+        });
+    });
+</script>
+
 {% endblock %}

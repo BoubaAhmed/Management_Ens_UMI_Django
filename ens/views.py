@@ -14,6 +14,7 @@ from django.http import HttpResponse
 from django.http import HttpResponse
 from openpyxl import Workbook
 from .models import Utilisateur
+from django.http import JsonResponse
 
 def is_staff_and_active(view_func):
     """
@@ -346,28 +347,19 @@ def delete_groupe(request, pk):
 @login_required
 @user_passes_test(is_staff_and_active)
 def etudiant_list(request):
-    # Fetch all Filiere objects
-    filieres = Filiere.objects.all()
-    selected_filiere = filieres.first() if filieres.exists() else None
+    # Obtenir toutes les filières avec groupes existants
+    filieres = Filiere.objects.filter(groupe__isnull=False).distinct()
 
-    # Get selected Filiere from request or default to the first one
     filiere_id = request.GET.get('filiere_id')
-    if filiere_id:
-        selected_filiere = get_object_or_404(Filiere, id=filiere_id)
+    selected_filiere = get_object_or_404(Filiere, id=filiere_id) if filiere_id else filieres.first()
 
-    # Fetch groups belonging to the selected Filiere
     groupes = Groupe.objects.filter(filiere=selected_filiere) if selected_filiere else []
-    selected_groupe = groupes.first() if groupes.exists() else None
 
-    # Get selected Groupe from request or default to the first one
     groupe_id = request.GET.get('groupe_id')
-    if groupe_id:
-        selected_groupe = get_object_or_404(Groupe, id=groupe_id)
+    selected_groupe = get_object_or_404(Groupe, id=groupe_id) if groupe_id else groupes.first()
 
-    # Fetch students in the selected Groupe
     etudiants = Etudiant.objects.filter(groupe=selected_groupe) if selected_groupe else []
 
-    # Context data for the template
     context = {
         'filieres': filieres,
         'selected_filiere': selected_filiere,
@@ -375,6 +367,7 @@ def etudiant_list(request):
         'selected_groupe': selected_groupe,
         'etudiants': etudiants,
     }
+
     return render(request, 'etudiant/index.html', context)
 
 
@@ -427,6 +420,8 @@ def delete_etudiant(request, pk):
 @login_required
 @user_passes_test(is_staff_and_active)
 def create_note(request):
+    filieres = Filiere.objects.filter(groupe__isnull=False, module__isnull=False).distinct()
+
     if request.method == 'POST':
         form = NoteForm(request.POST)
         if form.is_valid():
@@ -435,7 +430,26 @@ def create_note(request):
             return redirect('note_list')
     else:
         form = NoteForm()
-    return render(request, 'note/create.html', {'form': form})
+
+    return render(request, 'note/create.html', {'form': form, 'filieres': filieres})
+
+def get_groupes(request):
+    filiere_id = request.GET.get('filiere_id')
+    groupes = Groupe.objects.filter(filiere_id=filiere_id)
+    data = [{"id": groupe.id, "nom": groupe.nom} for groupe in groupes]
+    return JsonResponse(data, safe=False)
+
+def get_modules(request):
+    filiere_id = request.GET.get('filiere_id')
+    modules = Module.objects.filter(filiere_id=filiere_id)
+    data = [{"id": module.id, "nom": module.nom} for module in modules]
+    return JsonResponse(data, safe=False)
+
+def get_etudiants(request):
+    groupe_id = request.GET.get('groupe_id')
+    etudiants = Etudiant.objects.filter(groupe_id=groupe_id)
+    data = [{"id": etudiant.id, "nom": etudiant.nom} for etudiant in etudiants]
+    return JsonResponse(data, safe=False)
 
 @login_required
 @user_passes_test(is_staff_and_active)
@@ -453,7 +467,6 @@ def edit_note(request, pk):
 
 @login_required
 @user_passes_test(is_staff_and_active)
-
 def delete_note(request, pk):
     note = get_object_or_404(Note, pk=pk)
     if request.method == 'POST':
@@ -463,12 +476,52 @@ def delete_note(request, pk):
     return render(request, 'note/delete.html', {'note': note})
 
 @login_required
-def note_list(request):
-    notes = Note.objects.all()
-    return render(request, 'note/index.html', {'notes': notes})
-
-@login_required
 @user_passes_test(is_staff_and_active)
 def note_detail(request, pk):
     note = get_object_or_404(Note, pk=pk)
     return render(request, 'note/read.html', {'note': note})
+
+
+@login_required
+@user_passes_test(is_staff_and_active)
+def note_list(request):
+    # Obtenir toutes les filières avec groupes existants
+    filieres = Filiere.objects.filter(groupe__isnull=False).distinct()
+
+    # Sélectionner la filière (ou la première disponible)
+    filiere_id = request.GET.get('filiere_id')
+    selected_filiere = get_object_or_404(Filiere, id=filiere_id) if filiere_id else filieres.first()
+
+    # Obtenir les groupes pour la filière sélectionnée
+    groupes = Groupe.objects.filter(filiere=selected_filiere) if selected_filiere else []
+
+    # Sélectionner le groupe (ou le premier disponible)
+    groupe_id = request.GET.get('groupe_id')
+    selected_groupe = get_object_or_404(Groupe, id=groupe_id) if groupe_id else groupes.first()
+
+    # Obtenir les modules pour la filière sélectionnée
+    modules = Module.objects.filter(filiere=selected_filiere) if selected_filiere else []
+
+    # Sélectionner le module (ou le premier disponible)
+    module_id = request.GET.get('module_id')
+    selected_module = get_object_or_404(Module, id=module_id) if module_id else modules.first()
+
+    # Obtenir les notes pour le groupe et le module sélectionnés
+    notes = Note.objects.filter(
+        etudiant__groupe=selected_groupe,
+        module=selected_module
+    ) if selected_groupe and selected_module else []
+
+    # Contexte pour le rendu
+    context = {
+        'filieres': filieres,
+        'selected_filiere': selected_filiere,
+        'groupes': groupes,
+        'selected_groupe': selected_groupe,
+        'modules': modules,
+        'selected_module': selected_module,
+        'notes': notes,
+    }
+
+    return render(request, 'note/index.html', context)
+
