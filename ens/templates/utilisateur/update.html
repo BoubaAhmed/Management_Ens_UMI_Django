@@ -1,12 +1,172 @@
-<!-- templates/utilisateur/update.html -->
 {% extends 'core/base_dashboard.html' %}
 
+{% block page_title %} 
+    <b>Modifier  un Utilisateur</b>
+{% endblock %}
+
+{% block style %}
+<style>
+    .form-add-user {
+        background-color: #FBFBFB;
+        font-size: 0.9rem;
+    }
+    .form-add-user .form-control {
+        border: 2px solid transparent;
+    }
+    .form-add-user .form-control:focus {
+        border: 2px solid rgb(9, 255, 0);
+    }
+    .error-text {
+        color: #ff0000;
+        font-weight: bold;
+        font-size: 0.7rem;
+        display: block;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<h2>Modifier Utilisateur</h2>
-<form method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Mettre à Jour</button>
-</form>
-<a href="{% url 'utilisateur_list' %}">Retour à la liste</a>
+<div class="container mt-2 rounded shadow p-3 w-50 form-add-user">
+    <form method="post" enctype="multipart/form-data" class="needs-validation">
+        {% csrf_token %}
+        <!-- Form Errors -->
+        {% if form.non_field_errors %}
+            {% for error in form.non_field_errors %}
+                <div class="alert text-center p-0 text-danger" style="font-size: 0.8rem;">{{ error }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="row g-3">
+            <!-- Nom -->
+            <div class="col-md-6">
+                <label for="{{ form.nom.id_for_label }}" class="form-label">Nom <span class="text-danger">*</span></label>
+                {{ form.nom }}
+                {% if form.nom.errors %}
+                    {% for error in form.nom.errors %}
+                        <span class="error-text">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <!-- Prénom -->
+            <div class="col-md-6">
+                <label for="{{ form.prenom.id_for_label }}" class="form-label">Prénom <span class="text-danger">*</span></label>
+                {{ form.prenom }}
+                {% if form.prenom.errors %}
+                    {% for error in form.prenom.errors %}
+                        <span class="error-text">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <!-- Email -->
+            <div class="col-md-6">
+                <label for="{{ form.email.id_for_label }}" class="form-label">Email <span class="text-danger">*</span></label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                    {% for error in form.email.errors %}
+                        <span class="error-text">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <!-- Mot de passe -->
+            <div class="col-md-6">
+                <label for="{{ form.password.id_for_label }}" class="form-label">Mot de passe (Laisser vide si inchangé)</label>
+                {{ form.password }}
+                {% if form.password.errors %}
+                    {% for error in form.password.errors %}
+                        <span class="error-text">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <!-- Téléphone -->
+            <div class="col-md-6">
+                <label for="{{ form.telephone.id_for_label }}" class="form-label">Téléphone</label>
+                {{ form.telephone }}
+                {% if form.telephone.errors %}
+                    {% for error in form.telephone.errors %}
+                        <span class="error-text">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <!-- Adresse -->
+            <div class="col-md-6">
+                <label for="{{ form.adresse.id_for_label }}" class="form-label">Adresse</label>
+                {{ form.adresse }}
+                {% if form.adresse.errors %}
+                    {% for error in form.adresse.errors %}
+                        <span class="error-text">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <!-- Spécialité -->
+            <div class="col-md-6">
+                <label for="{{ form.specialite.id_for_label }}" class="form-label">Spécialité</label>
+                {{ form.specialite }}
+                {% if form.specialite.errors %}
+                    {% for error in form.specialite.errors %}
+                        <span class="error-text">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <!-- Statut -->
+            <div class="col-md-6">
+                <label for="{{ form.statut.id_for_label }}" class="form-label">Statut</label>
+                {{ form.statut }}
+                {% if form.statut.errors %}
+                    {% for error in form.statut.errors %}
+                        <span class="error-text">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <!-- Images -->
+            <div class="col-md-6">
+                <label for="{{ form.image.id_for_label }}" class="form-label">Photo de Profil</label>
+                {{ form.image }}
+                {% if form.image.errors %}
+                    {% for error in form.image.errors %}
+                        <span class="error-text">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <label for="">Roles <span class="text-danger">*</span></label>
+            <!-- Checkboxes for Roles -->
+            <div class="col-md-5  m-3 form-check form-switch mt-2">
+                {{ form.is_active }}
+                <label for="{{ form.is_active.id_for_label }}" class="form-check-label">Actif</label>
+            </div>
+
+            <div class="col-md-5 m-3  form-check form-switch mt-2">
+                {{ form.is_staff }}
+                <label for="{{ form.is_staff.id_for_label }}" class="form-check-label">Personnel</label>
+            </div>
+
+            <div class="col-md-5 m-3 form-check form-switch mt-2">
+                {{ form.is_encadrant }}
+                <label for="{{ form.is_encadrant.id_for_label }}" class="form-check-label">Encadrant</label>
+            </div>
+
+            <div class="col-md-5 m-3 form-check form-switch mt-2">
+                {{ form.is_enseignant }}
+                <label for="{{ form.is_enseignant.id_for_label }}" class="form-check-label">Enseignant</label>
+            </div>
+        </div>
+
+        <div class="mt-4 text-end">
+            <a href="{% url 'utilisateur_list' %}" class="btn btn-secondary btn-sm">
+                <i class="bi bi-arrow-left me-2"></i> Annuler
+            </a>
+            <button type="submit" class="btn btn-success btn-sm">
+                <i class="bi bi-save me-2"></i> Enregistrer
+            </button>
+        </div>
+    </form>
+</div>
 {% endblock %}

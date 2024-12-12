@@ -1,13 +1,116 @@
-<!-- templates/utilisateur/read.html -->
 {% extends 'core/base_dashboard.html' %}
-
+{% load static %}
 {% block content %}
-<h2>Détails Utilisateur</h2>
-<p><strong>Nom :</strong> {{ utilisateur.nom }}</p>
-<p><strong>Prénom :</strong> {{ utilisateur.prenom }}</p>
-<p><strong>Email :</strong> {{ utilisateur.email }}</p>
-<p><strong>Statut :</strong> {{ utilisateur.statut }}</p>
-<p><strong>Specialité :</strong> {{ utilisateur.specialite }}</p>
+<style>
+    body {
+        font-family: 'Roboto', Arial, sans-serif;
+        background: #f4f5f7;
+    }
+    .container {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 30px;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        animation: fadeIn 1s ease;
+        overflow: hidden;
+        text-align: center;
+    }
 
-<a href="{% url 'utilisateur_list' %}">Retour à la liste</a>
+    .container:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 25px rgba(0, 0, 255, 0.3);
+    }
+
+    h2 {
+        text-align: center;
+        color: #333;
+        font-weight: bold;
+        font-size: 2.4rem;
+    }
+
+    .profile-img {
+        width: 150px;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 50%;
+        margin: 20px auto;
+        display: block;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s ease;
+    }
+
+    .profile-img:hover {
+        transform: scale(1.1);
+    }
+
+    p {
+        font-size: 1.2rem;
+        color: #555;
+    }
+
+    .label {
+        font-weight: bold;
+        color: #444;
+    }
+
+    a {
+        text-decoration: none;
+        color: #007bff;
+        font-weight: bold;
+        transition: color 0.3s;
+    }
+
+    a:hover {
+        color: #0056b3;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<div class="container">
+    <h2>Détails Utilisateur</h2>
+
+    {% if utilisateur.image %}
+        <img src="{{ utilisateur.image.url }}" alt="Profile Image" class="profile-img">
+    {% else %}
+        <img src="{% static 'Assets/profiles/default.jpeg' %}" alt="Default Profile" class="profile-img">
+    {% endif %}
+
+    <div class="info">
+        <p><span class="label">Nom :</span> {{ utilisateur.nom }}</p>
+        <p><span class="label">Prénom :</span> {{ utilisateur.prenom }}</p>
+        <p><span class="label">Email :</span> {{ utilisateur.email }}</p>
+        <p><span class="label">Statut :</span> {{ utilisateur.statut }}</p>
+        <p><span class="label">Spécialité :</span> {{ utilisateur.specialite }}</p>
+
+        {% if utilisateur.telephone %}
+            <p><span class="label">Téléphone :</span> {{ utilisateur.telephone }}</p>
+        {% endif %}
+        {% if utilisateur.adresse %}
+            <p><span class="label">Adresse :</span> {{ utilisateur.adresse }}</p>
+        {% endif %}
+        {% if utilisateur.date_embauche %}
+            <p><span class="label">Date d'embauche :</span> {{ utilisateur.date_embauche }}</p>
+        {% endif %}
+        {% if utilisateur.annee_inscription %}
+            <p><span class="label">Année d'inscription :</span> {{ utilisateur.annee_inscription }}</p>
+        {% endif %}
+    </div>
+
+    <div class="mt-4">
+        <a href="{% url 'utilisateur_list' %}">Retour à la liste</a>
+    </div>
+</div>
 {% endblock %}

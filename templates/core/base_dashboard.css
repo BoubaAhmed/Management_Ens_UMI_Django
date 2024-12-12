@@ -1,15 +1,18 @@
+/* Global Styling */
 html, body {
     height: 100%;
     overflow: hidden;
     font-family: 'Lato', sans-serif;
+    background-color: #ECEBDE; /* Light gray */
+    margin: 0;
+    padding: 0;
 }
 
-
-/* Sidebar styling */
+/* Sidebar Styling */
 .sidebar {
     width: 220px;
     height: 100%;
-    background-color: #ffffff; /* Dark gray */
+    background-color: #ffffff; /* White background */
     position: fixed;
     top: 0;
     left: 0;
@@ -17,37 +20,87 @@ html, body {
     flex-direction: column;
     align-items: center;
     padding: 1rem 0;
+    transition: width 0.3s ease-in-out, background-color 0.3s ease-in-out;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Logo styling */
+.sidebar:hover {
+    background-color: #f9f9f9; /* Slight color change on hover */
+}
+
 .sidebar-logo {
-    width: 50%; /* Make it proportional */
+    width: 50%;
     max-width: 200px;
     height: auto;
     margin-bottom: 2rem;
+    transform: scale(1); /* Default size */
+    transition: transform 0.3s ease-in-out;
 }
 
-/* Nav links */
-.sidebar .nav-link {
+.sidebar-logo:hover {
+    transform: scale(1.1); /* Slight zoom effect */
+}
+
+.nav-link {
     color: #000000;
     font-size: 1rem;
     font-weight: 450;
     margin: 0.5rem 0;
     text-align: center;
-}
-.nav-link:hover i {
-    color: #355F2E; /* Bootstrap primary blue */
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    text-decoration: none;
+    transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out;
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); /* Subtle shadow for links */
 }
 
-/* Active link styling */
+.nav-link i {
+    margin-right: 0.5rem;
+    transition: transform 0.3s ease-in-out;
+}
+
+.nav-link:hover {
+    background-color: #6A669D; /* Light blue for hover effect */
+    transform: translateX(10px); /* Slight slide to the right */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Enhance shadow on hover */
+    color: #D4EBF8;
+}
+
+.nav-link:hover i {
+    transform: rotate(20deg); /* Rotate icon slightly */
+}
+
 .nav-link.active {
-    background-color: #007bff; /* Bootstrap primary blue */
-    color: #fff; /* White text */
+    background-color: #5DB996; /* Primary blue for active link */
+    color: #fff;
+    border-radius: 0.5rem;
+    transform: scale(1.05); /* Slightly larger when active */
 }
 
 .nav-link.active i {
-    color: #fff; /* White icon */
+    color: #fff;
+    transform: rotate(0deg); /* Ensure no rotation for active */
 }
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.nav-link {
+    animation: slideIn 0.5s ease-in-out;
+}
+
+
 .profile-link {
     color: #000000;
     font-size: 1rem;
@@ -56,38 +109,87 @@ html, body {
     text-decoration: none;
 }
 
-.nav-link:hover {
-    background-color: #81BFDA; /* Darker gray for hover effect */
-    border-radius: 0.5rem;
-}
-
-/* Logout button */
+/* Logout Button */
 .logout-btn {
     margin-top: auto;
+    width: 100%;
+    text-align: center;
 }
 
-.logout-btn .btn {
-    width: 100%;
-    font-weight: bold;
+.logout-btn .nav-link {
     background-color: #dc3545; /* Bootstrap danger color */
     color: #fff;
-    border: none;
+    font-weight: bold;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    transition: background-color 0.2s ease-in-out;
 }
 
-.logout-btn .btn:hover {
-    background-color: #c82333; /* Slightly darker red */
+.logout-btn .nav-link:hover {
+    background-color: #c82333; /* Darker red */
 }
 
-/* Main content */
+/* Main Content */
 .main-content {
     margin-left: 220px; /* Sidebar width */
-    padding: 0rem;
+    padding: 0.5rem; /* Increased padding for better spacing */
     height: 100%;
     overflow-y: auto;
-    background-color: #ECEBDE !important; /* Light gray */
+    background-color: #ECEBDE; /* Light gray background */
+    transition: margin-left 0.3s ease-in-out, background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1); /* Subtle inner shadow */
+    animation: fadeIn 0.5s ease-in-out;
 }
 
-/* Responsive design */
+/* On Hover - Optional if you want a slight hover effect */
+.main-content:hover {
+    background-color: #f7f7f7; /* Slightly lighter background */
+   /* transform: scale(1.005); /* Subtle zoom effect */
+}
+
+/* Smooth scrollbars */
+.main-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.main-content::-webkit-scrollbar-track {
+    background: #ECEBDE; /* Match background */
+    border-radius: 4px;
+}
+
+.main-content::-webkit-scrollbar-thumb {
+    background: #A4A19D; /* Contrasting gray for thumb */
+    border-radius: 4px;
+}
+
+.main-content::-webkit-scrollbar-thumb:hover {
+    background: #6D6A65; /* Darker gray for hover */
+}
+
+/* Animation for content load */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* Sidebar Collapsed */
+.sidebar.collapsed {
+    width: 0;
+    overflow: hidden;
+}
+
+.sidebar.collapsed + .main-content {
+    margin-left: 0;
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
     .sidebar {
         width: 100%;
@@ -118,3 +220,23 @@ html, body {
     }
 }
 
+/* Messages Styling */
+#message-container {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    width: 300px;
+    z-index: 1000;
+}
+
+.message {
+    background-color: #007bff; /* Primary blue */
+    color: #fff;
+    padding: 0.5rem 1rem;
+    margin-bottom: 0.5rem;
+    border-radius: 0.5rem;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}

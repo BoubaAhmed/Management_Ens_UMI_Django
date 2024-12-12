@@ -1,16 +1,20 @@
 from django import forms
 from .models import Utilisateur, Filiere, Module, Groupe, Etudiant, Note
+from django.core.exceptions import ValidationError
 
 
 # ------------------ Formulaire Utilisateur ------------------
 class UtilisateurForm(forms.ModelForm):
+
     password = forms.CharField(
         widget=forms.PasswordInput(attrs={'class': 'form-control shadow', 'placeholder': 'Password'}),
-        required=False
+        max_length=128,
+        required=True,
+        min_length=8,
     )
     class Meta:
         model = Utilisateur
-        fields = ['nom', 'prenom', 'email', 'password', 'telephone', 'adresse', 'specialite', 'statut', 'is_active', 'is_staff', 'is_encadrant', 'is_enseignant']
+        fields = ['nom', 'prenom', 'email', 'password', 'telephone', 'adresse', 'specialite', 'statut', 'is_active', 'is_staff', 'is_encadrant', 'is_enseignant','image']
         widgets = {
             'nom': forms.TextInput(attrs={'class': 'form-control shadow ', 'placeholder': 'Nom'}),
             'prenom': forms.TextInput(attrs={'class': 'form-control shadow ', 'placeholder': 'Prénom'}),
@@ -23,8 +27,24 @@ class UtilisateurForm(forms.ModelForm):
             'is_staff': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'is_encadrant': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'is_enseignant': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'image': forms.ClearableFileInput(attrs={'class': 'form-control shadow'}),  
         }
+    def clean_password(self):
+        password = self.cleaned_data.get('password')
+        # Validation de la longueur et des caractères spéciaux
+        if len(password) < 8:
+            raise ValidationError('Le mot de passe doit avoir au moins 8 caractères.')
 
+        if not any(char.isdigit() for char in password):
+            raise ValidationError('Le mot de passe doit contenir au moins un chiffre.')
+
+        if not any(char.isalpha() for char in password):
+            raise ValidationError('Le mot de passe doit contenir au moins une lettre.')
+
+        if not any(char in '!@#$%^&*()_+-=[]{}|;:,.<>?/' for char in password):
+            raise ValidationError('Le mot de passe doit contenir au moins un caractère spécial.')
+
+        return password
 
 # ------------------ Formulaire Filière ------------------
 class FiliereForm(forms.ModelForm):

@@ -9,10 +9,11 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Lato:wght@400;700&family=Parkinsans:wght@400;700&family=Playfair+Display:wght@400;700&family=Raleway:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/templates/core/base_dashboard.css">
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     
+    <link rel="stylesheet" href="/templates/core/base_dashboard.css">
+
     {% block style %}
 
     {% endblock %}
@@ -21,31 +22,31 @@
 
 <body class="bg-light text-dark">
     <!-- Sidebar -->
-    <div class="sidebar ">
+    <div class="sidebar">
         <!-- Logo -->
         <img src="/static/Assets/Images/logo.png" alt="Logo" class="sidebar-logo">
 
         <!-- Navigation links -->
         <nav class="nav flex-column w-75 ">
-            <a class="nav-link text-start" href="/dashboard">
+            <a class="nav-link text-start {% if request.path == '/dashboard/' %}active{% endif %}"  href="/dashboard">
                 <i class="bi bi-house-door me-2"></i>Home
             </a>
-            <a class="nav-link text-start" href="{% url 'utilisateur_list' %}">
+            <a class="nav-link text-start {% if request.path == '/dashboard/utilisateur/' %}active{% endif %}" href="{% url 'utilisateur_list' %}">
                 <i class="bi bi-people me-2"></i>Utilisateurs
-            </a>
-            <a class="nav-link text-start" href="{% url 'etudiant_list' %}">
+            </a>            
+            <a class="nav-link text-start {% if request.path == '/dashboard/etudiant/' %}active{% endif %}" href="{% url 'etudiant_list' %}">
                 <i class="bi bi-person-lines-fill me-2"></i>Etudiants
             </a>
-            <a class="nav-link text-start" href="{% url 'filiere_list' %}">
+            <a class="nav-link text-start {% if request.path == '/dashboard/filiere/' %}active{% endif %}" href="{% url 'filiere_list' %}">
                 <i class="bi bi-bookmark me-2"></i>Filieres
             </a>
-            <a class="nav-link text-start" href="{% url 'module_list' %}">
+            <a class="nav-link text-start {% if request.path == '/dashboard/module/' %}active{% endif %}" href="{% url 'module_list' %}">
                 <i class="bi bi-grid me-2"></i>Modules
             </a>
-            <a class="nav-link text-start" href="{% url 'note_list' %}">
+            <a class="nav-link text-start {% if request.path == '/dashboard/note/' %}active{% endif %}" href="{% url 'note_list' %}">
                 <i class="bi bi-pencil-square me-2"></i>Notes
             </a>
-            <a class="nav-link text-start" href="{% url 'groupe_list' %}">
+            <a class="nav-link text-start {% if request.path == '/dashboard/groupe/' %}active{% endif %}" href="{% url 'groupe_list' %}">
                 <i class="bi bi-people-fill me-2"></i>Groupes
             </a>  
             <a class="nav-link text-start" href="/">
@@ -66,16 +67,24 @@
 
     <!-- Main Content -->
     <div class="main-content px-3">
-        <nav class=" navbar navbar-expand-lg mt-2 mb-4 px-2 rounded shadow" style="background-color: #fff;">
+        <nav class=" navbar navbar-expand-lg mb-4 px-1 rounded shadow" style="background-color: #fff;">
             <div class="w-100 d-flex justify-content-between align-items-center">
+                <i id="sidebarToggle" class="bi bi-columns-gap btn btn-sm me-3"></i>
                 <a class="navbar-brand font-weight-bold " style="font-size: 0.9rem;font-family: 'Parkinsans', sans-serif;font-weight: bold;" href="#">{% block page_title %} Dashboard {% endblock %}</a>
+                <div class="flex-grow-1 text-center">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <p style="font-size: 0.8rem;font-weight: bold;font-family: 'Parkinsans', sans-serif;" class="p-0" id="message-{{ forloop.counter }}">{{ message }} </p>
+                        {% endfor %}
+                    {% endif %}
+                </div>
                 <div class="collapse navbar-collapse  " id="navbarNav">
                     <ul class="navbar-nav ms-auto me-2">
                         {% if user.is_authenticated %}
                             <li class="nav-item dropdown">
-                                <a class="profile-link dropdown-toggle d-flex justify-content-between align-items-center" style="color: rgb(55, 61, 61);font-size: 0.9rem;" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <a class="profile-link dropdown-toggle d-flex justify-content-between align-items-center" style="color: rgb(55, 61, 61);font-size: 0.9rem;font-family: 'Parkinsans',sans-serif;" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     {% if user.image %}
-                                        <img src="{{ user.image.url }}" alt="Profile Image" class="rounded-circle me-2" width="30" height="30">
+                                        <img src="{{ user.image.url }}" alt="Profile Image" class="rounded-circle me-2" style="border: 3px solid rgb(94, 255, 0);" width="35" height="35">
                                     {% else %}
                                         <i class="bi bi-person-circle me-2"></i>
                                     {% endif %}
@@ -99,11 +108,7 @@
                 </div>
             </div>
         </nav>
-        {% if messages %}
-            {% for message in messages %}
-                <p style="font-size: 0.8rem;font-weight: bold;" class="d-flex align-items-center p-0" id="message-{{ forloop.counter }}">{{ message }} </p>
-            {% endfor %}
-        {% endif %}
+
         {% block content %}
         
        
@@ -118,7 +123,22 @@
                 });
             }, 10000);  // Automatically remove messages after 10 seconds
         });
+        document.addEventListener('DOMContentLoaded', () => {
+            const sidebar = document.querySelector('.sidebar');
+            const toggleButton = document.getElementById('sidebarToggle');
+            
+            if (toggleButton && sidebar) {
+                toggleButton.addEventListener('click', () => {
+                    console.log('Toggle sidebar clicked');
+                    sidebar.classList.toggle('collapsed');
+                });
+            } else {
+                console.error('Sidebar or toggle button not found!');
+            }
+        });
+        
     </script>
+    
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     {% block script %}

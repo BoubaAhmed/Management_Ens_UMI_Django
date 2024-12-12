@@ -16,58 +16,130 @@
     }
     #searchInput,#roleSelect{
         border: none;
+        font-family: "Parkinsans", sans-serif;
         font-size: 0.9rem;
     }
-    .pagination .page-item .page-link{
+    /* Default Pagination Link */
+    .pagination .page-item .page-link {
         background-color: #fff;
         color: black;
         border: none;
         border-radius: 5px;
-        font-family: 'Caveat',sans-serif;
+        font-family: 'Caveat', sans-serif;
         font-size: 0.8rem;
+        transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
     }
+
+    /* Active Pagination Link */
     .pagination .page-item.active .page-link {
         background-color: #0A5EB0;
         color: #fff;
         font-weight: bold;
+        transform: scale(1.1); /* Slight enlargement for emphasis */
+        transition: transform 0.2s ease;
     }
+
+    /* Disabled Pagination Link */
     .pagination .page-item.disabled .page-link {
         color: #450303;
         pointer-events: none;
         background-color: #9AA6B2;
+        opacity: 0.6; /* Make disabled links less visually prominent */
+        transition: opacity 0.2s ease;
     }
+
+    /* Hover Effect */
     .pagination .page-link:hover {
         background-color: #f8f9fa;
         color: #0056b3;
+        transform: scale(1.05); /* Subtle zoom on hover */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add a soft shadow */
     }
-    #searchButton{
-        background-color: #0A5EB0;
+
+    /* Optional Focus Effect */
+    .pagination .page-link:focus {
+        outline: 2px solid #0A5EB0; /* Highlight on focus */
+        outline-offset: 2px;
+    }
+
+    /* Search Button */
+    #searchButton {
+        background-color: #6A669D;
         color: white;
+        border: none;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out, transform 0.2s ease-in-out;
     }
-    #searchButton:hover{
+
+    #searchButton:hover {
         background-color: transparent;
-        color: #0A5EB0;
-        border: 1px solid #0A5EB0;
+        color: #6A669D;
+        border: 1px solid #6A669D;
+        transform: scale(1.05); /* Slight zoom effect */
     }
-    #clearBtn{
-        background-color: #AE445A;
+
+    /* Clear Button */
+    #clearBtn {
+        background-color: #9ABF80;
         color: white;
+        border: none;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out, transform 0.2s ease-in-out;
     }
-    #clearBtn:hover{
+
+    #clearBtn:hover {
         background-color: transparent;
-        color: #AE445A;
-        border: 1px solid #AE445A;
+        color: #9ABF80;
+        border: 1px solid #9ABF80;
+        transform: scale(1.05); /* Slight zoom effect */
     }
+
+    /* Optional: Add focus effects for accessibility */
+    #searchButton:focus,
+    #clearBtn:focus {
+        outline: 2px solid #6A669D; /* Highlight effect */
+        outline-offset: 2px;
+    }
+
+    /* Keyframes for optional subtle animations */
+    @keyframes fadeInScale {
+        from {
+            opacity: 0;
+            transform: scale(0.9);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    /* Apply entry animation */
+    #searchButton,
+    #clearBtn {
+        animation: fadeInScale 0.4s ease-in-out;
+    }
+
+    .popover .popover-body {
+        background-color: #6A669D;
+        color: #ffffff;
+        padding: 10px;
+        border-radius: 5px;
+    }
+
+
+
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="container">  
+<div class="">  
     <div class="d-flex justify-content-between align-items-center">
         <!-- Search Form -->
         <form method="get" class="d-flex me-auto" id="searchForm">
-            <input type="text" id="searchInput" name="search" class="me-2 rounded p-1 shadow-sm" placeholder="Search..." value="{{ search_query }}">
-            <select id="roleSelect" name="role" class="rounded me-2">
+            <input type="text" id="searchInput" name="search" class="me-2 pe-5 rounded p-1 shadow-sm" placeholder="Search..." value="{{ search_query }}">
+            <select id="roleSelect" name="role" class="rounded me-2 px-3">
                 <option value="">All Roles</option>
                 <option value="encadrant" {% if filter_role == 'encadrant' %}selected{% endif %}>Encadrant</option>
                 <option value="enseignant" {% if filter_role == 'enseignant' %}selected{% endif %}>Enseignant</option>
@@ -113,11 +185,14 @@
         <tbody style="font-family: 'Parkinsans', sans-serif;">
             {% for utilisateur in utilisateurs %}
                 <tr>
-                    <td>
+                    <td 
+                    data-bs-toggle="popover" data-bs-content="<b>Nom:</b> {{ utilisateur.nom }}<br><b>Email:</b> {{ utilisateur.email }}<br><b>Tele :</b> {{ utilisateur.telephone }}"
+                    data-bs-html="true">
                         {% if utilisateur.image %}
-                            <img src="{{ utilisateur.image.url }}" style="border: 2px solid #FF7F3E;" alt="Profile Image" class="rounded-circle me-2" width="30" height="30">
+                            <img src="{{ utilisateur.image.url }}" class="rounded-circle me-2" width="30" height="30"
+                                alt="Profile Image" style="cursor: pointer;">
                         {% else %}
-                            <i class="bi bi-person-circle me-2" style="font-size: 25px; width: 25px; height: 25px; line-height: 25px;color: #432E54;"></i>
+                            <i class="bi bi-person-circle me-2"style="font-size: 25px; cursor: pointer;"></i>
                         {% endif %}
                         {{ utilisateur }}
                     </td>
@@ -247,6 +322,18 @@
             roleSelect.value = '';
             searchForm.submit();  // Automatically refresh the form
         });
-    });       
+    });      
+    document.addEventListener('DOMContentLoaded', (event) => {
+        var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+        var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+            return new bootstrap.Popover(popoverTriggerEl, {
+                trigger: 'hover',
+                placement: 'top',
+                html: true,
+                container: 'body'
+            });
+        });
+    });
+    
 </script>
 {% endblock %}
