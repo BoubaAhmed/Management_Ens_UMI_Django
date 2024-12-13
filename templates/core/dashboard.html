@@ -1,98 +1,311 @@
 {% extends 'core/base_dashboard.html' %}
+{% load static %}
+
 {% block title %}Dashboard{% endblock %}
+{% block style %}
+<style>
+    .dashboard .staticCards .card {
+        text-align: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: none;
+        display: flex;
+        flex-direction: column;
+        background: linear-gradient(to bottom, #ffffff, #f9f9f9);
+        overflow: hidden;
+        position: relative;
+    }
+    .dashboard .staticCards .card h5 {
+        font-size: 0.9rem;
+        font-weight: bold;
+        animation: fadeInUp 0.6s ease;
+    }
+    .dashboard .staticCards .card h2 {
+        font-family: 'Caveat', sans-serif;
+        animation: fadeInUp 0.8s ease;
+    }
+
+    .dashboard .staticCards .card:hover {
+        transform: scale(1.04) rotateY(5deg) rotateX(5deg);
+        box-shadow: 0 12px 20px rgba(0, 0, 0, 0.4);
+        cursor: all-scroll;
+    }
+
+    .icon-3d {
+        font-size: 20px;
+        transition: transform 0.3s ease, color 0.3s ease;
+        display: inline-block;
+        transform-origin: center;
+    }
+
+    .card:hover .icon-3d {
+        transform: scale(1.1) rotateY(15deg) rotateX(15deg);
+        color: #ffd700;
+    }
+
+    /* Glow effect for icons */
+    .card .icon-3d::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 50px;
+        height: 50px;
+        background: radial-gradient(circle, #8B5DFF, rgba(255, 255, 255, 0));
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0);
+        border-radius: 50%;
+        z-index: -1;
+        transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .card:hover .icon-3d::after {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.5);
+    }
+
+    /* Subtle card hover glow */
+    .dashboard .staticCards .card:hover {
+        border: 1px solid rgba(255, 255, 255, 0.6);
+    }
+
+    /* Fade-in animation */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    .chart-container {
+        position: relative;
+        width: 300px; /* Set the desired width */
+        height: 300px; /* Set the desired height */
+        margin: 0 auto; /* Center the chart */
+    }
+    .card canvas {
+        width: 100% !important;
+        height: 100% !important;
+    }
+</style>
+
+{% endblock %}
+
 {% block content %}
-<div class="container mt-4">    
-    <!-- Row 1: Stats -->
-    <div class="row text-center mb-4">
-        <div class="col-md-3">
-            <div class="card p-3">
-                <h5>Total Users</h5>
-                <p>{{ total_users }}</p>
+<div class="container mt-3 dashboard">
+
+    <div class="row staticCards  p-2">
+        <!-- Total des Utilisateurs -->
+        <div class="col-md-3 ">
+            <div class="card  shadow p-2">
+                <div class="d-flex flex-row  align-items-end">
+                    <i class="fas fa-users icon-3d rounded-circle shadow p-2 me-2" style="background-color: #6A669D;color: #fff;"></i>
+                    <h5>Total des Utilisateurs</h5>
+                </div>
+                <h2 style="text-align: end;font-size: 1.8rem;" class="me-2">{{ total_users }}</h2>
             </div>
         </div>
+    
+        <!-- Encadrants -->
         <div class="col-md-3">
-            <div class="card p-3">
-                <h5>Encadrants</h5>
-                <p>{{ encadrants_count }}</p>
+            <div class="card shadow p-2">
+                <div class="d-flex flex-row  align-items-end">
+                    <i class="fas fa-chalkboard-teacher icon-3d rounded-circle shadow p-2 me-2" style="background-color: #9ABF80;color: #000000;"></i>
+                    <h5>Encadrants</h5>
+                </div>
+                <h2 style="text-align: end;font-size: 1.8rem;" class="me-2">{{ encadrants_count }}</h2>
             </div>
         </div>
+    
+        <!-- Enseignants -->
         <div class="col-md-3">
-            <div class="card p-3">
-                <h5>Enseignants</h5>
-                <p>{{ enseignants_count }}</p>
+            <div class="card shadow p-2">
+                <div class="d-flex flex-row  align-items-end">
+                    <i class="fas fa-book icon-3d rounded-circle shadow p-2 me-2" style="background-color: #1C325B;color: #fff;"></i>
+                    <h5>Enseignants</h5>
+                </div>
+                <h2 style="text-align: end;font-size: 1.8rem;" class="me-2">{{ enseignants_count }}</h2>
             </div>
         </div>
+    
+        <!-- Étudiants Total -->
         <div class="col-md-3">
-            <div class="card p-3">
-                <h5>Total Students</h5>
-                <p>{{ total_students }}</p>
+            <div class="card shadow p-2">
+                <div class="d-flex flex-row  align-items-end">
+                    <i class="fas fa-user-graduate icon-3d rounded-circle shadow p-2 me-2" style="background-color: #219B9D;color: #fff;"></i>
+                    <h5>Étudiants Total</h5>
+                </div>
+                <h2 style="text-align: end;font-size: 1.8rem;" class="me-2">{{ total_students }}</h2>
             </div>
         </div>
     </div>
-    
-    <!-- Row 2: Charts -->
-    <div class="row mb-4">
-        <div class="col-md-6">
-            <canvas id="studentsStatusChart"></canvas>
-        </div>
-        <div class="col-md-6">
-            <canvas id="modulesSemesterChart"></canvas>
-        </div>
-    </div>
-    
-    <!-- Row 3: Latest Content -->
     <div class="row">
-        <div class="col-md-6">
-            <h5>Latest Article</h5>
-            {% if latest_article %}
-            <div class="card p-3">
-                <h6>{{ latest_article.title }}</h6>
-                <p>{{ latest_article.snippet }}</p>
+        <div class="col">
+            <!-- Graphique des Utilisateurs -->
+            <div class="card mt-4 p-4 rounded">
+                <h5>Statistiques des Utilisateurs</h5>
+                <canvas id="usersChart"></canvas>
             </div>
-            {% else %}
-            <p>No articles available.</p>
-            {% endif %}
         </div>
+        <div class="col">
+                <!-- Moyenne des Notes des Modules -->
+                <div class="card mt-4 p-4 rounded">
+                    <h5>Performance Moyenne des Modules</h5>
+                    <canvas id="notesChart"></canvas>
+                </div>
+        </div>
+    </div>
+
+    <!-- Section des modules et notes -->
+    <div class="row mt-4">
         <div class="col-md-6">
-            <h5>Performance</h5>
-            <ul>
-                {% for note in avg_notes_per_module %}
-                <li>{{ note.module__nom }}: {{ note.avg_finale|floatformat:2 }}</li>
-                {% endfor %}
-            </ul>
+            <div class="card bg-light p-4">
+                <h5>Modules par Semestre et Filière</h5>
+                {% if modules_by_semester_by_filiere %}
+                    <ul>
+                        {% for module in modules_by_semester_by_filiere %}
+                            <li>
+                                <strong>{{ module.semestre }}</strong> -
+                                <em>{{ module.filiere__nom }}</em>: 
+                                {{ module.module_count }} modules
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>Aucun module trouvé pour les semestres et filières disponibles.</p>
+                {% endif %}
+            </div>
         </div>
+        
+
+        <div class="col-md-6">
+            <div class="card bg-light p-4">
+                <h5>Moyenne des Notes par Module et Filière</h5>
+                {% if avg_notes_per_module_per_filiere %}
+                    <ul>
+                        {% for data in avg_notes_per_module_per_filiere %}
+                            <li>
+                                <strong>Filière: {{ data.module__filiere__nom }}</strong> -
+                                Module: {{ data.module__nom }} - 
+                                Moyenne: {{ data.avg_finale|floatformat:2 }}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>Aucune note disponible.</p>
+                {% endif %}
+            </div>
+        </div>
+        
+    </div>
+
+    <!-- Section des articles et slides -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card bg-secondary text-white p-4">
+                <h5>Articles Disponibles</h5>
+                <p>Total : {{ total_articles }}</p>
+                {% if latest_article %}
+                    <p><strong>Dernier article publié :</strong> {{ latest_article.title }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card bg-dark text-white p-4">
+                <h5>Slides Disponibles</h5>
+                <p>Total : {{ total_slides }}</p>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <!-- Graphique des Étudiants par Statut -->
+    <div class="card mt-4 p-4 rounded">
+        <h5>Distribution des Étudiants par Statut</h5>
+        <div class="chart-container"><canvas id="studentsChart"></canvas></div>
     </div>
 </div>
 
+
+
+{% endblock %}
+
+{% block script %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <script>
-    // Students by Status Chart
-    const ctx1 = document.getElementById('studentsStatusChart').getContext('2d');
-    new Chart(ctx1, {
-        type: 'pie',
+    // Graphique des utilisateurs (Bar Chart)
+    const ctxUsers = document.getElementById('usersChart').getContext('2d');
+    new Chart(ctxUsers, {
+        type: 'bar',
         data: {
-            labels: [{% for status in students_by_status %}"{{ status.statut }}"{% if not forloop.last %}, {% endif %}{% endfor %}],
+            labels: ['Total', 'Encadrants', 'Enseignants'],
             datasets: [{
-                label: 'Students by Status',
-                data: [{% for status in students_by_status %}{{ status.count }}{% if not forloop.last %}, {% endif %}{% endfor %}],
-                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+                label: 'Utilisateurs',
+                data: [{{ total_users }}, {{ encadrants_count }}, {{ enseignants_count }}],
+                backgroundColor: ['#007BFF', '#28A745', '#17A2B8']
             }]
         }
     });
 
-    // Modules by Semester Chart
-    const ctx2 = document.getElementById('modulesSemesterChart').getContext('2d');
-    new Chart(ctx2, {
-        type: 'bar',
+    // Graphique des étudiants par statut (Pie Chart)
+    const ctxStudents = document.getElementById('studentsChart').getContext('2d');
+
+    const studentsLabels = [
+        {% for student in students_by_status %}
+            '{{ student.statut }}'{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ];
+
+    const studentsData = [
+        {% for student in students_by_status %}
+            {{ student.count }}{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ];
+
+    new Chart(ctxStudents, {
+        type: 'pie',
         data: {
-            labels: [{% for semester in modules_by_semester %}"{{ semester.semestre }}"{% if not forloop.last %}, {% endif %}{% endfor %}],
+            labels: studentsLabels,
             datasets: [{
-                label: 'Modules by Semester',
-                data: [{% for semester in modules_by_semester %}{{ semester.count }}{% if not forloop.last %}, {% endif %}{% endfor %}],
-                backgroundColor: '#36A2EB',
+                data: studentsData,
+                backgroundColor: ['#FFC107', '#FF5722', '#9C27B0', '#673AB7']
+            }]
+        }
+    });
+
+    // Graphique des Moyennes des Modules (Line Chart)
+    const ctxNotes = document.getElementById('notesChart').getContext('2d');
+
+    const moduleLabels = [
+        {% for note in avg_notes_per_module %}
+            '{{ note.module__nom }}'{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ];
+
+    const avgNotesData = [
+        {% for note in avg_notes_per_module %}
+            {{ note.avg_finale }}{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ];
+
+    new Chart(ctxNotes, {
+        type: 'line',
+        data: {
+            labels: moduleLabels,
+            datasets: [{
+                label: 'Moyenne des Notes',
+                backgroundColor: '#FF5722',
+                borderColor: '#FF5722',
+                data: avgNotesData,
+                fill: false
             }]
         }
     });
 </script>
-
 {% endblock %}

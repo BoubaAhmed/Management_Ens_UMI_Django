@@ -54,7 +54,7 @@ html, body {
     transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out;
     border-radius: 0.5rem;
     padding: 0.5rem 1rem;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); /* Subtle shadow for links */
+    /* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); Subtle shadow for links */
 }
 
 .nav-link i {
@@ -117,16 +117,16 @@ html, body {
 }
 
 .logout-btn .nav-link {
-    background-color: #dc3545; /* Bootstrap danger color */
-    color: #fff;
-    font-weight: bold;
+    /* background-color: #dc3545; Bootstrap danger color */
+    color: #000000;
     padding: 0.5rem;
     border-radius: 0.5rem;
     transition: background-color 0.2s ease-in-out;
 }
 
 .logout-btn .nav-link:hover {
-    background-color: #c82333; /* Darker red */
+    background-color: #1C325B; /* Darker red */
+    color: #fff;
 }
 
 /* Main Content */

@@ -1,0 +1,182 @@
+/* Overall Container Styling */
+.containerEtudiant {
+    animation: fadeIn 1s ease-in-out;
+}
+
+/* Sidebar (left column) Styling */
+.col-3 {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    animation: slideInLeft 1s ease-in-out;
+}
+
+.col-3 label {
+    font-weight: bold;
+}
+
+.col-3 select {
+    transition: border-color 0.3s;
+}
+
+.col-3 select:focus {
+    border-color: #ffc107;
+    box-shadow: 0 0 5px rgba(255, 193, 7, 0.5);
+}
+
+/* Table Styling */
+.tableEtudiantsList {
+    background-color: #ffffff;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    animation: slideInRight 1s ease-in-out;
+}
+
+.thead-dark th {
+    background-color: #133E87;
+    color: #ffffff;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #f2f2f2;
+}
+
+/* Button Styling */
+
+
+/* Alert Styling */
+.alert {
+    animation: bounceIn 1s;
+    border-radius: 8px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes bounceIn {
+    0% {
+        transform: scale(0.8);
+        opacity: 0.5;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.dropdown-menu {
+    position: absolute !important; /* Ensures it stays out of the normal document flow */
+    z-index: 1055; /* Ensures it appears above most elements */
+    transform: translate(0, 0); /* Fix any offset issues if caused by Bootstrap */
+    will-change: transform; /* Improves rendering performance */
+}
+.ajouterEtudiantsBTN{
+    background-color: #88C273;
+    transition: transform 0.2s, box-shadow 0.2s;
+
+}
+
+.ajouterEtudiantsBTN:hover {
+    background-color: #3B1E54;
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Pagination container */
+.paginationStudentsPage {
+    display: flex;
+    justify-content: end;
+    align-items: end;
+}
+
+/* Pagination list */
+.pagination {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Pagination items */
+.page-item {
+    display: inline-block;
+    margin: 0;
+    font-weight: 500;
+    color: #555;
+    text-align: center;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+}
+
+/* Page link */
+.page-link {
+    text-decoration: none;
+    color: inherit;
+    display: inline-block;
+    font-size: 0.8rem;
+    border-radius: 8px;
+    width: 100%;
+    background-color: #fff;
+}
+
+/* Active page */
+.page-item.active {
+    color: #fff;
+    font-weight: bold;
+    box-shadow: 0 0 12px rgba(0, 123, 255, 0.5);
+}
+
+
+/* Arrow icons */
+.page-link span {
+    display: inline-block;
+    transition: all 0.2s ease;
+}
+
+/* Arrow hover effect */
+.page-item:hover .page-link span {
+    transform: scale(1.2);
+}
+
+/* Smooth transition */
+.page-link {
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+

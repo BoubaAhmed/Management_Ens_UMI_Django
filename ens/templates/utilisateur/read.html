@@ -7,7 +7,8 @@
         background: #f4f5f7;
     }
     .container {
-        max-width: 600px;
+        max-width: 70%;
+        min-height: 60vh;
         margin: 50px auto;
         padding: 30px;
         background: #fff;
@@ -16,11 +17,13 @@
         transition: transform 0.3s ease, box-shadow 0.3s ease;
         animation: fadeIn 1s ease;
         overflow: hidden;
-        text-align: center;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
     }
 
     .container:hover {
-        transform: scale(1.05);
+        transform: scale(1.03);
         box-shadow: 0 0 25px rgba(0, 0, 255, 0.3);
     }
 
@@ -32,11 +35,11 @@
     }
 
     .profile-img {
-        width: 150px;
-        height: 150px;
+        width: 120px;
+        height: 120px;
         object-fit: cover;
         border-radius: 50%;
-        margin: 20px auto;
+        border: 2px solid black;
         display: block;
         box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
         transition: transform 0.3s ease;
@@ -77,40 +80,139 @@
             transform: translateY(0);
         }
     }
+    .imageCol {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        width: 20%;
+        padding: 10px;
+        box-sizing: border-box;
+        border-right: 1px solid #ddd;
+    }
+    .userDetails{
+        width: 80%;
+        padding-left: 2rem;
+    }
+    .userDetails h5{
+        font-size: 1rem;
+        font-family: 'Parkinsans', sans-serif;
+        font-weight: bold;
+        color: #3D3BF3;
+    }
+    .userDetails .card p{
+        color: #0056b3;
+        font-size: 0.8rem;
+        font-weight: bolder;
+        font-family: 'Lato', sans-serif;
+    }
+    .userDetails .list-unstyled li{
+        font-size: 0.9rem;
+        font-family: "Lato", sans-serif;
+        
+    }
+
 </style>
 
 <div class="container">
-    <h2>Détails Utilisateur</h2>
+    <div class="imageCol ">
+        <div class="text-center">
+            {% if utilisateur.image %}
+                <img src="{{ utilisateur.image.url }}" alt="Profile Image" class="profile-img">
+            {% else %}
+                <img src="{% static 'Assets/profiles/default.jpeg' %}" alt="Default Profile" class="profile-img">
+            {% endif %}
+            <h5 class="p-1 mt-1 rounded text-light px-2" style="font-size: 0.8rem;background-color: #003161;">
+                {% if utilisateur.is_encadrant %}<i class="bi bi-person-check me-2"></i> Encadrant
+                {% elif utilisateur.is_enseignant %}<i class="bi bi-book me-2"></i> Enseignant
+                {% endif %}
+            </h5>
+        </div>
 
-    {% if utilisateur.image %}
-        <img src="{{ utilisateur.image.url }}" alt="Profile Image" class="profile-img">
-    {% else %}
-        <img src="{% static 'Assets/profiles/default.jpeg' %}" alt="Default Profile" class="profile-img">
-    {% endif %}
+        
 
-    <div class="info">
-        <p><span class="label">Nom :</span> {{ utilisateur.nom }}</p>
-        <p><span class="label">Prénom :</span> {{ utilisateur.prenom }}</p>
-        <p><span class="label">Email :</span> {{ utilisateur.email }}</p>
-        <p><span class="label">Statut :</span> {{ utilisateur.statut }}</p>
-        <p><span class="label">Spécialité :</span> {{ utilisateur.specialite }}</p>
-
-        {% if utilisateur.telephone %}
-            <p><span class="label">Téléphone :</span> {{ utilisateur.telephone }}</p>
-        {% endif %}
-        {% if utilisateur.adresse %}
-            <p><span class="label">Adresse :</span> {{ utilisateur.adresse }}</p>
-        {% endif %}
-        {% if utilisateur.date_embauche %}
-            <p><span class="label">Date d'embauche :</span> {{ utilisateur.date_embauche }}</p>
-        {% endif %}
-        {% if utilisateur.annee_inscription %}
-            <p><span class="label">Année d'inscription :</span> {{ utilisateur.annee_inscription }}</p>
-        {% endif %}
+        <div class="mt-4">
+            <a href="{% url 'utilisateur_list' %}">Retour à la liste</a>
+        </div>
     </div>
-
-    <div class="mt-4">
-        <a href="{% url 'utilisateur_list' %}">Retour à la liste</a>
+    <div class="userDetails">
+        <div class="row">
+            <!-- User Information -->
+            <div class="col-md-12">
+                <div class="d-flex flex-row justify-content-between">
+                    <h5>Informations personnelles</h5>
+                        {% if utilisateur.is_active %}
+                            <h5 class="p-1 rounded text-dark px-2" style="font-size: 0.8rem;background-color: #72BF78;">
+                                <i class="bi bi-person-check me-2"></i> Actif
+                            </h5>
+                        {% else %}
+                            <h5 class="p-1 rounded text-light px-2" style="font-size: 0.8rem;background-color: #D91656;">
+                                <i class="bi bi-person-x me-2"></i> Désactivé
+                            </h5>
+                        {% endif %}
+                    </h5>
+                </div>
+                <div class="card p-3 mb-4 d-flex flex-row">
+                    <div class="w-50">
+                        <p><span class="label">Nom :</span> {{ utilisateur.nom }}</p>
+                        <p><span class="label">Prénom :</span> {{ utilisateur.prenom }}</p>
+                        <p><span class="label">Email :</span> <a href="mailto:{{ utilisateur.email }}">{{ utilisateur.email }}</a></p>
+                        <p><span class="label">Statut :</span> {{ utilisateur.statut }}</p>
+                        <p><span class="label">Spécialité :</span> {{ utilisateur.specialite }}</p>
+                    </div>
+                    <div class="w-50">
+                        {% if utilisateur.telephone %}
+                            <p><span class="label font-weight-bold">Téléphone :</span> <a href="tel:+{{ utilisateur.telephone }}">{{ utilisateur.telephone }}</a></p>
+                        {% endif %}
+                        {% if utilisateur.adresse %}
+                            <p><span class="label font-weight-bold">Adresse :</span> {{ utilisateur.adresse }}</p>
+                        {% endif %}
+                        {% if utilisateur.date_embauche %}
+                            <p><span class="label font-weight-bold">Date d'embauche :</span> {{ utilisateur.date_embauche }}</p>
+                        {% endif %}
+                        {% if utilisateur.annee_inscription %}
+                            <p><span class="label font-weight-bold">Année d'inscription :</span> {{ utilisateur.annee_inscription }}</p>
+                        {% endif %}
+                    </div>                    
+                </div>
+            </div>
+            {% if modules %}
+            <div class="col-md-6">
+                <h5>Modules enseignés</h5>
+                <div class="card p-4 mb-4">
+                    <ul class="list-unstyled">
+                        {% for module in modules %}
+                        
+                            <li><i class="bi bi-code me-2" style="color: #007BFF;"></i><strong>{{ module.nom }}</strong> (Code : {{ module.code }})</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            {% endif %}
+            {% if filieres %}
+            <div class="col-md-6">
+                <h5>Filières encadrées</h5>
+                <div class="card p-4 mb-4">
+                    <ul class="list-unstyled">
+                        {% for item in filieres %}
+                            <li>
+                                <i class="bi bi-lightbulb me-2" style="color: #007BFF;"></i>
+                                <strong>{{ item.filiere.nom }}</strong> - 
+                                <span>{{ item.nombre_etudiants }} Étudiants</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+    
+                    {% if nombre_etudiants %}
+                    <p><strong>Nombre d'étudiants sous supervision :</strong> {{ nombre_etudiants }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
     </div>
+    
+
+
 </div>
 {% endblock %}

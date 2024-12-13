@@ -68,32 +68,41 @@ def utilisateur_list(request):
 
     return render(request, 'utilisateur/index.html', {'utilisateurs': page_obj, 'search_query': search_query, 'filter_role': filter_role})
 
-# View a single utilisateur's details
 @login_required
 @user_passes_test(is_staff_and_active)
 def utilisateur_detail(request, pk):
     utilisateur = get_object_or_404(Utilisateur, pk=pk)
 
-    # If the user is an encadrant
-    if request.user.is_encadrant:
-        # Allow access to their own account
-        if request.user.pk == pk:
-            return render(request, 'utilisateur/read.html', {'utilisateur': utilisateur})
-        
-        # Allow access to other non-encadrant accounts
-        if not utilisateur.is_encadrant:
-            return render(request, 'utilisateur/read.html', {'utilisateur': utilisateur})
-        
-        # Disallow access to other encadrant accounts
-        messages.error(request, "You cannot view other encadrants' details.")
-        return redirect('utilisateur_list')
+    context = {'utilisateur': utilisateur}
 
-    # If the user is not an encadrant, ensure they can only view their own account
-    if request.user.pk != pk:
-        messages.error(request, "You are only allowed to view your own account details.")
-        return redirect('utilisateur_list')
+    # Si l'utilisateur est un encadrant
+    if utilisateur.is_encadrant:
+        filieres = Filiere.objects.filter(encadrant=utilisateur)
 
-    return render(request, 'utilisateur/read.html', {'utilisateur': utilisateur})
+        filieres_avec_nb_etudiants = []
+        for filiere in filieres:
+            # Compter les étudiants dans chaque groupe de cette filière
+            groupes = Groupe.objects.filter(filiere=filiere)
+            nombre_etudiants = Etudiant.objects.filter(groupe__filiere=filiere).count()
+
+            filieres_avec_nb_etudiants.append({
+                'filiere': filiere,
+                'nombre_etudiants': nombre_etudiants
+            })
+            nombre_etudiants = Etudiant.objects.filter(groupe__filiere__encadrant=utilisateur).count()
+            context['nombre_etudiants'] = nombre_etudiants
+
+        context['filieres'] = filieres_avec_nb_etudiants
+
+    # Si l'utilisateur est un enseignant
+    if utilisateur.is_enseignant:
+        modules = Module.objects.filter(enseignant=utilisateur)
+        context['modules'] = modules
+
+    return render(request, 'utilisateur/read.html', context)
+
+
+
 
 
 @login_required
@@ -344,30 +353,68 @@ def delete_groupe(request, pk):
 
 # ---------------------- Views Etudiant ----------------------
 
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.db.models import Avg, Q
+from django.shortcuts import render, get_object_or_404
+from .models import Filiere, Groupe, Etudiant
+
+def is_staff_and_active(user):
+    return user.is_staff and user.is_active
+
 @login_required
 @user_passes_test(is_staff_and_active)
 def etudiant_list(request):
-    # Obtenir toutes les filières avec groupes existants
+    # Retrieve all available Filiere objects with associated groups
     filieres = Filiere.objects.filter(groupe__isnull=False).distinct()
 
+    # Extract query parameters
     filiere_id = request.GET.get('filiere_id')
-    selected_filiere = get_object_or_404(Filiere, id=filiere_id) if filiere_id else filieres.first()
+    groupe_id = request.GET.get('groupe_id')
+    search_query = request.GET.get('search', '').strip()
+    page_number = request.GET.get('page')
 
+    # Get selected Filiere or fallback to the first available
+    selected_filiere = Filiere.objects.filter(id=filiere_id).first() if filiere_id else filieres.first()
+
+    # Get associated Groupes for the selected Filiere
     groupes = Groupe.objects.filter(filiere=selected_filiere) if selected_filiere else []
 
-    groupe_id = request.GET.get('groupe_id')
-    selected_groupe = get_object_or_404(Groupe, id=groupe_id) if groupe_id else groupes.first()
+    # Get selected Groupe or fallback to the first available
+    selected_groupe = Groupe.objects.filter(id=groupe_id).first() if groupe_id else groupes.first()
 
-    etudiants = Etudiant.objects.filter(groupe=selected_groupe) if selected_groupe else []
+    # Filter Etudiants based on the selected Groupe
+    etudiants = Etudiant.objects.filter(groupe=selected_groupe) if selected_groupe else Etudiant.objects.none()
 
+    # Apply search filtering
+    if search_query:
+        etudiants = etudiants.filter(
+            Q(nom__icontains=search_query) |
+            Q(prenom__icontains=search_query) |
+            Q(email__icontains=search_query)
+        )
+
+    # Annotate Etudiants with their average note and sort them
+    etudiants = etudiants.annotate(average_note=Avg('note__note_finale')).order_by('-average_note')
+
+    # Implement pagination
+    paginator = Paginator(etudiants, 10)
+    etudiants_page = paginator.get_page(page_number)
+
+    # Select top 3 students based on their average note
+    top_students = etudiants[:3] if etudiants.exists() else []
+
+    # Context for the template
     context = {
         'filieres': filieres,
         'selected_filiere': selected_filiere,
         'groupes': groupes,
         'selected_groupe': selected_groupe,
-        'etudiants': etudiants,
+        'etudiants': etudiants_page,
+        'top_students': top_students,
+        'search_query': search_query,
     }
 
+    # Render the template
     return render(request, 'etudiant/index.html', context)
 
 

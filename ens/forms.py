@@ -94,6 +94,7 @@ class EtudiantForm(forms.ModelForm):
             'nom': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nom'}),
             'prenom': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Prénom'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email'}),
+            'groupe': forms.Select(attrs={'class': 'form-control', 'placeholder': 'Groupe'}),
             'telephone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Téléphone'}),
             'cni': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'CNI'}),
             'cne': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'CNE'}),

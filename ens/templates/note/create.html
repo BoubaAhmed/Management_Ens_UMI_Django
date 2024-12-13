@@ -32,6 +32,17 @@
         background-color: #d4edda;
         color: #155724;
     }
+    .grid-form {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+    }
+    .btn {
+        font-weight: bold;
+    }
+    .btn-secondary {
+        margin-right: 10px;
+    }
 </style>
 {% endblock %}
 
@@ -48,62 +59,78 @@
                 </div>
             {% endfor %}
         {% endif %}
-            <!-- Form Errors -->
-            {% if form.non_field_errors %}
+
+        <!-- Form Errors -->
+        {% if form.non_field_errors %}
             {% for error in form.non_field_errors %}
                 <div class="alert alert-danger">{{ error }}</div>
             {% endfor %}
         {% endif %}
 
-        <!-- Filière Dropdown -->
-        <label for="filiere" class="form-label mt-2">Filière</label>
-        <select id="filiere" name="filiere" class="form-control mt-2">
-            <option value="">Select Filière</option>
-            {% for filiere in filieres %}
-                <option value="{{ filiere.id }}">{{ filiere.nom }}</option>
-            {% endfor %}
-        </select>
+        <!-- Grid Layout for Form Fields -->
+        <div class="grid-form">
+            <!-- Filière Dropdown -->
+            <div>
+                <label for="filiere" class="form-label mt-2">Filière</label>
+                <select id="filiere" name="filiere" class="form-control mt-2">
+                    <option value="">Select Filière</option>
+                    {% for filiere in filieres %}
+                        <option value="{{ filiere.id }}">{{ filiere.nom }}</option>
+                    {% endfor %}
+                </select>
+            </div>
 
-        <!-- Module Dropdown -->
-        <label for="module" class="form-label mt-3">Module</label>
-        <select id="module" name="module" class="form-control mt-2"></select>
+            <!-- Module Dropdown -->
+            <div>
+                <label for="module" class="form-label mt-2">Module</label>
+                <select id="module" name="module" class="form-control mt-2"></select>
+            </div>
 
-        <!-- Groupe Dropdown -->
-        <label for="groupe" class="form-label mt-3">Groupe</label>
-        <select id="groupe" name="groupe" class="form-control mt-2"></select>
+            <!-- Groupe Dropdown -->
+            <div>
+                <label for="groupe" class="form-label mt-2">Groupe</label>
+                <select id="groupe" name="groupe" class="form-control mt-2"></select>
+            </div>
 
-        <!-- Étudiant Dropdown -->
-        <label for="etudiant" class="form-label mt-3">Étudiant</label>
-        <select id="etudiant" name="etudiant" class="form-control mt-2"></select>
+            <!-- Étudiant Dropdown -->
+            <div>
+                <label for="etudiant" class="form-label mt-2">Étudiant</label>
+                <select id="etudiant" name="etudiant" class="form-control mt-2"></select>
+            </div>
 
-        <!-- Hidden input to capture selected Étudiant dynamically -->
-        <input type="hidden" id="selected_etudiant" class="selected_etudiant" name="etudiant">
-        <input type="hidden" id="selected_module" class="selected_module" name="module">
+            <!-- Note DS -->
+            <div>
+                <label for="{{ form.note_ds.id_for_label }}" class="form-label mt-2">Note DS</label>
+                {{ form.note_ds }}
+                {% if form.note_ds.errors %}
+                    {% for error in form.note_ds.errors %}
+                        <span class="error-text">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
 
-        <!-- Notes -->
-        <label for="{{ form.note_ds.id_for_label }}" class="form-label mt-3">Note DS</label>
-        {{ form.note_ds }}
-        {% if form.note_ds.errors %}
-            {% for error in form.note_ds.errors %}
-                <span class="error-text">{{ error }}</span>
-            {% endfor %}
-        {% endif %}
+            <!-- Note TP -->
+            <div>
+                <label for="{{ form.note_tp.id_for_label }}" class="form-label mt-2">Note TP</label>
+                {{ form.note_tp }}
+                {% if form.note_tp.errors %}
+                    {% for error in form.note_tp.errors %}
+                        <span class="error-text">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
 
-        <label for="{{ form.note_tp.id_for_label }}" class="form-label mt-3">Note TP</label>
-        {{ form.note_tp }}
-        {% if form.note_tp.errors %}
-            {% for error in form.note_tp.errors %}
-                <span class="error-text">{{ error }}</span>
-            {% endfor %}
-        {% endif %}
-
-        <label for="{{ form.note_exam.id_for_label }}" class="form-label mt-3">Note Exam</label>
-        {{ form.note_exam }}
-        {% if form.note_exam.errors %}
-            {% for error in form.note_exam.errors %}
-                <span class="error-text">{{ error }}</span>
-            {% endfor %}
-        {% endif %}
+            <!-- Note Exam -->
+            <div>
+                <label for="{{ form.note_exam.id_for_label }}" class="form-label mt-2">Note Exam</label>
+                {{ form.note_exam }}
+                {% if form.note_exam.errors %}
+                    {% for error in form.note_exam.errors %}
+                        <span class="error-text">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
 
         <!-- Buttons -->
         <div class="mt-4 text-end">

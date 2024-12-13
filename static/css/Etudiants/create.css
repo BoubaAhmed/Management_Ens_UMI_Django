@@ -1,0 +1,48 @@
+/* Container Styling */
+.container {
+    max-width: 900px;
+    padding: 2rem;
+}
+
+/* Form Elements */
+.form-control {
+    font-size: 0.9rem;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+/* Button Styling */
+.btn {
+    font-weight: bold;
+    font-size: 1rem;
+    padding: 12px;
+    transition: transform 0.2s ease;
+}
+
+.btn:hover {
+    transform: scale(1.05);
+}
+
+/* Error Handling */
+.text-danger {
+    font-size: 0.9rem;
+}
+
+/* Bootstrap Grid Adjustments */
+.w-45 {
+    width: 45%;
+    text-align: center;
+}
+
+/* Buttons Alignment */
+.d-flex.justify-content-between {
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Page Header */
+h2 {
+    font-weight: bold;
+    font-family: Arial;
+    text-align: center;
+}
