@@ -1,12 +1,107 @@
-<!-- templates/utilisateur/update.html -->
 {% extends 'core/base_dashboard.html' %}
 
+{% block page_title %} 
+    <b>Créer une Filière</b>
+{% endblock %}
+
+{% block style %}
+<style>
+    .form-filiere {
+        background-color: #FBFBFB;
+        font-size: 0.9rem;
+    }
+    .form-filiere .form-control {
+        border: 2px solid transparent;
+    }
+    .form-filiere .form-control:focus {
+        border: 2px solid rgb(9, 255, 0);
+    }
+    .error-text {
+        color: #ff0000;
+        font-weight: bold;
+        font-size: 0.9rem;
+        display: block;
+    }
+    .alert {
+        padding: 10px;
+        border-radius: 5px;
+        font-weight: bold;
+    }
+    .alert-danger {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+    .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<h2>Modifier Filiere</h2>
-<form method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Mettre à Jour</button>
-</form>
-<a href="{% url 'filiere_list' %}">Retour à la liste</a>
+<div class="container mt-2 rounded shadow p-3 w-50 form-filiere">
+    <form method="post" enctype="multipart/form-data" class="needs-validation">
+        {% csrf_token %}
+
+        <!-- Django Messages -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} mt-2">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Form Errors -->
+        {% if form.non_field_errors %}
+            {% for error in form.non_field_errors %}
+                <div class="alert alert-danger">{{ error }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="row g-3">
+            <!-- Nom -->
+            <div class="col-md-6">
+                <label for="{{ form.nom.id_for_label }}" class="form-label">Nom de la Filière</label>
+                {{ form.nom }}
+                {% if form.nom.errors %}
+                    {% for error in form.nom.errors %}
+                        <span class="error-text">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <!-- Description -->
+            <div class="col-md-6">
+                <label for="{{ form.description.id_for_label }}" class="form-label">Description</label>
+                {{ form.description }}
+                {% if form.description.errors %}
+                    {% for error in form.description.errors %}
+                        <span class="error-text">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <!-- Encadrant -->
+            <div class="col-md-12">
+                <label for="{{ form.encadrant.id_for_label }}" class="form-label">Encadrant</label>
+                {{ form.encadrant }}
+                {% if form.encadrant.errors %}
+                    {% for error in form.encadrant.errors %}
+                        <span class="error-text">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="mt-4 text-end">
+            <a href="{% url 'filiere_list' %}" class="btn btn-secondary btn-sm">
+                <i class="bi bi-arrow-left"></i> Cancel
+            </a>
+            <button type="submit" class="btn btn-success btn-sm">
+                <i class="bi bi-save"></i> Mettre à Jour
+            </button>
+        </div>
+    </form>
+</div>
 {% endblock %}

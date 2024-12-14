@@ -70,17 +70,6 @@
                 {% endif %}
             </div>
 
-            <!-- Mot de passe -->
-            <div class="col-md-6">
-                <label for="{{ form.password.id_for_label }}" class="form-label">Mot de passe (Laisser vide si inchangé)</label>
-                {{ form.password }}
-                {% if form.password.errors %}
-                    {% for error in form.password.errors %}
-                        <span class="error-text">{{ error }}</span>
-                    {% endfor %}
-                {% endif %}
-            </div>
-
             <!-- Téléphone -->
             <div class="col-md-6">
                 <label for="{{ form.telephone.id_for_label }}" class="form-label">Téléphone</label>
@@ -165,6 +154,9 @@
             </a>
             <button type="submit" class="btn btn-success btn-sm">
                 <i class="bi bi-save me-2"></i> Enregistrer
+            </button>
+            <button type="submit" name="reset_password" class="btn btn-warning mt-2">
+                Réinitialiser le Mot de Passe
             </button>
         </div>
     </form>

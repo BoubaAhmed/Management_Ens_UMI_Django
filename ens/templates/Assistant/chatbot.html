@@ -1,0 +1,268 @@
+<!-- templates/utilisateur/read.html -->
+{% extends 'core/base_dashboard.html' %}
+
+{% block style %}
+
+<style>
+    /* Chat container */
+#chat-container {
+    max-width: 90%;
+    height: 87vh;
+    background-color: transparent;
+    margin: 0 auto;
+    overflow: hidden;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+}
+#chat-container #slide1{
+    width: 30%;
+    background-color: none;
+}
+#chat-container #slide2 {
+    width: 70%;
+    margin: 0.5rem 2rem;
+    border-radius: 12px;
+    transition: all 0.3s ease-in-out; /* Smooth transition effect for resizing and color changes */
+    padding: 10px;
+    overflow: hidden;
+    transform-origin: center;
+}
+
+/* Animation effect */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Apply animation when the element is loaded */
+#chat-container #slide2 {
+    animation: slideIn 0.6s ease-out;
+}
+
+
+/* Chat window */
+#chat-window {
+    height: 92%;
+    width: 80%;
+    overflow-y: scroll;
+    padding: 15px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Messages */
+.message {
+    padding: 15px;
+    border-radius: 10px;
+    word-break: break-word;
+    max-width: 70%;
+    line-height: 1.5;
+    transition: transform 0.2s ease-in-out, opacity 0.5s ease;
+}
+
+/* User messages */
+.user-message {
+    background-color: #6A669D;
+    align-self: flex-end;
+    text-align: right;
+    border-bottom-right-radius: 0;
+    width: max-content;
+    margin-left: auto;
+}
+
+/* Bot messages */
+.bot-message {
+    background-color: transparent;
+    align-self: flex-start;
+    text-align: left;
+    color: #000;
+    border-bottom-left-radius: 0;
+    margin-right: auto;
+}
+
+/* Timestamps in messages */
+.message span {
+    font-size: 0.8em;
+    color: #888;
+    margin-left: 5px;
+}
+
+/* Chat input container */
+#chat-input-container {
+    display: flex;
+    align-items: center;
+    height: 8%;
+    margin: 0 auto;
+    border-radius: 10px;
+    background-color: #D7D3BF;
+    width: 60%;
+    box-sizing: border-box;
+    padding: 10px;
+}
+
+/* Chat input field */
+#chat-input {
+    width: 95%;
+    background-color: transparent;
+    border: none;
+    border-radius: 8px;
+    outline: none;
+}
+
+/* Send button */
+#send-btn {
+    background-color: #2A3335;
+    color: white;
+    font-weight: bold;
+    font-size: 15px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    margin-left: 10px;
+    transition: 0.3s;
+}
+.default-questions {
+    display: flex;
+    flex-wrap: wrap; /* Allows wrapping to next line */
+    gap: 10px; /* Space between buttons */
+    margin-top: 20px;
+}
+.default-questions button {
+    flex: 1 1 auto; /* Allow buttons to grow and shrink */
+    min-width: 150px; /* Set a minimum width for buttons */
+    padding: 10px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+}
+.default-questions button:hover {
+    background-color: #0056b3;
+}
+
+/* Hover effect on Send button */
+#send-btn:hover {
+    background-color: #005bb5;
+}
+
+/* Press effect on Send button */
+#send-btn:active {
+    transform: scale(0.95);
+}
+
+/* Remove button focus outline */
+#send-btn:focus {
+    outline: none;
+}
+
+/* Hide Scrollbars (Webkit and others) */
+::-webkit-scrollbar {
+    display: none;
+}
+
+#chat-window::-webkit-scrollbar {
+    display: none;
+}
+
+#chat-window {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+}
+
+</style>
+
+{% endblock %}
+
+{% block content %}
+
+<div id="chat-container">
+    <div id="slide1" class="d-flex flex-column justify-content-between">
+        <p class="text-center" style="font-size: 1.5rem;font-weight: bolder;"> <i class="bi bi-wechat me-2"></i>ENS gpt</p>
+        <div class="default-questions">
+            <button onclick="sendQuestion('what\'s up')">what's up</button>
+            <button onclick="sendQuestion('What is this system?')">What is this system?</button>
+            <button onclick="sendQuestion('contact enseignant agoujil')">contact enseignant Agoujil</button>
+            <button onclick="sendQuestion('number of students in filiere Systemes intelligents')">number of students in master SIE ?</button>
+            <button onclick="sendQuestion('tell me about module AI')">tell me about module AI</button>
+        </div>
+        <p class="text-center" style="font-size: 0.8rem;color:gray;">EnsGPT peut faire des erreurs. Envisagez de vérifier les informations importantes.</p>
+    </div>
+    <div id="slide2">
+        <div id="chat-window">
+            <div id="chat-messages"></div>
+        </div>
+        <div id="chat-input-container">
+            <input type="text" id="chat-input" placeholder="Ask me anything..." autocomplete="on" />
+            <button title="send" id="send-btn" class="btn btn-sm"><i class="bi bi-arrow-up"></i></button>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    document.getElementById('send-btn').addEventListener('click', sendMessage);
+
+    document.getElementById('chat-input').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            sendMessage();
+        }
+    });
+
+    function sendMessage() {
+        const userMessage = document.getElementById('chat-input').value.trim();
+        const messagesDiv = document.getElementById('chat-messages');
+
+        if (!userMessage) return;
+
+        const timestamp = new Date().toLocaleTimeString();
+
+        // Display user's message
+        messagesDiv.innerHTML += `<div class="message user-message">${userMessage} <span class='text-light'>${timestamp}</span></div>`;
+
+        // Send message to chatbot backend
+        fetch('{% url "chatbot_response" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: `message=${encodeURIComponent(userMessage)}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            const botResponse = data.response;
+
+            // Display chatbot's response
+            messagesDiv.innerHTML += `<div class="message bot-message">${botResponse} <span>${new Date().toLocaleTimeString()}</span></div>`;
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;  // Scroll to the bottom
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            messagesDiv.innerHTML += `<div class="message bot-message">Oops! Something went wrong. Please try again.</div>`;
+        });
+
+        // Clear input field and keep focus
+        document.getElementById('chat-input').value = '';
+        document.getElementById('chat-input').focus();
+    }
+
+     function sendQuestion(message) {
+        // Set the message in the input field
+        const chatInput = document.getElementById('chat-input');
+        chatInput.value = message;
+        sendMessage()
+    }
+</script>
+
+{% endblock %}

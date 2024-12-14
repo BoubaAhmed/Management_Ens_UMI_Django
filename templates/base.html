@@ -83,7 +83,7 @@
                                 {{ user }}
                             </a>                            
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-                                <li><a class="dropdown-item" href="/dashboard">Dashboard</a></li>
+                                <li><a class="dropdown-item" href="{% url 'dashboard' %}">Dashboard</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item text-danger" href="{% url 'logout' %}">Logout</a></li>
                             </ul>

@@ -1,0 +1,88 @@
+{
+    "intents": [
+        {
+            "tag": "greeting",
+            "patterns": ["hello", "hi", "hey", "greetings", "what's up", "good day", "good morning", "good afternoon"],
+            "responses": ["Hello!", "Hi there!", "Greetings!", "How can I assist you today?"]
+        },
+        {
+            "tag": "goodbye",
+            "patterns": ["bye", "goodbye", "see you", "later", "take care", "see you soon"],
+            "responses": ["Goodbye!", "See you later!", "Take care!", "Looking forward to our next chat!"]
+        },
+        {
+            "tag": "students_in_filiere",
+            "patterns": ["students in filiere", "how many students in filiere", "number of students in filiere", "show student count in filiere"],
+            "responses": ["Please specify the filiere to get the student count.", "Which filiere are you referring to?", "I can fetch the student count for a specific filiere."]
+        },
+        {
+            "tag": "email_of_enseignant",
+            "patterns": ["email of enseignant", "find enseignant email", "enseignant email", "contact enseignant", "enseignant's email address"],
+            "responses": ["Please provide the enseignant's name to find their email.", "Which enseignant's email are you looking for?"]
+        },
+        {
+            "tag": "module_information",
+            "patterns": ["tell me about module", "module info", "module details", "list of modules", "module description"],
+            "responses": ["Please provide the module code or name to fetch its details.", "Which module information would you like to know?"]
+        },
+        {
+            "tag": "static_faq",
+            "patterns": ["What is this system?", "Tell me about this system", "What does this project do?", "How does this tool work?", "System details"],
+            "responses": [
+                "This system is a school management tool designed to handle student, teacher, and course information.",
+                "It allows users to manage student data, notes, modules, and more!",
+                "This tool facilitates efficient school management."
+            ]
+        },
+        {
+            "tag": "student_notes",
+            "patterns": ["student notes", "grades of student", "show me notes for student", "fetch notes for student"],
+            "responses": ["Please provide the student's name or ID to fetch their notes.", "Which student's notes would you like to view?"]
+        },
+        {
+            "tag": "contact_support",
+            "patterns": ["how to contact support", "support email", "customer support", "help desk contact", "reach support"],
+            "responses": ["You can contact support at support@schoolmanagement.com.", "Our support team is reachable at support@schoolmanagement.com."]
+        },
+        {
+            "tag": "create_filiere",
+            "patterns": ["create new filiere", "add a filiere", "how to add filiere", "add filiere to system"],
+            "responses": ["To create a new filiere, please provide its name, description, and assigned encadrant."]
+        },
+        {
+            "tag": "filiere_info",
+            "patterns": ["details of filiere", "filiere information", "info about filiere", "filiere data"],
+            "responses": ["Please provide the name or ID of the filiere to fetch its details."]
+        },
+        {
+            "tag": "create_student",
+            "patterns": ["add new student", "register a student", "how to add student", "create student profile"],
+            "responses": ["To register a student, please provide their name, email, CNI, CNE, and assigned group."]
+        },
+        {
+            "tag": "note_average",
+            "patterns": ["average note for module", "calculate average note", "module average", "get average note for module"],
+            "responses": ["Please provide the module code to calculate its average note."]
+        },
+        {
+            "tag": "validate_cni",
+            "patterns": ["validate CNI", "check CNI format", "CNI validation"],
+            "responses": ["The CNI must follow the format: one uppercase letter followed by 6 digits (e.g., X123456)."]
+        },
+        {
+            "tag": "validate_cne",
+            "patterns": ["validate CNE", "check CNE format", "CNE validation"],
+            "responses": ["The CNE must follow the format: one uppercase letter followed by 9 digits (e.g., X123456789)."]
+        },
+        {
+            "tag": "module_professor",
+            "patterns": ["who teaches module", "professor for module", "module instructor", "enseignant of module"],
+            "responses": ["Please provide the module code to fetch its professor details."]
+        },
+        {
+            "tag": "unknown",
+            "patterns": [],
+            "responses": ["Sorry, I didn't understand your question.", "Can you please rephrase that?", "I'm not sure I understand."]
+        }
+    ]
+}

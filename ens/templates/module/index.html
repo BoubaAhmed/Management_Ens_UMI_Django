@@ -1,41 +1,180 @@
 {% extends 'core/base_dashboard.html' %}
+
+{% block style %}
+<style>
+    /* Pagination list */
+    .pagination {
+        list-style: none;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+    }
+
+    /* Pagination items */
+    .page-item {
+        display: inline-block;
+        margin: 0;
+        font-weight: 500;
+        color: #555;
+        text-align: center;
+        transition: all 0.3s ease;
+        border-radius: 8px;
+    }
+
+    /* Page link */
+    .page-link {
+        text-decoration: none;
+        color: inherit;
+        display: inline-block;
+        font-size: 0.8rem;
+        border-radius: 8px;
+        width: 100%;
+        background-color: #fff;
+    }
+
+    /* Active page */
+    .page-item.active {
+        color: #fff;
+        font-weight: bold;
+        box-shadow: 0 0 12px rgba(0, 123, 255, 0.5);
+    }
+
+    /* Arrow icons */
+    .page-link span {
+        display: inline-block;
+        transition: all 0.2s ease;
+    }
+
+    /* Arrow hover effect */
+    .page-item:hover .page-link span {
+        transform: scale(1.2);
+    }
+
+    /* Smooth transition */
+    .page-link {
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="container">
-    <h2>modules</h2>
-    <a href="{% url 'create_module' %}" class="btn btn-warning btn-sm">Create</a>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Nom</th>
-                <th>description</th>
-                <th>enseignant</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for module in modules %}
-            <tr>
-                <td>{{ module }}</td>
-                <td>{{ module.description }}</td>
-                <td>{{ module.enseignant }}</td>
-                <td>
-                    <a href="{% url 'module_detail' module.id %}" class="btn btn-warning btn-sm">view</a>
-                    <a href="{% url 'edit_module' module.id %}" class="btn btn-warning btn-sm">Edit</a>
-                    <a href="{% url 'delete_module' module.id %}" class="btn btn-danger btn-sm"
-                       onclick="return confirm('Are you sure?');">Delete</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <div class="pagination">
-        {% for page_num in modules.paginator.page_range %}
-        {% if modules.number == page_num %}
-        <span class="current">{{ page_num }}</span>
-        {% else %}
-        <a href="?page={{ page_num }}">{{ page_num }}</a>
-        {% endif %}
+<div class="container mt-4">
+    <!-- Flash Messages -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert" id="message-{{ forloop.counter }}">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
         {% endfor %}
+    {% endif %}
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <form method="get" action="" class="row gx-2 gy-1 align-items-center w-50">
+            <div class="col-md-5">
+                <input type="text" name="search" placeholder="Search Module" class="form-control p-1" value="{{ search_query }}">
+            </div>
+            <div class="col-md-4">
+                <input type="text" name="semestre" placeholder="Filter by Semester" class="form-control p-1" value="{{ semestre_filter }}">
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-sm" style="background-color: #6A669D; color: #fff;">Search</button>
+            </div>
+        </form>
+
+        <a href="{% url 'create_module' %}" class="btn btn-sm" style="background-color: #9EDF9C;">
+            <i class="bi bi-plus-circle me-2"></i> Ajouter Module
+        </a>
     </div>
+
+    <!-- Modules Table -->
+    <div class="table-responsive">
+        <table class="table table-hover table-bordered align-middle" style="font-size: 0.9rem;">
+            <thead class="table-light">
+                <tr>
+                    <th>Nom</th>
+                    <th>Filière</th>
+                    <th>Semestre</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in modules_data %}
+                    <tr>
+                        <td>{{ item.module.nom }}</td>
+                        <td>{{ item.module.filiere.nom }}</td>
+                        <td>{{ item.module.semestre }}</td>
+                        <td class="text-center">
+                            <div class="dropdown">
+                                <button title="Dropdown" class="btn btn-sm" type="button" id="dropdownMenuButton{{ item.module.id }}" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-three-dots"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton{{ item.module.id }}">
+                                    <li><a class="dropdown-item" href="{% url 'module_detail' item.module.id %}"><i class="bi bi-eye me-2"></i> Voir</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'edit_module' item.module.id %}"><i class="bi bi-pencil me-2"></i> Modifier</a></li>
+                                    <li><a class="dropdown-item text-danger" href="{% url 'delete_module' item.module.id %}"><i class="bi bi-trash me-2"></i> Supprimer</a></li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center py-5">No Modules Found</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    <nav aria-label="Pagination" class="mt-2">
+        <ul class="pagination justify-content-end">
+            {% if modules_data.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}{% if semestre_filter %}&semestre={{ semestre_filter }}{% endif %}">
+                        &laquo;&laquo;
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ modules_data.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if semestre_filter %}&semestre={{ semestre_filter }}{% endif %}">
+                        &laquo;
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">&laquo;</span>
+                </li>
+            {% endif %}
+
+            {% for num in modules_data.paginator.page_range %}
+                {% if modules_data.number == num %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ num }}</span>
+                    </li>
+                {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}{% if search_query %}&search={{ search_query }}{% endif %}{% if semestre_filter %}&semestre={{ semestre_filter }}{% endif %}">
+                            {{ num }}
+                        </a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if modules_data.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ modules_data.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if semestre_filter %}&semestre={{ semestre_filter }}{% endif %}">
+                        &raquo;
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">&raquo;</span>
+                </li> 
+            {% endif %}
+        </ul>
+    </nav>
 </div>
 {% endblock %}

@@ -15,12 +15,12 @@ from django.http import HttpResponse
 from openpyxl import Workbook
 from .models import Utilisateur
 from django.http import JsonResponse
+from django.contrib import messages
+from django.contrib.auth.hashers import make_password
+from django.core.mail import send_mail
+import random, string
 
 def is_staff_and_active(view_func):
-    """
-    Decorator to ensure the user is both staff and active.
-    Redirects with an error message if not.
-    """
     def wrapper(request, *args, **kwargs):
         if request.user.is_authenticated: 
             if not request.user.is_staff or not request.user.is_active:
@@ -29,6 +29,24 @@ def is_staff_and_active(view_func):
         else:
             messages.error(request, "You must log in first.")
             return redirect('login') # Redirect to the login page
+
+        return view_func(request, *args, **kwargs)
+    return wrapper
+
+def is_encadrant(view_func):
+    def wrapper(request, *args, **kwargs):
+        user_id = kwargs.get('pk')  # Get the user id from URL kwargs
+        if request.user.is_authenticated:
+            if str(request.user.id) == str(user_id):
+                # If the user is accessing their own account, let them pass
+                return view_func(request, *args, **kwargs)
+            
+            if not hasattr(request.user, 'is_encadrant') or not request.user.is_encadrant:
+                messages.error(request, "You do not have the required permissions as an encadrant.")
+                return redirect('/dashboard/')
+        else:
+            messages.error(request, "You must log in first.")
+            return redirect('/login')
 
         return view_func(request, *args, **kwargs)
 
@@ -69,6 +87,7 @@ def utilisateur_list(request):
     return render(request, 'utilisateur/index.html', {'utilisateurs': page_obj, 'search_query': search_query, 'filter_role': filter_role})
 
 @login_required
+@is_encadrant
 @user_passes_test(is_staff_and_active)
 def utilisateur_detail(request, pk):
     utilisateur = get_object_or_404(Utilisateur, pk=pk)
@@ -101,18 +120,35 @@ def utilisateur_detail(request, pk):
 
     return render(request, 'utilisateur/read.html', context)
 
-
-
-
+# Generate a random password
+def generate_password():
+    return ''.join(random.choices(string.ascii_letters + string.digits, k=8))
 
 @login_required
+@is_encadrant
 @user_passes_test(is_staff_and_active)
 def create_utilisateur(request):
     if request.method == 'POST':
         form = UtilisateurForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
-            messages.success(request, "Utilisateur créé avec succès !")
+            utilisateur = form.save(commit=False)
+            print(utilisateur)
+            # Generate and set a password
+            password = generate_password()
+            utilisateur.set_password(password)  # Hash the password
+            print(utilisateur)
+            # Save the instance to the database first
+            utilisateur.save()
+
+            # Send the email with the generated password
+            send_mail(
+                'Votre mot de passe',
+                f'Votre mot de passe temporaire est: {password}',
+                'noreply@votresite.com',
+                [utilisateur.email]
+            )
+
+            messages.success(request, "Utilisateur créé avec succès ! Un email a été envoyé.")
             return redirect('utilisateur_list')
         else:
             messages.error(request, "Veuillez remplir correctement tous les champs.")
@@ -121,25 +157,46 @@ def create_utilisateur(request):
 
     return render(request, 'utilisateur/create.html', {'form': form})
 
-
-# Update an existing utilisateur
+# Update an existing utilisateur with reset password option
 @login_required
+@is_encadrant
 @user_passes_test(is_staff_and_active)
 def update_utilisateur(request, pk):
     utilisateur = get_object_or_404(Utilisateur, pk=pk)
     if request.method == 'POST':
-        form = UtilisateurForm(request.POST, instance=utilisateur)
+        if 'reset_password' in request.POST:
+            # Generate a new password
+            new_password = generate_password()
+            utilisateur.set_password(new_password)
+            utilisateur.save()
+
+            # Send email with the new password
+            send_mail(
+                'Réinitialisation du mot de passe',
+                f'Votre mot de passe a été réinitialisé. Nouveau mot de passe: {new_password}',
+                'noreply@votresite.com',
+                [utilisateur.email]
+            )
+            messages.success(request, "Mot de passe réinitialisé avec succès.")
+            return redirect('utilisateur_list')
+
+        # For regular form updates
+        form = UtilisateurForm(request.POST, request.FILES, instance=utilisateur)
         if form.is_valid():
             form.save()
             messages.success(request, "Utilisateur mis à jour avec succès !")
             return redirect('utilisateur_list')
+
     else:
         form = UtilisateurForm(instance=utilisateur)
+
     return render(request, 'utilisateur/update.html', {'form': form})
+
 
 # Delete an utilisateur (confirmation)
 @user_passes_test(is_staff_and_active)
 @login_required
+@is_encadrant
 def delete_utilisateur(request, pk):
     utilisateur = get_object_or_404(Utilisateur, pk=pk)
     if request.method == 'POST':
@@ -149,6 +206,7 @@ def delete_utilisateur(request, pk):
     return render(request, 'utilisateur/delete.html', {'utilisateur': utilisateur})
 
 # export utilisateur 
+@is_encadrant
 def export_utilisateurs_excel(request):
     # Create an HTTP response with the Excel content type
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
@@ -183,31 +241,55 @@ def export_utilisateurs_excel(request):
 @login_required
 @user_passes_test(is_staff_and_active)
 def filiere_list(request):
+    # Get search query and filters from request
+    search_query = request.GET.get('search', '')
+    encadrant_filter = request.GET.get('encadrant', '')
+
+    # Get all Filières and apply search query
     filieres = Filiere.objects.all()
-    return render(request, 'filiere/index.html', {'filieres': filieres})
+
+    if search_query:
+        filieres = filieres.filter(nom__icontains=search_query)
+
+    if encadrant_filter:
+        filieres = filieres.filter(encadrant__nom__icontains=encadrant_filter)
+
+    # Annotate each Filiere with the number of Etudiants, Groupes, and Modules
+    filieres_data = []
+    for fil in filieres:
+        num_etudiants = Etudiant.objects.filter(groupe__filiere=fil).count()
+        num_groupes = Groupe.objects.filter(filiere=fil).count()
+        num_modules = Module.objects.filter(filiere=fil).count()
+
+        filieres_data.append({
+            'filiere': fil,
+            'nombre_etudiants': num_etudiants,
+            'nombre_groupes': num_groupes,
+            'num_modules': num_modules
+        })
+
+    # Pagination setup
+    paginator = Paginator(filieres_data, 5)  # 5 items per page
+    page = request.GET.get('page')
+    paginated_filieres = paginator.get_page(page)
+
+    return render(request, 'filiere/index.html', {
+        'filieres_data': paginated_filieres,
+        'search_query': search_query,
+        'encadrant_filter': encadrant_filter
+    })
 
 @login_required
 @user_passes_test(is_staff_and_active)
 def filiere_detail(request, pk):
     # Get the filiere object or return a 404 error if not found
     filiere = get_object_or_404(Filiere, pk=pk)
-
-    # Check if the connected user is an encadrant
-    if not request.user.is_encadrant:
-        messages.error(request, "You do not have permission to view this filière.")
-        return redirect('filiere_list')
-
-    # Check if the connected user is the encadrant of this filière
-    if request.user != filiere.encadrant:
-        messages.error(request, "You are only allowed to view your own filières details.")
-        return redirect('filiere_list')
-
     # If everything checks out, render the filière details
     return render(request, 'filiere/read.html', {'filiere': filiere})
 
-
 @login_required
 @user_passes_test(is_staff_and_active)
+@is_encadrant
 def create_filiere(request):
     if request.method == 'POST':
         form = FiliereForm(request.POST)
@@ -223,6 +305,14 @@ def create_filiere(request):
 @user_passes_test(is_staff_and_active)
 def update_filiere(request, pk):
     filiere = get_object_or_404(Filiere, pk=pk)
+    if not request.user.is_encadrant:
+        messages.error(request, "You do not have permission to edit this filière.")
+        return redirect('filiere_list')
+
+    if request.user != filiere.encadrant:
+        messages.error(request, "You are only allowed to edit your own filières details.")
+        return redirect('filiere_list')
+    
     if request.method == 'POST':
         form = FiliereForm(request.POST, instance=filiere)
         if form.is_valid():
@@ -237,6 +327,13 @@ def update_filiere(request, pk):
 @login_required
 def delete_filiere(request, pk):
     filiere = get_object_or_404(Filiere, pk=pk)
+    if not request.user.is_encadrant:
+        messages.error(request, "You do not have permission to delete this filière.")
+        return redirect('filiere_list')
+
+    if request.user != filiere.encadrant:
+        messages.error(request, "You are only allowed to delete your own filières details.")
+        return redirect('filiere_list')
     if request.method == 'POST':
         filiere.delete()
         messages.success(request, "Filière supprimée avec succès !")
@@ -249,8 +346,46 @@ def delete_filiere(request, pk):
 @login_required
 @user_passes_test(is_staff_and_active)
 def module_list(request):
+    # Get search query and filters from request
+    search_query = request.GET.get('search', '')
+    semestre_filter = request.GET.get('semestre', '')
+    filiere_filter = request.GET.get('filiere', '')
+
+    # Get all Modules and apply search query
     modules = Module.objects.all()
-    return render(request, 'module/index.html', {'modules': modules})
+
+    if search_query:
+        modules = modules.filter(nom__icontains=search_query)
+
+    if semestre_filter:
+        modules = modules.filter(semestre=semestre_filter)
+
+    if filiere_filter:
+        modules = modules.filter(filiere__nom__icontains=filiere_filter)
+
+    # Annotate each module with the number of enrolled students
+    modules_data = []
+    for module in modules:
+        num_etudiants = Note.objects.filter(module=module).values('etudiant').distinct().count()
+
+        modules_data.append({
+            'module': module,
+            'nombre_etudiants': num_etudiants,
+            'filiere': module.filiere.nom,
+            'semestre': module.semestre
+        })
+
+    # Pagination setup
+    paginator = Paginator(modules_data, 5)  # 5 modules per page
+    page = request.GET.get('page')
+    paginated_modules = paginator.get_page(page)
+
+    return render(request, 'module/index.html', {
+        'modules_data': paginated_modules,
+        'search_query': search_query,
+        'semestre_filter': semestre_filter,
+        'filiere_filter': filiere_filter
+    })
 
 @login_required
 @user_passes_test(is_staff_and_active)
@@ -302,8 +437,40 @@ def delete_module(request, pk):
 @login_required
 @user_passes_test(is_staff_and_active)
 def groupe_list(request):
+    # Get search query and filters from request
+    search_query = request.GET.get('search', '')
+    filiere_filter = request.GET.get('filiere', '')
+
+    # Get all Groupes and apply search query
     groupes = Groupe.objects.all()
-    return render(request, 'groupe/index.html', {'groupes': groupes})
+
+    if search_query:
+        groupes = groupes.filter(nom__icontains=search_query)
+
+    if filiere_filter:
+        groupes = groupes.filter(filiere__nom__icontains=filiere_filter)
+
+    # Annotate each Groupe with the number of Etudiants
+    groupes_data = []
+    for groupe in groupes:
+        num_etudiants = Etudiant.objects.filter(groupe=groupe).count()
+
+        groupes_data.append({
+            'groupe': groupe,
+            'nombre_etudiants': num_etudiants
+        })
+
+    # Pagination setup
+    paginator = Paginator(groupes_data, 5)  # 5 items per page
+    page = request.GET.get('page')
+    paginated_groupes = paginator.get_page(page)
+
+    return render(request, 'groupe/index.html', {
+        'groupes_data': paginated_groupes,
+        'search_query': search_query,
+        'filiere_filter': filiere_filter
+    })
+
 
 @login_required
 @user_passes_test(is_staff_and_active)
@@ -572,3 +739,8 @@ def note_list(request):
 
     return render(request, 'note/index.html', context)
 
+
+@login_required
+@user_passes_test(is_staff_and_active)
+def assistant(request):
+    return render(request, 'Assistant/chatbot.html')

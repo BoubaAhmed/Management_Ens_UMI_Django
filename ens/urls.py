@@ -1,5 +1,6 @@
 from django.urls import path
-from . import views
+from . import views, chatbot
+
 
 urlpatterns = [
     # ---------------------- Utilisateur URLs ----------------------
@@ -49,4 +50,7 @@ urlpatterns = [
     path('get-etudiants/', views.get_etudiants, name='get_etudiants'),
     path('get-modules/', views.get_modules, name='get_modules'),
     
+
+    path('chatbot/', chatbot.chatbot_response , name='chatbot_response'),
+    path('assistant/', views.assistant, name='chatbot_assistant'),
 ]

@@ -5,16 +5,9 @@ from django.core.exceptions import ValidationError
 
 # ------------------ Formulaire Utilisateur ------------------
 class UtilisateurForm(forms.ModelForm):
-
-    password = forms.CharField(
-        widget=forms.PasswordInput(attrs={'class': 'form-control shadow', 'placeholder': 'Password'}),
-        max_length=128,
-        required=True,
-        min_length=8,
-    )
     class Meta:
         model = Utilisateur
-        fields = ['nom', 'prenom', 'email', 'password', 'telephone', 'adresse', 'specialite', 'statut', 'is_active', 'is_staff', 'is_encadrant', 'is_enseignant','image']
+        fields = ['nom', 'prenom', 'email',  'telephone', 'adresse', 'specialite', 'statut', 'is_active', 'is_staff', 'is_encadrant', 'is_enseignant','image']
         widgets = {
             'nom': forms.TextInput(attrs={'class': 'form-control shadow ', 'placeholder': 'Nom'}),
             'prenom': forms.TextInput(attrs={'class': 'form-control shadow ', 'placeholder': 'Prénom'}),

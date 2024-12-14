@@ -160,3 +160,13 @@ CKEDITOR_CONFIGS = {
         # 'toolbar': 'full',
     }
 }
+
+# Email Configuration (Using Gmail SMTP)
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'  # Gmail SMTP server address
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+# Your Gmail credentials (replace with actual email and password)
+EMAIL_HOST_USER = 'ahmedbouba383@gmail.com'
+EMAIL_HOST_PASSWORD = 'cfua pgqi gtqw iqru'
