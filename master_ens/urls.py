@@ -25,7 +25,9 @@ urlpatterns = [
     path('dashboard/', include('ens.urls')), 
     path('', include('core.urls')), 
     path('auth/', include('users_auth.urls')), 
+    path('myumi/', include('Students.urls')), 
 ]
+
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

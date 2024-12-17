@@ -73,6 +73,12 @@
                         </button>
                     </div>
                 </form>
+                <!-- Button to download CSV -->
+                {% if etudiants %}
+                <a href="{% url 'download_students_accounts' %}?group_id={{ selected_groupe.id }}" class="btn btn-sm btn-success mt-3">
+                    <i class="bi bi-download"></i> Télécharger les Comptes des Étudiants
+                </a>
+                {% endif %}
                 <a href="{% url 'create_etudiant' %}" class="btn btn-sm  text-light shadow" style="background-color: #1F509A;"><i class="bi bi-plus"></i> Ajouter</a>
             </div>
             <!-- Étudiants Table -->

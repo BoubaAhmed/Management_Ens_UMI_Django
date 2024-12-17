@@ -89,6 +89,25 @@
         width: 100% !important;
         height: 100% !important;
     }
+    .card {
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .card:hover {
+        transform: scale(1.02);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+    .list-group-item {
+        border: none;
+        padding: 0.75rem 1rem;
+        background-color: #f8f9fa;
+    }
+    .list-group-item:hover {
+        background-color: #e9ecef;
+    }
+    .text-primary {
+        font-weight: 600;
+    }
+    
 </style>
 
 {% endblock %}
@@ -161,23 +180,31 @@
     <!-- Section des modules et notes -->
     <div class="row mt-4">
         <div class="col-md-6">
-            <div class="card bg-light p-4">
-                <h5>Modules par Semestre et Filière</h5>
+            <div class="card bg-light p-4 shadow-sm rounded border-0">
+                <h5 class="text-primary mb-4">Modules par Semestre et Filière</h5>
                 {% if modules_by_semester_by_filiere %}
-                    <ul>
+                    <ul class="list-group">
                         {% for module in modules_by_semester_by_filiere %}
-                            <li>
-                                <strong>{{ module.semestre }}</strong> -
-                                <em>{{ module.filiere__nom }}</em>: 
-                                {{ module.module_count }} modules
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>
+                                    <strong>{{ module.semestre }}</strong> - 
+                                    <em>{{ module.filiere__nom }}</em>
+                                </span>
+                                <span class="badge bg-primary rounded-pill">
+                                    {{ module.module_count }} modules
+                                </span>
                             </li>
                         {% endfor %}
                     </ul>
                 {% else %}
-                    <p>Aucun module trouvé pour les semestres et filières disponibles.</p>
+                    <div class="alert alert-warning mt-3">
+                        Aucun module trouvé pour les semestres et filières disponibles.
+                    </div>
                 {% endif %}
             </div>
         </div>
+        
+        
         
 
         <div class="col-md-6">
@@ -290,9 +317,10 @@
 
     const avgNotesData = [
         {% for note in avg_notes_per_module %}
-            {{ note.avg_finale }}{% if not forloop.last %},{% endif %}
+            {{ note.avg_finale|floatformat }}{% if not forloop.last %},{% endif %}
         {% endfor %}
     ];
+    
 
     new Chart(ctxNotes, {
         type: 'line',

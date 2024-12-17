@@ -4,7 +4,7 @@ from django.db.models import UniqueConstraint
 from django.core.exceptions import ValidationError
 import re
 from decimal import Decimal
-
+import random,string
 # ------------------ Gestionnaire Utilisateur ------------------
 class UtilisateurManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
@@ -128,15 +128,17 @@ def validate_cne(value):
 class Etudiant(models.Model):
     STATUT_CHOICES = [('actif', 'Actif'), ('suspendu', 'Suspendu'), ('gradué', 'Gradué')]
 
-    nom = models.CharField(max_length=100)
-    prenom = models.CharField(max_length=100)
-    email = models.EmailField(unique=True)
+    nom = models.CharField(max_length=100, null=False, blank=False)
+    prenom = models.CharField(max_length=100, null=False, blank=False)
+    email = models.EmailField(unique=True, null=False, blank=False)
+    password = models.CharField(max_length=128, default=''.join(random.choices(string.ascii_letters + string.digits, k=8)))
     groupe = models.ForeignKey(Groupe, on_delete=models.CASCADE)
-    cni = models.CharField(max_length=20, unique=True, validators=[validate_cni])
-    cne = models.CharField(max_length=20, unique=True, validators=[validate_cne])
-    telephone = models.CharField(max_length=20, null=True, blank=True)
-    date_naissance = models.DateField(null=True, blank=True)
-    adresse = models.TextField(null=True, blank=True)
+    cni = models.CharField(max_length=20, unique=True, validators=[validate_cni], null=False, blank=False)
+    cne = models.CharField(max_length=20, unique=True, validators=[validate_cne], null=False, blank=False)
+    image = models.ImageField(upload_to='static/Assets/profiles/etudiants/', null=True, blank=True)
+    telephone = models.CharField(max_length=20, null=False, blank=False,  default="0000000000")  
+    date_naissance = models.DateField(null=False, blank=False)
+    adresse = models.TextField(null=False, blank=False)
     annee_inscription = models.PositiveSmallIntegerField()
     statut = models.CharField(max_length=10, choices=STATUT_CHOICES, default='actif')
     created_at = models.DateTimeField(auto_now_add=True)

@@ -61,17 +61,6 @@
                 {% endif %}
             </div>
 
-            <!-- Email -->
-            <div class="col-md-6">
-                <label for="{{ form.email.id_for_label }}" class="form-label">Email <span class="text-danger">*</span></label>
-                {{ form.email }}
-                {% if form.email.errors %}
-                    {% for error in form.email.errors %}
-                        <span class="error-text">{{ error }}</span>
-                    {% endfor %}
-                {% endif %}
-            </div>
-
             <!-- Groupe -->
             <div class="col-md-6">
                 <label for="{{ form.groupe.id_for_label }}" class="form-label">Groupe</label>
@@ -119,7 +108,7 @@
             <!-- Date de Naissance -->
             <div class="col-md-6">
                 <label for="{{ form.date_naissance.id_for_label }}" class="form-label">Date de Naissance</label>
-                {{ form.date_naissance }}
+                {{ form.date_naissance}}
                 {% if form.date_naissance.errors %}
                     {% for error in form.date_naissance.errors %}
                         <span class="error-text">{{ error }}</span>
@@ -155,6 +144,16 @@
                 {{ form.statut }}
                 {% if form.statut.errors %}
                     {% for error in form.statut.errors %}
+                        <span class="error-text">{{ error }}</span>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <div class="col-md-6">
+                <label for="{{ form.image.id_for_label }}" class="form-label">Photo de Profil</label>
+                {{ form.image }}
+                {% if form.image.errors %}
+                    {% for error in form.image.errors %}
                         <span class="error-text">{{ error }}</span>
                     {% endfor %}
                 {% endif %}

@@ -39,6 +39,9 @@ urlpatterns = [
     path('etudiant/edit/<int:pk>/', views.update_etudiant, name='edit_etudiant'),
     path('etudiant/delete/<int:pk>/', views.delete_etudiant, name='delete_etudiant'),
 
+    path('download_students_accounts/', views.download_students_accounts, name='download_students_accounts'),
+
+
     # ---------------------- Note URLs ----------------------
     path('note/', views.note_list, name='note_list'),
     path('note/<int:pk>/', views.note_detail, name='note_detail'),
@@ -54,3 +57,4 @@ urlpatterns = [
     path('chatbot/', chatbot.chatbot_response , name='chatbot_response'),
     path('assistant/', views.assistant, name='chatbot_assistant'),
 ]
+

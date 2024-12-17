@@ -89,11 +89,16 @@
                             </ul>
                         </li>
                     {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link d-flex justify-content-between align-items-center" href="{% url 'login' %}" style="color: #9EDF9C;">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link d-flex justify-content-between align-items-center" id="connexionDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" href="#" style="color: #9EDF9C;">
                                 <i class="bi bi-key me-2" style="font-size: 1.5rem;"></i>
                                 connexion
                             </a> 
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="connexionDropdown">
+                                <li><a class="dropdown-item" href="{% url 'login' %}">Personnel</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'etudiant_login' %}">Etudiant</a></li>
+                            </ul>
                         </li>
                     {% endif %}
                 </ul>

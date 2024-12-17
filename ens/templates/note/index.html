@@ -1,87 +1,121 @@
 {% extends 'core/base_dashboard.html' %}
 
 {% block content %}
-<div class="container">
-    <!-- Bouton Ajouter -->
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h3 class="mb-0">Gestion des Notes</h3>
-        <a href="{% url 'create_note' %}" class="btn btn-success btn-sm">
-            <i class="bi bi-plus-circle me-1"></i> Ajouter une Note
-        </a>
+<div class="container-fluid">
+    <div class="row">
+        <!-- Filters Section -->
+        <div class="col-lg-3 col-md-4 col-12 mb-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">Filtres</h5>
+                </div>
+                <div class="card-body">
+                    <form method="get">
+                        <!-- Filière Selection -->
+                        <div class="form-group mb-3">
+                            <label for="filiere-select"><strong>Filière :</strong></label>
+                            <select id="filiere-select" name="filiere_id" class="form-control" onchange="this.form.submit()">
+                                <option value="">-- Sélectionnez une filière --</option>
+                                {% for filiere in filieres %}
+                                    <option value="{{ filiere.id }}" {% if filiere == selected_filiere %}selected{% endif %}>
+                                        {{ filiere.nom }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Groupe Selection -->
+                        {% if groupes %}
+                        <div class="form-group mb-3">
+                            <label for="groupe-select"><strong>Groupe :</strong></label>
+                            <select id="groupe-select" name="groupe_id" class="form-control" onchange="this.form.submit()">
+                                <option value="">-- Sélectionnez un groupe --</option>
+                                {% for groupe in groupes %}
+                                    <option value="{{ groupe.id }}" {% if groupe == selected_groupe %}selected{% endif %}>
+                                        {{ groupe.nom }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        {% endif %}
+
+                        <!-- Module Selection -->
+                        {% if modules %}
+                        <div class="form-group mb-3">
+                            <label for="module-select"><strong>Module :</strong></label>
+                            <select id="module-select" name="module_id" class="form-control" onchange="this.form.submit()">
+                                <option value="">-- Sélectionnez un module --</option>
+                                {% for module in modules %}
+                                    <option value="{{ module.id }}" {% if module == selected_module %}selected{% endif %}>
+                                        {{ module.nom }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table Section -->
+        <div class="col-lg-9 col-md-8 col-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Gestion des Notes</h5>
+                    <a href="{% url 'create_note' %}" class="btn btn-success btn-sm">
+                        <i class="bi bi-plus-circle me-1"></i> Ajouter une Note
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if notes %}
+                    <div class="">
+                        <table class="table table-bordered ">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th>Etudiant</th>
+                                    <th>CNE</th>
+                                    <th>DS</th>
+                                    <th>TP</th>
+                                    <th>EXAM</th>
+                                    <th>Note Finale</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for note in notes %}
+                                <tr>
+                                    <td>{{ note.etudiant.nom }} {{ note.etudiant.prenom }}</td>
+                                    <td>{{ note.etudiant.cne }}</td>
+                                    <td>{{ note.note_ds }}</td>
+                                    <td>{{ note.note_tp }}</td>
+                                    <td>{{ note.note_exam }}</td>
+                                    <td>{{ note.note_finale|default:"-" }}</td>
+                                    <td class="text-center">
+                                        <div class="dropdown">
+                                            <button title="dropdown" class="btn btn-sm" type="button" id="dropdownMenuButton{{ note.id }}" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="bi bi-three-dots"></i>
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton{{ note.id }}">
+                                                <li><a class="dropdown-item" href="{% url 'note_detail' note.id %}"><i class="bi bi-eye me-2"></i> Voir</a></li>
+                                                <li><a class="dropdown-item" href="{% url 'edit_note' note.id %}"><i class="bi bi-pencil me-2"></i> Modifier</a></li>
+                                                <li><a class="dropdown-item text-danger" href="{% url 'delete_note' note.id %}"><i class="bi bi-trash me-2"></i> Supprimer</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-warning mt-4" role="alert">
+                        <strong>Aucune note disponible :</strong> Veuillez sélectionner une filière, un groupe, et un module pour afficher les notes.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
     </div>
-
-    <!-- Formulaire de sélection -->
-    <form method="get" class="mb-4">
-        <!-- Sélection de la Filière -->
-        <div class="form-group mb-3">
-            <label for="filiere-select"><strong>Filière :</strong></label>
-            <select id="filiere-select" name="filiere_id" class="form-control" onchange="this.form.submit()">
-                <option value="">-- Sélectionnez une filière --</option>
-                {% for filiere in filieres %}
-                    <option value="{{ filiere.id }}" {% if filiere == selected_filiere %}selected{% endif %}>
-                        {{ filiere.nom }}
-                    </option>
-                {% endfor %}
-            </select>
-        </div>
-
-        <!-- Sélection du Groupe -->
-        {% if groupes %}
-        <div class="form-group mb-3">
-            <label for="groupe-select"><strong>Groupe :</strong></label>
-            <select id="groupe-select" name="groupe_id" class="form-control" onchange="this.form.submit()">
-                <option value="">-- Sélectionnez un groupe --</option>
-                {% for groupe in groupes %}
-                    <option value="{{ groupe.id }}" {% if groupe == selected_groupe %}selected{% endif %}>
-                        {{ groupe.nom }}
-                    </option>
-                {% endfor %}
-            </select>
-        </div>
-        {% endif %}
-
-        <!-- Sélection du Module -->
-        {% if modules %}
-        <div class="form-group mb-3">
-            <label for="module-select"><strong>Module :</strong></label>
-            <select id="module-select" name="module_id" class="form-control" onchange="this.form.submit()">
-                <option value="">-- Sélectionnez un module --</option>
-                {% for module in modules %}
-                    <option value="{{ module.id }}" {% if module == selected_module %}selected{% endif %}>
-                        {{ module.nom }}
-                    </option>
-                {% endfor %}
-            </select>
-        </div>
-        {% endif %}
-    </form>
-
-    <!-- Tableau des Notes -->
-    {% if notes %}
-    <table class="table table-bordered table-striped">
-        <thead class="thead-dark">
-            <tr>
-                <th>Étudiant</th>
-                <th>CNI</th>
-                <th>CNE</th>
-                <th>Note Finale</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for note in notes %}
-            <tr>
-                <td>{{ note.etudiant.nom }} {{ note.etudiant.prenom }}</td>
-                <td>{{ note.etudiant.cni }}</td>
-                <td>{{ note.etudiant.cne }}</td>
-                <td>{{ note.note_finale|default:"-" }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% else %}
-    <div class="alert alert-warning mt-4" role="alert">
-        <strong>Aucune note disponible :</strong> Veuillez sélectionner une filière, un groupe, et un module pour afficher les notes.
-    </div>
-    {% endif %}
 </div>
 {% endblock %}

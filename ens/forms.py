@@ -82,11 +82,10 @@ class GroupeForm(forms.ModelForm):
 class EtudiantForm(forms.ModelForm):
     class Meta:
         model = Etudiant
-        fields = ['nom', 'prenom', 'email', 'groupe', 'cni', 'cne', 'telephone', 'date_naissance', 'adresse', 'annee_inscription', 'statut']
+        fields = ['nom', 'prenom',  'groupe', 'cni', 'cne', 'telephone', 'date_naissance', 'adresse', 'annee_inscription', 'statut','image']
         widgets = {
             'nom': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nom'}),
             'prenom': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Prénom'}),
-            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email'}),
             'groupe': forms.Select(attrs={'class': 'form-control', 'placeholder': 'Groupe'}),
             'telephone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Téléphone'}),
             'cni': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'CNI'}),
@@ -95,6 +94,7 @@ class EtudiantForm(forms.ModelForm):
             'date_naissance': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'annee_inscription': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Année'}),
             'statut': forms.Select(attrs={'class': 'form-control'}),
+            'image': forms.ClearableFileInput(attrs={'class': 'form-control shadow'}),  
         }
 
 

@@ -73,7 +73,7 @@ def dashboard_view(request):
     avg_notes_per_module = Note.objects.values('module__nom').annotate(avg_finale=Avg('note_finale'))
     avg_notes_per_module_per_filiere = (
     Note.objects.values('module__nom', 'module__filiere__nom')
-    .annotate(avg_finale=Avg('note_finale'))
+    .annotate(avg_finale=Avg('note_finale')) 
     .order_by('module__filiere__nom', 'module__nom')
 )
 

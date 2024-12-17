@@ -8,7 +8,7 @@
         {
             "tag": "goodbye",
             "patterns": ["bye", "goodbye", "see you", "later", "take care", "see you soon"],
-            "responses": ["Goodbye!", "See you later!", "Take care!", "Looking forward to our next chat!"]
+            "responses": ["Goodbye!", "See you later!", "Take care!", "Looking forward to our next chat!", "Sad to see you go :(", "Come back soon"]
         },
         {
             "tag": "students_in_filiere",
@@ -22,57 +22,27 @@
         },
         {
             "tag": "module_information",
-            "patterns": ["tell me about module", "module info", "module details", "list of modules", "module description"],
+            "patterns": ["tell me about module", "module info", "module details", "list of modules", "module description" ],
             "responses": ["Please provide the module code or name to fetch its details.", "Which module information would you like to know?"]
-        },
-        {
-            "tag": "static_faq",
-            "patterns": ["What is this system?", "Tell me about this system", "What does this project do?", "How does this tool work?", "System details"],
-            "responses": [
-                "This system is a school management tool designed to handle student, teacher, and course information.",
-                "It allows users to manage student data, notes, modules, and more!",
-                "This tool facilitates efficient school management."
-            ]
         },
         {
             "tag": "student_notes",
             "patterns": ["student notes", "grades of student", "show me notes for student", "fetch notes for student"],
-            "responses": ["Please provide the student's name or ID to fetch their notes.", "Which student's notes would you like to view?"]
-        },
-        {
-            "tag": "contact_support",
-            "patterns": ["how to contact support", "support email", "customer support", "help desk contact", "reach support"],
-            "responses": ["You can contact support at support@schoolmanagement.com.", "Our support team is reachable at support@schoolmanagement.com."]
-        },
-        {
-            "tag": "create_filiere",
-            "patterns": ["create new filiere", "add a filiere", "how to add filiere", "add filiere to system"],
-            "responses": ["To create a new filiere, please provide its name, description, and assigned encadrant."]
+            "responses": ["Please provide the student's CNE or nom complete  to fetch their notes.", "Which student's notes would you like to view?"]
         },
         {
             "tag": "filiere_info",
-            "patterns": ["details of filiere", "filiere information", "info about filiere", "filiere data"],
-            "responses": ["Please provide the name or ID of the filiere to fetch its details."]
-        },
-        {
-            "tag": "create_student",
-            "patterns": ["add new student", "register a student", "how to add student", "create student profile"],
-            "responses": ["To register a student, please provide their name, email, CNI, CNE, and assigned group."]
-        },
+            "patterns": ["Tell me about the filiere", "Details about the filiere", "Show details of the filiere", "details of filiere", "filiere information", "info about filiere", "filiere data"],
+            "responses": [
+                "Please provide the name, ID, or code of the filiere to get its details.",
+                "I need the specific name or identifier of the filiere you're interested in.",
+                "Could you specify the filiere name or its unique ID so I can fetch the information?"
+            ]
+        },       
         {
             "tag": "note_average",
             "patterns": ["average note for module", "calculate average note", "module average", "get average note for module"],
             "responses": ["Please provide the module code to calculate its average note."]
-        },
-        {
-            "tag": "validate_cni",
-            "patterns": ["validate CNI", "check CNI format", "CNI validation"],
-            "responses": ["The CNI must follow the format: one uppercase letter followed by 6 digits (e.g., X123456)."]
-        },
-        {
-            "tag": "validate_cne",
-            "patterns": ["validate CNE", "check CNE format", "CNE validation"],
-            "responses": ["The CNE must follow the format: one uppercase letter followed by 9 digits (e.g., X123456789)."]
         },
         {
             "tag": "module_professor",
@@ -80,9 +50,81 @@
             "responses": ["Please provide the module code to fetch its professor details."]
         },
         {
+            "tag": "static_faq",
+            "patterns": ["What is this system?","Tell me about this system","What does this project do?","How does this tool work?","System details"],
+            "responses": [
+                "This system is a comprehensive school management platform designed to efficiently handle student, teacher, and course information.",
+                "Our platform offers powerful tools to manage student records, grades, attendance, modules, and more, all in one place.",
+                "This system streamlines school operations, making it easy to handle student data, academic records, and administrative tasks.",
+                "Designed with simplicity and efficiency in mind, this system helps you manage school activities, modules, and staff effortlessly.",
+                "This tool serves as an all-in-one school management solution, facilitating everything from scheduling and attendance to grading and communication."
+            ]
+        },        
+        {
+            "tag": "creator",
+            "patterns": ["what is the name of your developers","what is the name of your creators","what is the name of the developers","what is the name of the creators",
+                    "who created you","your developers","your creators","who are your developers","developers","you are made by","you are made by whom",
+                    "who created you","who create you","creators","who made you","who designed you"],
+            "responses": [
+                "I was developed by Bouba Ahmed in October 2024 as part of a minor project.",
+                "I owe my creation to Bouba Ahmed, a talented student from ENS Meknès.",
+                "A passionate student from ENS Meknès, Bouba Ahmed, brought me to life in October 2024.",
+                "I was built by Bouba Ahmed, a bright mind at ENS Meknès, as part of his minor project.",
+                "Created by Bouba Ahmed, a dedicated student from ENS Meknès, in October 2024."
+            ]
+        },
+        {
+            "tag": "name",
+            "patterns": ["name","your name","do you have a name","what are you called","what is your name","what should I call you","whats your name?","what are you",
+                        "who are you","who is this","what am i chatting to","who am i taking to","what are you"],
+            "responses": [
+                "You can call me ENS GPT, your virtual assistant!",
+                "I'm ENS GPT, the chatbot here to help you with your queries.",
+                "I am ENS GPT, also known as GPTEN's intelligent assistant.",
+                "Call me ENS GPT, your go-to chatbot for all things ENS-related.",
+                "I'm here as ENS GPT, ready to assist you anytime!"
+            ]
+        },
+        {
+            "tag": "hours",
+            "patterns": ["timing of ENS Meknes","what is ENS Meknes timing","working days","when are you guys open","what are your hours","hours of operation",
+                        "when is the ENS Meknes open","ENS Meknes timing","what about ENS Meknes timing","is ENS Meknes open on saturday","tell something about ENS Meknes timing",
+                        "what is the ENS Meknes  hours","when should i come to ENS Meknes","when should i attend ENS Meknes","what is my ENS Meknes time","ENS Meknes timing","timing ENS Meknes"],
+            "responses": [
+                "ENS Meknes is open 8:00 AM to 6:00 PM, Monday to Sunday.",
+                "The operational hours at ENS Meknes are from 8:00 AM to 6:00 PM every day of the week.",
+                "You can visit ENS Meknes anytime from 8:00 AM to 6:00 PM, including weekends.",
+                "ENS Meknes operates every day, with working hours from 8:00 in the morning until 6:00 in the evening.",
+                "The institute operates every day of the week. Working hours are 8:00 AM - 6:00 PM, Monday through Sunday.",
+                "ENS Meknes is accessible from 8:00 AM to 6:00 PM every day. Feel free to come at your convenience.",
+                "Whether it's a weekend or a weekday, ENS Meknes is open from 8:00 AM to 6:00 PM.",
+                "Our working days include Monday through Sunday, with consistent hours of 8:00 AM to 6:00 PM.",
+                "If you're planning a visit or meeting at ENS Meknes, the working hours are 8:00 AM until 6:00 PM every day.",
+                "You can attend ENS Meknes activities and classes from 8:00 AM to 6:00 PM, seven days a week."
+            ]
+        },
+        {
+            "tag": "number",
+            "patterns": ["more info","contact info","how to contact ENS ","ENS  telephone number","ENS  number","What is your contact no","Contact number?",
+                    "how to call you","ENS  phone no?","how can i contact you","Can i get your phone number","how can i call you","phone number","phone no","call"
+            ],
+            "responses": [
+                "You can contact us at the following address:\nBP.3104, Toulal, Meknès, Maroc.\nTél : +212 5 35 53 38 85 / 53 38 83.\nFax : +212 5 35 46 02 50.\nE-mail : info@ens-umi.ac.ma.",
+                "For any inquiries, reach us at:\nAddress: BP.3104, Toulal, Meknès, Maroc.\nPhone: +212 5 35 53 38 85 / 53 38 83.\nFax: +212 5 35 46 02 50.\nEmail: info@ens-umi.ac.ma.",
+                "Need to get in touch? Here’s our contact information:\nLocation: BP.3104, Toulal, Meknès, Maroc.\nTelephone: +212 5 35 53 38 85 / 53 38 83.\nFax: +212 5 35 46 02 50.\nEmail: info@ens-umi.ac.ma.",
+                "You can reach us through the following channels:\nAddress: BP.3104, Toulal, Meknès, Maroc.\nCall us at: +212 5 35 53 38 85 / 53 38 83.\nFax: +212 5 35 46 02 50.\nEmail: info@ens-umi.ac.ma."
+            ]
+        },
+        {
             "tag": "unknown",
             "patterns": [],
-            "responses": ["Sorry, I didn't understand your question.", "Can you please rephrase that?", "I'm not sure I understand."]
+            "responses": [
+                "I'm sorry, I didn't quite catch that. Could you please clarify your question?",
+                "Oops! I didn't understand what you meant. Can you rephrase it for me?",
+                "My apologies, but I’m not sure I understand your request. Could you try again?",
+                "I’m not familiar with that. Could you please provide more details?",
+                "Sorry, I couldn't get that. How can I assist you better?"
+            ]
         }
     ]
 }

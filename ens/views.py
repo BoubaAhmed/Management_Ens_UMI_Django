@@ -1,24 +1,17 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.views.decorators.http import require_POST
-from django.contrib import messages
 from .models import Utilisateur, Filiere, Module, Groupe, Etudiant, Note
 from .forms import (
     UtilisateurForm, FiliereForm, ModuleForm, GroupeForm, EtudiantForm, NoteForm
 )
-from django.http import HttpResponseForbidden
 from django.core.paginator import Paginator
-from django.db.models import Q
-import csv
-from django.http import HttpResponse
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from openpyxl import Workbook
-from .models import Utilisateur
-from django.http import JsonResponse
 from django.contrib import messages
-from django.contrib.auth.hashers import make_password
 from django.core.mail import send_mail
 import random, string
+from django.db.models import Avg, Q
+import csv
 
 def is_staff_and_active(view_func):
     def wrapper(request, *args, **kwargs):
@@ -52,10 +45,32 @@ def is_encadrant(view_func):
 
     return wrapper
 
+def is_enseignant(view_func):
+    def wrapper(request, *args, **kwargs):
+        user_id = kwargs.get('pk')  # Get the user id from URL kwargs
+        if request.user.is_authenticated:
+            if str(request.user.id) == str(user_id):
+                # If the user is accessing their own account, let them pass
+                return view_func(request, *args, **kwargs)
+            
+            if not hasattr(request.user, 'is_enseignant') or not request.user.is_enseignant:
+                messages.error(request, "You do not have the required permissions as an enseignant.")
+                return redirect('/dashboard/')
+        else:
+            messages.error(request, "You must log in first.")
+            return redirect('/login')
+
+        return view_func(request, *args, **kwargs)
+
+    return wrapper
+
 
 # ---------------------- Views Utilisateur ----------------------
 
 # List all utilisateurs
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
+
 @login_required
 @user_passes_test(lambda user: user.is_staff and user.is_active)
 def utilisateur_list(request):
@@ -84,7 +99,25 @@ def utilisateur_list(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    return render(request, 'utilisateur/index.html', {'utilisateurs': page_obj, 'search_query': search_query, 'filter_role': filter_role})
+    # Password Change Form
+    password_form = None
+    if request.user.is_authenticated:  # Ensure user is logged in
+        if request.method == 'POST' and 'change_password' in request.POST:
+            password_form = PasswordChangeForm(request.user, request.POST)
+            if password_form.is_valid():
+                user = password_form.save()
+                update_session_auth_hash(request, user)  # Keep user logged in
+                messages.success(request, 'Your password has been updated successfully!')
+                return redirect('utilisateur_list')  # Adjust redirection as needed
+        else:
+            password_form = PasswordChangeForm(request.user)
+
+    return render(request, 'utilisateur/index.html', {
+        'utilisateurs': page_obj,
+        'search_query': search_query,
+        'filter_role': filter_role,
+        'password_form': password_form,
+    })
 
 @login_required
 @is_encadrant
@@ -325,12 +358,9 @@ def update_filiere(request, pk):
 
 @user_passes_test(is_staff_and_active)
 @login_required
+@is_encadrant
 def delete_filiere(request, pk):
     filiere = get_object_or_404(Filiere, pk=pk)
-    if not request.user.is_encadrant:
-        messages.error(request, "You do not have permission to delete this filière.")
-        return redirect('filiere_list')
-
     if request.user != filiere.encadrant:
         messages.error(request, "You are only allowed to delete your own filières details.")
         return redirect('filiere_list')
@@ -395,6 +425,7 @@ def module_detail(request, pk):
 
 @login_required
 @user_passes_test(is_staff_and_active)
+@is_encadrant
 def create_module(request):
     if request.method == 'POST':
         form = ModuleForm(request.POST)
@@ -408,8 +439,13 @@ def create_module(request):
 
 @login_required
 @user_passes_test(is_staff_and_active)
+@is_encadrant
 def update_module(request, pk):
     module = get_object_or_404(Module, pk=pk)
+    if request.user != module.filiere.encadrant:
+        messages.error(request, "You are only allowed to update your own filières modules.")
+        return redirect('module_list')
+    
     if request.method == 'POST':
         form = ModuleForm(request.POST, instance=module)
         if form.is_valid():
@@ -422,9 +458,13 @@ def update_module(request, pk):
 
 @login_required
 @user_passes_test(is_staff_and_active)
-
+@is_encadrant
 def delete_module(request, pk):
     module = get_object_or_404(Module, pk=pk)
+    if request.user != module.filiere.encadrant:
+        messages.error(request, "You are only allowed to delete your own filières modules.")
+        return redirect('module_list')
+    
     if request.method == 'POST':
         module.delete()
         messages.success(request, "Module supprimé avec succès !")
@@ -471,7 +511,6 @@ def groupe_list(request):
         'filiere_filter': filiere_filter
     })
 
-
 @login_required
 @user_passes_test(is_staff_and_active)
 def groupe_detail(request, pk):
@@ -480,6 +519,7 @@ def groupe_detail(request, pk):
 
 @login_required
 @user_passes_test(is_staff_and_active)
+@is_encadrant
 def create_groupe(request):
     if request.method == 'POST':
         form = GroupeForm(request.POST)
@@ -493,8 +533,13 @@ def create_groupe(request):
 
 @login_required
 @user_passes_test(is_staff_and_active)
+@is_encadrant
 def update_groupe(request, pk):
     groupe = get_object_or_404(Groupe, pk=pk)
+    if request.user != groupe.filiere.encadrant:
+        messages.error(request, "You are only allowed to update your own filières groupes.")
+        return redirect('module_list')
+    
     if request.method == 'POST':
         form = GroupeForm(request.POST, instance=groupe)
         if form.is_valid():
@@ -507,9 +552,12 @@ def update_groupe(request, pk):
 
 @login_required
 @user_passes_test(is_staff_and_active)
-
+@is_encadrant
 def delete_groupe(request, pk):
     groupe = get_object_or_404(Groupe, pk=pk)
+    if request.user != groupe.filiere.encadrant:
+        messages.error(request, "You are only allowed to delete your own filières groupes.")
+        return redirect('module_list')
     if request.method == 'POST':
         groupe.delete()
         messages.success(request, "Groupe supprimé avec succès !")
@@ -517,17 +565,7 @@ def delete_groupe(request, pk):
     return render(request, 'groupe/delete.html', {'groupe': groupe})
 
 
-
 # ---------------------- Views Etudiant ----------------------
-
-from django.contrib.auth.decorators import login_required, user_passes_test
-from django.db.models import Avg, Q
-from django.shortcuts import render, get_object_or_404
-from .models import Filiere, Groupe, Etudiant
-
-def is_staff_and_active(user):
-    return user.is_staff and user.is_active
-
 @login_required
 @user_passes_test(is_staff_and_active)
 def etudiant_list(request):
@@ -584,32 +622,77 @@ def etudiant_list(request):
     # Render the template
     return render(request, 'etudiant/index.html', context)
 
-
 @login_required
 @user_passes_test(is_staff_and_active)
 def etudiant_detail(request, pk):
     etudiant = get_object_or_404(Etudiant, pk=pk)
+
+    if request.method == 'POST' and 'change_password' in request.POST:
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+
+        if new_password == confirm_password:
+            try:
+                # Directly update the password in the database
+                etudiant.password = new_password
+                etudiant.save()
+                messages.success(request, "Le mot de passe a été mis à jour avec succès.")
+                return redirect('etudiant_detail', pk=pk)
+            except Exception as e:
+                messages.error(request, f"Une erreur est survenue : {str(e)}")
+        else:
+            messages.error(request, "Les mots de passe ne correspondent pas.")
+
     return render(request, 'etudiant/read.html', {'etudiant': etudiant})
+
+
 
 @login_required
 @user_passes_test(is_staff_and_active)
+@is_encadrant
 def create_etudiant(request):
     if request.method == 'POST':
-        form = EtudiantForm(request.POST)
+        form = EtudiantForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
-            messages.success(request, "Étudiant créé avec succès !")
+            etudiant = form.save(commit=False)
+            email_prefix = f"{etudiant.nom[0:2].lower()}.{etudiant.prenom.lower()}"
+            base_email = f"{email_prefix}@edu.umi.ac.ma"
+            existing_students = Etudiant.objects.filter(email=base_email)
+            if existing_students.exists():
+                counter = 1
+                while True:
+                    new_email = f"{email_prefix}{counter}@edu.umi.ac.ma"
+                    if not Etudiant.objects.filter(email=new_email).exists():
+                        base_email = new_email
+                        break
+                    counter += 1
+            etudiant.email = base_email
+            password = generate_password()
+            etudiant.password = password 
+            if 'image' in request.FILES:
+                print(f"Image uploaded: {request.FILES['image']}")
+            else:
+                print("No image uploaded!")
+            etudiant.save()
+            messages.success(request, f"Étudiant créé avec succès !")
             return redirect('etudiant_list')
     else:
         form = EtudiantForm()
+
     return render(request, 'etudiant/create.html', {'form': form})
+
+
 
 @login_required
 @user_passes_test(is_staff_and_active)    
+@is_encadrant
 def update_etudiant(request, pk):
         etudiant = get_object_or_404(Etudiant, pk=pk)
+        if request.user != etudiant.groupe.filiere.encadrant:
+            messages.error(request, "You are only allowed to edit your own filières students.")
+            return redirect('etudiant_list')
         if request.method == 'POST':
-            form = EtudiantForm(request.POST, instance=etudiant)
+            form = EtudiantForm(request.POST, request.FILES, instance=etudiant)
             if form.is_valid():
                 form.save()
                 messages.success(request, "Étudiant mis à jour avec succès !")
@@ -620,9 +703,12 @@ def update_etudiant(request, pk):
 
 @login_required
 @user_passes_test(is_staff_and_active)
-
+@is_encadrant
 def delete_etudiant(request, pk):
     etudiant = get_object_or_404(Etudiant, pk=pk)
+    if request.user != etudiant.groupe.filiere.encadrant:
+            messages.error(request, "You are only allowed to delete your own filières students.")
+            return redirect('etudiant_list')
     if request.method == 'POST':
         etudiant.delete()
         messages.success(request, "Étudiant supprimé avec succès !")
@@ -633,9 +719,9 @@ def delete_etudiant(request, pk):
 
 @login_required
 @user_passes_test(is_staff_and_active)
+@is_enseignant
 def create_note(request):
     filieres = Filiere.objects.filter(groupe__isnull=False, module__isnull=False).distinct()
-
     if request.method == 'POST':
         form = NoteForm(request.POST)
         if form.is_valid():
@@ -644,7 +730,6 @@ def create_note(request):
             return redirect('note_list')
     else:
         form = NoteForm()
-
     return render(request, 'note/create.html', {'form': form, 'filieres': filieres})
 
 def get_groupes(request):
@@ -667,8 +752,12 @@ def get_etudiants(request):
 
 @login_required
 @user_passes_test(is_staff_and_active)
+@is_enseignant
 def edit_note(request, pk):
     note = get_object_or_404(Note, pk=pk)
+    if request.user != note.module.enseignant:
+            messages.error(request, "You are only allowed to edit your own  module students.")
+            return redirect('etudiant_list')
     if request.method == 'POST':
         form = NoteForm(request.POST, instance=note)
         if form.is_valid():
@@ -681,6 +770,7 @@ def edit_note(request, pk):
 
 @login_required
 @user_passes_test(is_staff_and_active)
+@is_enseignant
 def delete_note(request, pk):
     note = get_object_or_404(Note, pk=pk)
     if request.method == 'POST':
@@ -744,3 +834,39 @@ def note_list(request):
 @user_passes_test(is_staff_and_active)
 def assistant(request):
     return render(request, 'Assistant/chatbot.html')
+
+
+@login_required
+@user_passes_test(is_staff_and_active)
+@is_encadrant
+def download_students_accounts(request):
+    group_id = request.GET.get('group_id')
+    
+    if not group_id:
+        return redirect('etudiant_list')  # Redirect if no group_id is provided
+
+    try:
+        # Get the selected group
+        groupe = Groupe.objects.get(id=group_id)
+        if request.user != groupe.filiere.encadrant:
+            messages.error(request, "You are only allowed to download your own filières Students.")
+            return redirect('etudiant_list')
+        # Filter students belonging to this group
+        etudiants = Etudiant.objects.filter(groupe=groupe)
+
+        # Create response to download CSV
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="students_accounts.csv"'
+
+        writer = csv.writer(response)
+        # Write the CSV header
+        writer.writerow(['Nom', 'Prénom', 'Email', 'Mot de passe'])
+
+        # Write each student's information
+        for etudiant in etudiants:
+            writer.writerow([etudiant.nom, etudiant.prenom, etudiant.email, etudiant.password])
+
+        return response
+
+    except Groupe.DoesNotExist:
+        return redirect('etudiant_list')  # Redirect if group doesn't exist

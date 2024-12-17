@@ -19,7 +19,7 @@ def login_view(request):
                     return redirect('/')  # Superusers have access to everything
                 elif user.is_staff and (user.is_enseignant or user.is_encadrant):
                     login(request, user)
-                    return redirect('/')  # Regular staff members with roles
+                    return redirect('dashboard')  # Regular staff members with roles
                 else:
                     messages.error(request, "You do not have the required access privileges.")
             else:
@@ -27,9 +27,10 @@ def login_view(request):
         else:
             messages.error(request, "Invalid Username or Password or Your account is inactive")
 
-    return render(request, 'login.html')
+    return render(request, 'login.html', {'title': 'Connexion Personnels','user_type':'Personnel'})
 
 
 def logout_view(request):
     logout(request)
     return redirect('login')
+

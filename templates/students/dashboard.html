@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <title>Profil Étudiant | École Normale Supérieure Meknès</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Rubik:ital,wght@0,300..900;1,300..900&family=Inter:wght@400;500;600;700&family=Lato:wght@400;700&family=Parkinsans:wght@400;700&family=Playfair+Display:wght@400;700&family=Raleway:wght@400;700&display=swap" rel="stylesheet">   
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        body{
+            font-family: 'Rubik',sans-serif;
+        }
+        .profile-card {
+            transition: 0.3s;
+        }
+        .profile-card:hover {
+            transform: scale(1.05);
+        }
+        .badge-status {
+            font-weight: bold;
+        }
+        .btn-logout {
+            background: #AE445A;
+            color: #fff;
+            font-weight: bold;
+            font-size: 0.8rem;
+            padding: 0.2rem;
+            transition: background 0.3s ease;
+            box-shadow: 0 4px 5px rgba(255, 0, 0, 0.3);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-logout:hover {
+            background: #e63946;
+            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.5);
+        }
+        .btn-logout i {
+            margin-right: 8px;
+        }
+        .profile-img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 2px solid black;
+            display: block;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+    
+        .profile-img:hover {
+            transform: scale(1.0.4);
+        }
+        
+    </style>
+</head>
+
+<body>
+    <div class="container  min-vh-100 my-auto d-flex flex-row justify-content-between py-5 w-75">
+            <!-- Personal Information Card -->
+            <div class="card  profile-card w-50 me-2 border border-0 shadow" style="height: max-content;">
+                <div class="card-header text-light text-center"style="background-color: #8B5DFF;">
+                    <h5 style="font-size: 1.1rem;"> <i class="bi bi-person me-2"></i>Informations Personnelles</h5>
+                </div>
+                <div class="card-body" style="font-size: 0.9rem;">
+                    <div class="d-flex flex-row mb-4 align-items-center">
+                        <div class="w-50">
+                            {% if etudiant.image %}
+                                <img src="{{ etudiant.image.url }}" alt="Profile Image" class="profile-img">
+                            {% else %}
+                                <img src="{% static 'Assets/profiles/defaultStudent1.jpeg' %}" alt="Default Profile" class="profile-img">
+                            {% endif %}
+                        </div>
+                        <div class="w-50">
+                            <p><strong>Nom :</strong> {{ etudiant.nom }}</p>
+                            <p><strong>Prénom :</strong> {{ etudiant.prenom }}</p>
+                        </div>
+                    </div>
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="text-danger my-2" id="message-{{ forloop.counter }}">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                    <p><strong>Email :</strong> {{ etudiant.email }}</p>
+                    <p><strong>Numéro Téléphone :</strong> {{ etudiant.telephone }}</p>
+                    <p><strong>Adresse :</strong> {{ etudiant.adresse }}</p>
+                    <p><strong>Année d'Inscription :</strong> {{ etudiant.annee_inscription }}</p>
+                    <p><strong>CNI :</strong> {{ etudiant.cni }}</p>
+                    <p><strong>CNE :</strong> {{ etudiant.cne }}</p>
+                    <p><strong>Date de Naissance :</strong> {{ etudiant.date_naissance|date:"d/m/Y" }}</p>
+                    <p><strong>Statut :</strong>
+                        <span class="badge {% if etudiant.statut == 'actif' %}bg-success{% elif etudiant.statut == 'suspendu' %}bg-warning{% else %}bg-secondary{% endif %} badge-status">
+                            {{ etudiant.get_statut_display }}
+                        </span>
+                    </p>
+                    
+                    <div class="text-center mt-4">
+                        <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
+                            Modifier le mot de passe
+                        </button>
+                    </div>
+                    <div class="text-end mt-5" >
+                        <a href="{% url 'etudiant_logout' %}" class="btn btn-logout rounded btn-sm px-2">
+                            <i class="fas fa-sign-out-alt"></i>Déconnection
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Academic Information -->
+            <div class="card w-100 ms-2 border border-0">
+                <div class="card-header bg-transparent text-dark">
+                    <h5  style="font-size: 1.1rem;"><i class="bi bi-mortarboard me-2"></i> Informations Académiques</h5>
+                </div>
+                <div class="card-body"  style="font-size: 0.9rem;">
+                    <p><strong>Groupe :</strong> {{ etudiant.groupe.nom }}</p>
+                    <p><strong>Spécialité :</strong> {{ etudiant.groupe.filiere.nom }}</p>
+                    <form method="get" class="mb-4">
+                        <label for="semester" class="form-label">Filter by Semester:</label>
+                        <select name="semester" id="semester" class="form-select" onchange="this.form.submit()">
+                            <option value="" {% if not selected_semester %}selected{% endif %}>All Semesters</option>
+                            {% for sem in semesters %}
+                                <option value="{{ sem }}" {% if selected_semester == sem %}selected{% endif %}>
+                                    {{ sem }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </form>
+                    
+                    <!-- Notes -->
+                    {% if notes %} 
+                        <h6>Votre Notes : {{ selected_semester }}</h6>
+                        
+                        <table class="table table-bordered mt-2" style="font-size: 0.8rem;font-family: 'Parkinsans';">
+                            <thead class="table-dark table-rounded">
+                                <tr>
+                                    <th>Module</th>
+                                    <th>Note DS</th>
+                                    <th>Note TP</th>
+                                    <th>Note Exam</th>
+                                    <th>Note Finale</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if etudiant.statut == 'suspendu'  %}
+                                    {% for note in notes %}
+                                        <tr>
+                                            <td>{{ note.module.nom }}</td>
+                                            <td>{{ note.note_ds }}</td>
+                                            <td>{{ note.note_tp }}</td>
+                                            <td>{{ note.note_exam }}</td>
+                                            <td>{{ note.note_finale }}</td>
+                                        </tr>
+                                    {% endfor %}                                    
+                                {% else %}
+                                        <tr class="text-center">
+                                            <th colspan="5" class="text-danger">Vous êtes suspendu. <i class="bi bi-sign-stop-fill ms-2"></i></th>
+                                        </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <p>Aucune note disponible.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+
+    </div>
+    <!-- Password Change Modal -->
+<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="change_password" value="1">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="changePasswordModalLabel">Modifier le mot de passe</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="new_password" class="form-label">Nouveau mot de passe</label>
+                        <input type="password" name="new_password" id="new_password" class="form-control" placeholder="Entrez votre nouveau mot de passe" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="confirm_password" class="form-label">Confirmer le mot de passe</label>
+                        <input type="password" name="confirm_password" id="confirm_password" class="form-control" placeholder="Confirmez le mot de passe" required>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Changer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            setTimeout(() => {
+                const messages = document.querySelectorAll('[id^="message-"]');
+                messages.forEach((msg) => {
+                    msg.parentNode.removeChild(msg);
+                });
+            }, 8000);  // Automatically remove messages after 10 seconds
+        });
+    </script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+</body>
+</html>

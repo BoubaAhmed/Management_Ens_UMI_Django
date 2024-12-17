@@ -1,12 +1,77 @@
-{% extends 'base.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %} <!-- Enables static tag functionality -->
+    <title>Connexion | École Normale Supérieure Meknès</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Lato:wght@400;700&family=Parkinsans:wght@400;700&family=Playfair+Display:wght@400;700&family=Raleway:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+        /* Custom Animation for Fade-in Effect */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+    
+        .btn {
+            transition: transform 0.2s;
+        }
+        .btn:hover {
+            transform: scale(1.05);
+        }
+    
+        .btn:active {
+            transform: scale(0.95);
+        }
+    
+        .card {
+            transition: 0.3s ease-in-out;
+        }
+        .card:hover {
+            transform: scale(1.02);
+        }
+    
+        .form-control {
+            transition: 0.2s;
+        }
+        .form-control:focus {
+            border-color: #22177A;
+            box-shadow: 0 0 5px #22177A;
+        }
+        .position-relative {
+            position: relative;
+        }
+    
+        #togglePassword {
+            position: absolute;
+            font-size: 1rem;
+            top: 75%;
+            right: 10px;
+            transform: translateY(-50%);
+            color: #888;
+            cursor: pointer;
+        }
 
-{% block title %}Login{% endblock %}
+        #togglePassword:hover {
+            color: #000;
+        }
+    </style>
+</head>
+<body>
 
-{% block content %}
-<div class="d-flex align-items-center justify-content-center bg-transparent " style="margin: 5rem 0 0;">
-    <div class="card shadow-lg rounded-3 p-4" style="width: 100%; max-width: 400px; margin: 1rem;">
-        <h2 class="text-center mb-4 text-dark">Login </h2>
-
+<div class="d-flex align-items-center justify-content-center min-vh-100 bg-transparent">
+    <div class="card shadow-lg rounded-3 p-4 py-5 border border-0" style="width: 100%; max-width: 400px; margin: 1rem; animation: fadeIn 1s ease-in-out;font-family: 'Parkinsans';">
+        <img src="{% static '/Assets/Images/logo.png' %}" width="100" class="w-50 mx-auto mb-4" alt="">
         {% if messages %}
             {% for message in messages %}
                 <div class="alert alert-danger">
@@ -15,36 +80,56 @@
             {% endfor %}
         {% endif %}
 
-        <form method="POST" class="needs-validation" novalidate>
+        <form method="POST" class="needs-validation py-2" novalidate>
             {% csrf_token %}
 
             <!-- Username Field -->
             <div class="mb-3">
-                <label for="username" class="form-label text-dark">Username</label>
-                <input id="username" name="username" type="text" class="form-control" placeholder="Enter your username" required>
+                <label for="username" class="form-label text-dark">
+                    <i class="bi bi-person-circle me-2"></i> Email
+                </label>
+                <input id="username" name="username" type="text" class="form-control" placeholder="Entrez votre adresse email" required>
             </div>
 
             <!-- Password Field -->
-            <div class="mb-3">
-                <label for="password" class="form-label text-dark">Password</label>
-                <input id="password" name="password" type="password" class="form-control" placeholder="Enter your password" required>
+            <div class="mb-3 position-relative">
+                <label for="password" class="form-label text-dark">
+                    <i class="fas fa-lock me-2"></i> Password
+                </label>
+                <input id="password" name="password" type="password" class="form-control" placeholder="Entrez votre mot de passe" required>
+                <span id="togglePassword" class="position-absolute translate-middle-y">
+                    <i class="fas fa-eye"></i>
+                </span>
             </div>
+            <p style="color: #b8b6b6;font-size: 0.8rem;">Cliquez sur l'icône avec l'œil pour afficher ou masquer votre mot de passe.</p>
 
-            <!-- Forgot Password -->
-            <div class="mb-3 d-flex justify-content-between">
-                <a href="#" class="text-primary text-decoration-none small">Forgot Password?</a>
-            </div>
-
+ 
             <!-- Login Button -->
-            <button type="submit" class="btn btn-primary w-100 py-2 mt-2">
-                Login
+            <button type="submit" class="btn  w-100 py-2 mb-2 mt-2" style="background-color: #1C325B; color:#fff; ">
+                <i class="fas fa-sign-in-alt me-2"></i> Connexion
             </button>
+            <a href="{% url 'home' %}" class="text-success m-2" style="text-decoration: none;position: absolute;bottom: 0;left: 0;">
+                <i class="fas fa-arrow-left"></i> Accueil
+            </a>
+            <a href="{% url 'etudiant_login' %}" class="text-success m-2" style="text-decoration: none;position: absolute;bottom: 0;right: 0;">
+                <i class="fas fa-arrow-right"></i> Etudiant
+            </a>
         </form>
 
-        <p class="text-center mt-3 small text-muted">
-            Don't have an account? 
-            <a href="#" class="text-primary text-decoration-none">Sign up</a>
-        </p>
     </div>
 </div>
-{% endblock %}
+    
+<script>
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordField = document.getElementById('password');
+
+    togglePassword.addEventListener('click', function () {
+        // Toggle the password field type
+        const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordField.setAttribute('type', type);
+
+        // Toggle the eye icon
+        this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+    });
+</script>
+</body>
