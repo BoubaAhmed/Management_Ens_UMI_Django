@@ -7,22 +7,18 @@ from django.db.models import Q, Avg
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
-# Construct the path to the intents.json file
 intents_path = os.path.join(current_dir, 'intents.json')
 
-# Load the JSON file
 with open(intents_path, 'r', encoding='utf-8') as file:
     intents = json.load(file)["intents"]
 
-# Function to match the user message with an intent
 def match_intent(user_message):
     for intent in intents:
         for pattern in intent["patterns"]:
             if pattern.lower() in user_message:
                 return intent
-    return None  # Default to unknown if no match is found
+    return None  
 
-# The chatbot response view
 def chatbot_response(request):
     if request.method == 'POST':
         user_message = request.POST.get('message', '').lower()
@@ -33,9 +29,6 @@ def chatbot_response(request):
 
         tag = matched_intent["tag"]
 
-        # Handle dynamic intents based on the tag
-
-        # 1. Get the number of students in a Filiere
         if tag == "students_in_filiere":
             filiere_name = user_message.split("filiere")[-1].strip()
             if not filiere_name:

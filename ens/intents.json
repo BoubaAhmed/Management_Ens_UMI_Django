@@ -2,8 +2,8 @@
     "intents": [
         {
             "tag": "greeting",
-            "patterns": ["hello", "hi", "hey", "greetings", "what's up", "good day", "good morning", "good afternoon"],
-            "responses": ["Hello!", "Hi there!", "Greetings!", "How can I assist you today?"]
+            "patterns": ["salam","wafin","labas","hello", "hi", "hey", "greetings", "what's up", "good day", "good morning", "good afternoon"],
+            "responses": ["Hello!", "Hi there!", "Greetings!", "How can I assist you today?","Salam labas elik !", "Asalamu alaikum kidayr!"]
         },
         {
             "tag": "goodbye",
