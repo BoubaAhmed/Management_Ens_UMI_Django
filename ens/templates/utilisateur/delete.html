@@ -1,12 +1,133 @@
 <!-- templates/utilisateur/utilisateur_confirm_delete.html -->
 {% extends 'core/base_dashboard.html' %}
 
+{% block style %}
+<style>
+    /* Confirmation Modal - CSS */
+    .confirmation-container-user {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.3);  /* Dark background */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        opacity: 0;
+        animation: fadeIn 0.5s forwards;
+    }
+
+    /* Fade-in animation */
+    @keyframes fadeIn {
+        0% {
+            opacity: 0;
+        }
+        100% {
+            opacity: 1;
+        }
+    }
+
+    .confirmation-container-user .confirmation-box {
+        background: #fff;
+        border-radius: 8px;
+        padding: 30px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        transform: translateY(-50px);
+        animation: slideUp 0.5s ease-out forwards;
+    }
+
+    /* Slide-up animation */
+    @keyframes slideUp {
+        0% {
+            transform: translateY(-50px);
+            opacity: 0;
+        }
+        100% {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    .confirmation-container-user .confirmation-title {
+        font-size: 24px;
+        margin-bottom: 15px;
+        color: #333;
+    }
+
+    .confirmation-container-user .confirmation-message {
+        font-size: 18px;
+        margin-bottom: 30px;
+        color: #555;
+    }
+
+    .confirmation-container-user .button-group {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    .confirmation-container-user .btn {
+        padding: 10px 20px;
+        border: none;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+        width: 48%;
+    }
+
+    /* Confirm button style */
+    .confirmation-container-user .btn-confirm {
+        background-color: #28a745;
+        color: #fff;
+        box-shadow: 0 4px 6px rgba(40, 167, 69, 0.2);
+    }
+
+    .confirmation-container-user .btn-confirm:hover {
+        background-color: #218838;
+        transform: scale(1.05);
+    }
+
+    .confirmation-container-user .btn-confirm:active {
+        transform: scale(0.98);
+    }
+
+    /* Cancel button style */
+    .confirmation-container-user .btn-cancel {
+        background-color: #dc3545;
+        color: #fff;
+        box-shadow: 0 4px 6px rgba(220, 53, 69, 0.2);
+    }
+
+    .confirmation-container-user .btn-cancel:hover {
+        background-color: #c82333;
+        transform: scale(1.05);
+    }
+
+    .confirmation-container-user .btn-cancel:active {
+        transform: scale(0.98);
+    }
+
+</style>
+{% endblock %}
+
 {% block content %}
-<h2>Confirmation de Suppression</h2>
-<p>Voulez-vous vraiment supprimer {{ utilisateur.nom }} {{ utilisateur.prenom }} ?</p>
-<form method="POST">
-    {% csrf_token %}
-    <button type="submit">Confirmer</button>
-    <a href="{% url 'utilisateur_list' %}">Annuler</a>
-</form>
+    <div class="confirmation-container-user">
+        <div class="confirmation-box">
+            <h2 class="confirmation-title">Confirmation de Suppression</h2>
+            <p class="confirmation-message">
+                Voulez-vous vraiment supprimer {{ utilisateur.nom }} {{ utilisateur.prenom }} ?
+            </p>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="button-group">
+                    <button type="submit" class="btn btn-confirm">Confirmer</button>
+                    <a href="{% url 'utilisateur_list' %}" class="btn btn-cancel">Annuler</a>
+                </div>
+            </form>
+        </div>
+    </div>
 {% endblock %}

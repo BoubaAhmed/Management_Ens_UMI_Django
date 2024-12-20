@@ -2,8 +2,9 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from .models import Slide, Article
 from django.db.models import Count, Avg
-from ens.models import Utilisateur, Etudiant, Filiere, Module, Note
-from django.db.models import Count, Avg
+from ens.models import Utilisateur, Etudiant, Filiere, Module, Note, Groupe
+from django.db.models import Count, Avg,Max, Sum, F
+from datetime import datetime
 
 def home_view(request):
     slides = Slide.objects.all()
@@ -55,44 +56,60 @@ def articles_view(request):
 @login_required
 def dashboard_view(request):
     # ---------------------- Statistiques des utilisateurs ----------------------
-    total_users = Utilisateur.objects.count()
+    total_users = Utilisateur.objects.filter(is_superuser=False).count()
     encadrants_count = Utilisateur.objects.filter(is_encadrant=True).count()
-    enseignants_count = Utilisateur.objects.filter(is_enseignant=True).count()
+    enseignants_count = Utilisateur.objects.filter(is_enseignant=True, is_encadrant=False).count()
 
     # ---------------------- Statistiques des étudiants ----------------------
     total_students = Etudiant.objects.count()
     students_by_status = Etudiant.objects.values('statut').annotate(count=Count('id'))
 
+    # Get the number of students and users per year (last 5 years)
+    current_year = datetime.now().year
+    years = [current_year - i for i in range(5)]
+
+    students_per_year = []
+    for year in years:
+        students_per_year.append(
+            Etudiant.objects.filter(created_at__year=year).count()
+        )
+
+    users_per_year = []
+    for year in years:
+        users_per_year.append(
+            Utilisateur.objects.filter(created_at__year=year, is_superuser=False).count()
+        )
+
+    # ---------------------- Top-performing students by Filière ----------------------
+    top_five_etudiants = Etudiant.objects.annotate(
+        total_grade=Sum(F('note__note_finale'))
+    ).order_by('-total_grade')[:5]
+
     # ---------------------- Statistiques des Modules ----------------------
-    modules_by_semester_by_filiere = (
-        Module.objects.values('semestre', 'filiere__nom')
-        .annotate(module_count=Count('id'))
-        .order_by('semestre', 'filiere__nom')
-    )
+    # ---------------------- Filtrer par Semestre ----------------------
+    semester_filter = request.GET.get('semester', None)
+    if semester_filter:
+        modules_by_semester_by_filiere = (
+            Module.objects.filter(semestre=semester_filter)
+            .values('semestre', 'filiere__nom')
+            .annotate(module_count=Count('id'))
+            .order_by('semestre', 'filiere__nom')
+        )
+    else:
+        modules_by_semester_by_filiere = (
+            Module.objects.values('semestre', 'filiere__nom')
+            .annotate(module_count=Count('id'))
+            .order_by('semestre', 'filiere__nom')
+        )
+
     # ---------------------- Moyennes des Notes et Performance ----------------------
     avg_notes_per_module = Note.objects.values('module__nom').annotate(avg_finale=Avg('note_finale'))
-    avg_notes_per_module_per_filiere = (
-    Note.objects.values('module__nom', 'module__filiere__nom')
-    .annotate(avg_finale=Avg('note_finale')) 
-    .order_by('module__filiere__nom', 'module__nom')
-)
 
+    filiere_statistics = Filiere.objects.annotate(student_count=Count('groupe__etudiant'))
 
     # ---------------------- Autres statistiques ----------------------
     total_filiere = Filiere.objects.count()
-
-    try:
-        total_slides = Slide.objects.count()
-    except:
-        total_slides = 0
-
-    try:
-        total_articles = Article.objects.count()
-        latest_article = Article.objects.filter(is_published=True).order_by('-published_date').first()
-    except:
-        total_articles = 0
-        latest_article = None
-
+    semestres = Module.objects.values_list('semestre', flat=True).distinct()
 
     context = {
         'total_users': total_users,
@@ -102,12 +119,13 @@ def dashboard_view(request):
         'students_by_status': list(students_by_status),
         'modules_by_semester_by_filiere': modules_by_semester_by_filiere,
         'avg_notes_per_module': list(avg_notes_per_module),
-        'avg_notes_per_module_per_filiere': list(avg_notes_per_module_per_filiere),
+        'filiere_statistics': filiere_statistics,
         'total_filiere': total_filiere,
-        'total_slides': total_slides,
-        'total_articles': total_articles,
-        'latest_article': latest_article
+        'semestres': semestres,
+        'top_five_etudiants': top_five_etudiants,
+        'students_per_year': students_per_year,
+        'users_per_year': users_per_year,
+        'years': years, 
     }
 
-    
     return render(request, 'core/dashboard.html', context)

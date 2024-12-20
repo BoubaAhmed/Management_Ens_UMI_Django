@@ -96,6 +96,7 @@
             <thead class="table-light">
                 <tr>
                     <th>Nom</th>
+                    <th>Enseignant</th>
                     <th>Filière</th>
                     <th>Semestre</th>
                     <th>Actions</th>
@@ -105,6 +106,7 @@
                 {% for item in modules_data %}
                     <tr>
                         <td>{{ item.module.nom }}</td>
+                        <td>{{ item.module.enseignant }}</td>
                         <td>{{ item.module.filiere.nom }}</td>
                         <td>{{ item.module.semestre }}</td>
                         <td class="text-center">

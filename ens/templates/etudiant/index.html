@@ -97,7 +97,14 @@
                     <tbody>
                         {% for etudiant in etudiants %}
                             <tr>
-                                <td>{{ etudiant.nom }} {{ etudiant.prenom }}</td>
+                                <td>
+                                    {% if etudiant.image %}
+                                        <img src="{{ etudiant.image.url }}" alt="" class="rounded-circle me-2" style="border: 3px solid rgb(94, 255, 0);" width="30" height="30">
+                                    {% else %}
+                                        <i class="bi bi-person-circle me-2 h4" ></i>
+                                    {% endif %}
+                                    {{ etudiant.nom }} {{ etudiant.prenom }}
+                                </td>
                                 <td>{{ etudiant.email }}</td>
                                 <td>{{ etudiant.telephone }}</td>
                                 <td>{{ etudiant.cne }}</td>

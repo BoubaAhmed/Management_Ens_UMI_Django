@@ -25,9 +25,11 @@
     }
 
     .dashboard .staticCards .card:hover {
-        transform: scale(1.04) rotateY(5deg) rotateX(5deg);
+        transform: scale(1.02) rotateY(5deg) rotateX(5deg);
         box-shadow: 0 12px 20px rgba(0, 0, 0, 0.4);
         cursor: all-scroll;
+        background: linear-gradient(90deg, #f7f7f7, #C5D3E8);
+
     }
 
     .icon-3d {
@@ -107,7 +109,12 @@
     .text-primary {
         font-weight: 600;
     }
-    
+    canvas {
+        -webkit-transition: all 0.5s ease;
+        -moz-transition: all 0.5s ease;
+        -ms-transition: all 0.5s ease;
+        transition: all 0.5s ease;
+    }
 </style>
 
 {% endblock %}
@@ -115,7 +122,7 @@
 {% block content %}
 <div class="container mt-3 dashboard">
 
-    <div class="row staticCards  p-2">
+    <div class="row staticCards  ">
         <!-- Total des Utilisateurs -->
         <div class="col-md-3 ">
             <div class="card  shadow p-2">
@@ -163,15 +170,21 @@
     <div class="row">
         <div class="col">
             <!-- Graphique des Utilisateurs -->
-            <div class="card mt-4 p-4 rounded">
-                <h5>Statistiques des Utilisateurs</h5>
+            <div class="card mt-4 p-4 rounded border-0">
+                <h5 class="" style="font-size: 1.1em;color: #4335A7; font-family: 'Parkinsans', sans-serif;">
+                    <i class="bi bi-person-lines-fill" style=" margin-right: 8px;"></i> <!-- Bootstrap icon for users -->
+                    Statistiques des Utilisateurs
+                </h5>
                 <canvas id="usersChart"></canvas>
             </div>
         </div>
         <div class="col">
                 <!-- Moyenne des Notes des Modules -->
-                <div class="card mt-4 p-4 rounded">
-                    <h5>Performance Moyenne des Modules</h5>
+                <div class="card mt-4 p-4 rounded border-0">
+                    <h5 class="" style="font-size: 1.1em; color: #4335A7; font-family: 'Parkinsans', sans-serif;">
+                        <i class="bi bi-bar-chart-line-fill" style="margin-right: 8px;"></i> <!-- Bootstrap icon for performance -->
+                        Performance Moyenne des Modules
+                    </h5>                    
                     <canvas id="notesChart"></canvas>
                 </div>
         </div>
@@ -180,17 +193,40 @@
     <!-- Section des modules et notes -->
     <div class="row mt-4">
         <div class="col-md-6">
-            <div class="card bg-light p-4 shadow-sm rounded border-0">
-                <h5 class="text-primary mb-4">Modules par Semestre et Filière</h5>
+            <div class="card  p-4 shadow-sm rounded border-0">
+                <div class="row align-items-start justify-content-between mb-4">
+                    <!-- Title on the left -->
+                    <div class="col-auto">
+                        <h5 class="" style="font-size: 1.1em; color: #4335A7; font-family: 'Parkinsans', sans-serif;">
+                            <i class="bi bi-journal-bookmark-fill" style="margin-right: 8px;"></i> <!-- Bootstrap icon added -->
+                            Modules par Semestre et Filière
+                        </h5>
+                    </div>
+                
+                    <!-- Semester Filter Form on the right -->
+                    <div class="col ms-auto">
+                        <form method="get" action="{% url 'dashboard' %}" id="semester-filter-form">
+                            <div class="mb-3">
+                                <select id="semester_filter" name="semester" onchange="document.getElementById('semester-filter-form').submit()" class="form-select ms-auto p-1 border border-dark shadow shadow-sm">
+                                    <option value="">Tous les Semestres</option>
+                                    {% for semester in semestres %}
+                                        <option value="{{ semester }}"  {% if semester == request.GET.semester %}selected{% endif %}>{{ semester }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+        
                 {% if modules_by_semester_by_filiere %}
                     <ul class="list-group">
                         {% for module in modules_by_semester_by_filiere %}
                             <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <span>
-                                    <strong>{{ module.semestre }}</strong> - 
-                                    <em>{{ module.filiere__nom }}</em>
+                                <span class="w-50" style="font-family: 'Parkinsans', sans-serif;">
+                                    {{ module.filiere__nom }}
                                 </span>
-                                <span class="badge bg-primary rounded-pill">
+                                <span class="badge bg-success text-light rounded-pill">
                                     {{ module.module_count }} modules
                                 </span>
                             </li>
@@ -206,56 +242,75 @@
         
         
         
-
         <div class="col-md-6">
-            <div class="card bg-light p-4">
-                <h5>Moyenne des Notes par Module et Filière</h5>
-                {% if avg_notes_per_module_per_filiere %}
-                    <ul>
-                        {% for data in avg_notes_per_module_per_filiere %}
-                            <li>
-                                <strong>Filière: {{ data.module__filiere__nom }}</strong> -
-                                Module: {{ data.module__nom }} - 
-                                Moyenne: {{ data.avg_finale|floatformat:2 }}
-                            </li>
-                        {% endfor %}
-                    </ul>
-                {% else %}
-                    <p>Aucune note disponible.</p>
-                {% endif %}
+            <div class="card  p-4 border-0">
+                <h5 class="" style="font-size: 1.1em;color: #4335A7;font-family: 'Parkinsans',sans-serif;">
+                    <i class="bi bi-person-fill" style=" margin-right: 8px;"></i>
+                    Nombre d'Étudiants par Filière
+                </h5>
+                <canvas id="filiereChart"></canvas>
             </div>
         </div>
+        
         
     </div>
 
     <!-- Section des articles et slides -->
     <div class="row mt-4">
         <div class="col-md-6">
-            <div class="card bg-secondary text-white p-4">
-                <h5>Articles Disponibles</h5>
-                <p>Total : {{ total_articles }}</p>
-                {% if latest_article %}
-                    <p><strong>Dernier article publié :</strong> {{ latest_article.title }}</p>
-                {% endif %}
+            <div class="card shadow  p-4 border-0">
+                <h5 class="" style="font-size: 1.1em;color: #4335A7;font-family: 'Parkinsans',sans-serif;">
+                    <i class="bi bi-bar-chart" style=" margin-right: 8px;"></i>
+                    Distribution des Étudiants par Statut
+                </h5>
+                <canvas id="studentsChart" style="max-height: 200px;"></canvas>
             </div>
         </div>
 
         <div class="col-md-6">
-            <div class="card bg-dark text-white p-4">
-                <h5>Slides Disponibles</h5>
-                <p>Total : {{ total_slides }}</p>
+            <div class="card shadow p-4 border-0">
+                <h5 class="" style="font-size: 1.1em;color: #4335A7;font-family: 'Parkinsans',sans-serif;">
+                    <i class="bi bi-person-fill" style=" margin-right: 8px;"></i>
+                    Top 3 Performing Students per Filière
+                </h5>
+                <table class="border-0  table table-rounded  mt-3 " style="font-size: 0.85rem; ">
+                    <thead >
+                        <tr >
+                            <th class="text-light" style="background-color: #4DA1A9;">Name</th>
+                            <th class="text-light" style="background-color: #4DA1A9;">Total Grade</th>
+                        </tr>
+                    </thead>
+                    <tbody >
+                        {% for etudiant in top_five_etudiants %}
+                        <tr>
+                            <td>
+                                {% if etudiant.image %}
+                                    <img src="{{ etudiant.image.url }}" alt="" class="rounded-circle me-2" style="border: 3px solid rgb(94, 255, 0);" width="30" height="30">
+                                {% else %}
+                                    <i class="bi bi-person-circle me-2 h4" ></i>
+                                {% endif %}
+                            {{ etudiant.nom }} {{ etudiant.prenom }}</td>
+                            <td>{{ etudiant.total_grade }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+              
+            </div>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card shadow  p-4 border-0">
+                <h5 class="" style="font-size: 1.1em;color: #4335A7;font-family: 'Parkinsans',sans-serif;">
+                    <i class="bi bi-graph-up-arrow " style=" margin-right: 8px;"></i>
+                    Comparaison des données annuelles
+                </h5>
+                <canvas id="myChart" style="max-height: 300px;"></canvas>
             </div>
         </div>
     </div>
 
-
-
-
-    <!-- Graphique des Étudiants par Statut -->
-    <div class="card mt-4 p-4 rounded">
-        <h5>Distribution des Étudiants par Statut</h5>
-        <div class="chart-container"><canvas id="studentsChart"></canvas></div>
-    </div>
 </div>
 
 
@@ -271,40 +326,80 @@
     new Chart(ctxUsers, {
         type: 'bar',
         data: {
-            labels: ['Total', 'Encadrants', 'Enseignants'],
+            labels: ['Total', 'Encadrants', 'Enseignants', 'Etudiants'],
             datasets: [{
                 label: 'Utilisateurs',
-                data: [{{ total_users }}, {{ encadrants_count }}, {{ enseignants_count }}],
-                backgroundColor: ['#007BFF', '#28A745', '#17A2B8']
+                data: [{{ total_users }}, {{ encadrants_count }}, {{ enseignants_count }}, {{ total_students }}],
+                backgroundColor: ['#074799', '#9ABF80', '#6A669D', '#6A669D'],
+                borderRadius: 10,
+                barPercentage: 0.7,
             }]
+        },
+        options: {
+            plugins: {
+                legend: {
+                    display: false,
+                },
+            }
         }
     });
 
-    // Graphique des étudiants par statut (Pie Chart)
-    const ctxStudents = document.getElementById('studentsChart').getContext('2d');
+// Graphique des étudiants par statut (Pie Chart)
+const ctxStudents = document.getElementById('studentsChart').getContext('2d');
 
-    const studentsLabels = [
-        {% for student in students_by_status %}
-            '{{ student.statut }}'{% if not forloop.last %},{% endif %}
-        {% endfor %}
-    ];
+// Data for the pie chart
+const studentsLabels = [
+    {% for student in students_by_status %}
+        '{{ student.statut }}'{% if not forloop.last %},{% endif %}
+    {% endfor %}
+];
 
-    const studentsData = [
-        {% for student in students_by_status %}
-            {{ student.count }}{% if not forloop.last %},{% endif %}
-        {% endfor %}
-    ];
+const studentsData = [
+    {% for student in students_by_status %}
+        {{ student.count }}{% if not forloop.last %},{% endif %}
+    {% endfor %}
+];
 
-    new Chart(ctxStudents, {
-        type: 'pie',
-        data: {
-            labels: studentsLabels,
-            datasets: [{
-                data: studentsData,
-                backgroundColor: ['#FFC107', '#FF5722', '#9C27B0', '#673AB7']
-            }]
+// Create the chart with smooth animations and enhanced styling
+new Chart(ctxStudents, {
+    type: 'pie',
+    data: {
+        labels: studentsLabels,
+        datasets: [{
+            data: studentsData,
+            backgroundColor: ['#982B1C', '#387478', '#9C27B0', '#673AB7'],
+            hoverBackgroundColor: ['#800000', '#243642', '#D81B60', '#512DA8'],
+            borderWidth: 2
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'left',
+                labels: {
+                    font: {
+                        size: 14
+                    },
+                    padding: 20
+                }
+            },
+            tooltip: {
+                enabled: true,
+                callbacks: {
+                    label: function(tooltipItem) {
+                        return tooltipItem.label + ': ' + tooltipItem.raw + ' Étudiants';
+                    }
+                }
+            }
+        },
+        animation: {
+            duration: 1000, // Smooth animation
+            easing: 'easeOutBounce' // Bounce effect
         }
-    });
+    }
+});
+
 
     // Graphique des Moyennes des Modules (Line Chart)
     const ctxNotes = document.getElementById('notesChart').getContext('2d');
@@ -328,12 +423,118 @@
             labels: moduleLabels,
             datasets: [{
                 label: 'Moyenne des Notes',
-                backgroundColor: '#FF5722',
-                borderColor: '#FF5722',
+                backgroundColor: 'rgba(255, 87, 34, 0.2)', // Semi-transparent fill
+                borderColor: '#FF5722', // Line color
+                pointBackgroundColor: '#FF5722', // Point color
+                pointBorderColor: '#FFFFFF', // Point border
+                pointRadius: 5, // Point size
+                pointHoverRadius: 7, // Hover size
+                borderWidth: 2, // Line width
+                tension: 0.4, // Smoothness of the line (0 for straight lines, closer to 1 for smoother curves)
                 data: avgNotesData,
-                fill: false
+                fill: true // Fill the area under the line
             }]
+        },
+        options: {
+            plugins: {
+                legend: {
+                    display: false,
+                }
+            }
+        }    
+    });
+
+
+    const data = {
+        labels: [{% for filiere in filiere_statistics %}"{{ filiere.nom }}",{% endfor %}],
+        datasets: [{
+            label: 'Number of Students',
+            data: [{% for filiere in filiere_statistics %}{{ filiere.student_count }},{% endfor %}],
+            backgroundColor: ['#1F509A', '#FF5722', '#9C27B0', '#673AB7'],
+            borderWidth: 0,
+            borderRadius: 5
+        }]
+    };
+    
+    const config = {
+        type: 'bar', // Bar chart type
+        data: data,
+        options: {
+            indexAxis: 'y', // This makes the bar chart horizontal
+            responsive: true,
+            scales: {
+                x: {
+                    beginAtZero: true // Ensure the bars start from zero on the x-axis
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false,
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(tooltipItem) {
+                            return tooltipItem.label + ': ' + tooltipItem.raw + ' students';
+                        }
+                    }
+                }
+            }
+        }
+    };
+    
+    const filiereChart = new Chart(
+        document.getElementById('filiereChart'),
+        config
+    );
+    
+
+   
+</script>
+<script>
+    var ctxSU = document.getElementById('myChart').getContext('2d');
+    var myChart = new Chart(ctxSU, {
+        type: 'line',  // Set the chart type to 'line'
+        data: {
+            labels: [
+                {% for year in years reversed %}  <!-- Reverse the order of years -->
+                    "{{ year }}", 
+                {% endfor %}
+            ],  // X-axis: years, reversed order
+            datasets: [{
+                label: 'Number of Students',
+                data: [
+                    {% for students in students_per_year reversed %}  <!-- Reverse the order of students data -->
+                        {{ students }},
+                    {% endfor %}
+                ],  // Y-axis: students per year
+                borderColor: 'rgba(75, 192, 192, 1)',  // Line color for students
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',  // Fill color under the line
+                fill: true,
+                tension: 0.4  // Smooth the line curve
+            }, {
+                label: 'Number of Users',
+                data: [
+                    {% for users in users_per_year reversed %}  <!-- Reverse the order of users data -->
+                        {{ users }},
+                    {% endfor %}
+                ],  // Y-axis: users per year
+                borderColor: 'rgba(153, 102, 255, 1)',  // Line color for users
+                backgroundColor: 'rgba(153, 102, 255, 0.2)',  // Fill color for users line
+                fill: true,
+                tension: 0.4  // Smooth the line curve
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true  // Set the Y-axis to start from 0
+                },
+                x: {
+                    reverse: false  // Make sure the X-axis starts from the left
+                }
+            }
         }
     });
 </script>
+
 {% endblock %}
