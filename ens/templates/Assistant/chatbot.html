@@ -2,218 +2,370 @@
 {% extends 'core/base_dashboard.html' %}
 
 {% block style %}
-
 <style>
     /* Chat container */
-#chat-container {
-    max-width: 90%;
-    height: 87vh;
-    background-color: transparent;
-    margin: 0 auto;
-    overflow: hidden;
-    display: flex;
-    justify-content: space-between;
-    flex-direction: row;
-}
-#chat-container #slide1{
-    width: 30%;
-    background-color: none;
-}
-#chat-container #slide2 {
-    width: 70%;
-    margin: 0.5rem 2rem;
-    border-radius: 12px;
-    transition: all 0.3s ease-in-out; /* Smooth transition effect for resizing and color changes */
-    padding: 10px;
-    overflow: hidden;
-    transform-origin: center;
-}
+    #chat-container {
+        max-width: 90%;
+        height: 88vh;
+        background-color: transparent;
+        margin: 0 auto;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
 
-/* Animation effect */
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
     }
-    to {
-        opacity: 1;
-        transform: translateY(0);
+
+    /* Logo container */
+    #logo-container {
+        text-align: center;
+        font-size: 1.4rem; /* Larger text size for logo appearance */
+        font-weight: bold; /* Make the text bold */
+        color: transparent; /* Set text color to transparent so gradient is visible */
+        background-image: linear-gradient(45deg, #ff7e5f, #feb47b, #06b6d4, #062fa2, #00c6ff);
+        background-size: 400% 400%; /* Larger background size for smooth gradient movement */
+        -webkit-background-clip: text; /* Clip the gradient to the text */
+        background-clip: text; /* Clip the gradient to the text */
+        letter-spacing: 2px; /* Space between letters for a more distinct look */
+        font-family: 'Parkinsans'; /* Modern font style */
+        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+        animation: gradientAnimation 5s ease infinite; /* Apply the gradient animation */
     }
-}
 
-/* Apply animation when the element is loaded */
-#chat-container #slide2 {
-    animation: slideIn 0.6s ease-out;
-}
+    /* Keyframes for gradient animation */
+    @keyframes gradientAnimation {
+        0% {
+            background-position: 0% 50%;
+        }
+        50% {
+            background-position: 100% 50%;
+        }
+        100% {
+            background-position: 0% 50%;
+        }
+    }
 
+    
 
-/* Chat window */
-#chat-window {
-    height: 92%;
-    width: 80%;
-    overflow-y: scroll;
-    padding: 15px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
+    /* Chat window */
+    #chat-window {
+        height: 95%;
+        overflow-y: scroll;
+        padding: 15px;
+        width: 80%;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        font-family: 'Parkinsans',sans-serif;
+    }
 
-/* Messages */
-.message {
-    padding: 15px;
-    border-radius: 10px;
-    word-break: break-word;
-    max-width: 70%;
-    line-height: 1.5;
-    transition: transform 0.2s ease-in-out, opacity 0.5s ease;
-}
+    /* Messages */
+    .message {
+        padding: 10px 15px;
+        border-radius: 10px;
+        word-break: break-word;
+        max-width: 70%;
+        line-height: 1.5;
+        transition: transform 0.2s ease-in-out, opacity 0.5s ease;
+    }
 
-/* User messages */
-.user-message {
-    background-color: #6A669D;
-    align-self: flex-end;
-    text-align: right;
-    border-bottom-right-radius: 0;
-    width: max-content;
-    margin-left: auto;
-}
+    /* User messages */
+    .user-message {
+        background-color: #dfdfdf;
+        color: #000000;
+        align-self: flex-end;
+        text-align: right;
+        border-radius: 15px;
+        width: max-content;
+        margin-left: auto;
+    }
 
-/* Bot messages */
-.bot-message {
-    background-color: transparent;
-    align-self: flex-start;
-    text-align: left;
-    color: #000;
-    border-bottom-left-radius: 0;
-    margin-right: auto;
-}
+    /* Bot messages */
+    .bot-message {
+        background-color: transparent;
+        align-self: flex-start;
+        text-align: left;
+        color: #000;
+        border-bottom-left-radius: 0;
+        margin-right: auto;
+    }
 
-/* Timestamps in messages */
-.message span {
-    font-size: 0.8em;
-    color: #888;
-    margin-left: 5px;
-}
+    /* Timestamps in messages */
+    .message span {
+        font-size: 0.8em;
+        color: #888;
+        margin-left: 5px;
+    }
 
-/* Chat input container */
-#chat-input-container {
-    display: flex;
-    align-items: center;
-    height: 8%;
-    margin: 0 auto;
-    border-radius: 10px;
-    background-color: #D7D3BF;
-    width: 60%;
-    box-sizing: border-box;
-    padding: 10px;
-}
+    /* Chat input container */
+    #chat-input-container {
+        display: flex;
+        align-items: center;
+        height: auto;
+        margin: 0 auto;
+        border-radius: 10px;
+        background-color: #B7B7B7;
+        width: 60%;
+        box-sizing: border-box;
+        padding: 8px;
+    }
 
-/* Chat input field */
-#chat-input {
-    width: 95%;
-    background-color: transparent;
-    border: none;
-    border-radius: 8px;
-    outline: none;
-}
+    /* Chat input field */
+    #chat-input {
+        width: 95%;
+        background-color: transparent;
+        border: none;
+        border-radius: 8px;
+        outline: none;
+    }
 
-/* Send button */
-#send-btn {
-    background-color: #2A3335;
-    color: white;
-    font-weight: bold;
-    font-size: 15px;
-    border: none;
-    border-radius: 50%;
-    cursor: pointer;
-    margin-left: 10px;
-    transition: 0.3s;
-}
-.default-questions {
-    display: flex;
-    flex-wrap: wrap; /* Allows wrapping to next line */
-    gap: 10px; /* Space between buttons */
-    margin-top: 20px;
-}
-.default-questions button {
-    flex: 1 1 auto; /* Allow buttons to grow and shrink */
-    min-width: 150px; /* Set a minimum width for buttons */
-    padding: 10px;
-    border: none;
-    background-color: #007bff;
-    color: white;
-    border-radius: 5px;
-    cursor: pointer;
-    text-align: center;
-}
-.default-questions button:hover {
-    background-color: #0056b3;
-}
+    /* Send button */
+    #send-btn {
+        background-color: #2A3335;
+        color: white;
+        font-weight: bold;
+        font-size: 15px;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        margin-left: 10px;
+        transition: 0.3s;
+    }
 
-/* Hover effect on Send button */
-#send-btn:hover {
-    background-color: #005bb5;
-}
+    /* Hover effect on Send button */
+    #send-btn:hover {
+        background-color: #005bb5;
+    }
 
-/* Press effect on Send button */
-#send-btn:active {
-    transform: scale(0.95);
-}
+    /* Press effect on Send button */
+    #send-btn:active {
+        transform: scale(0.95);
+    }
 
-/* Remove button focus outline */
-#send-btn:focus {
-    outline: none;
-}
+    /* Remove button focus outline */
+    #send-btn:focus {
+        outline: none;
+    }
 
-/* Hide Scrollbars (Webkit and others) */
-::-webkit-scrollbar {
-    display: none;
-}
+    /* Hide Scrollbars (Webkit and others) */
+    ::-webkit-scrollbar {
+        display: none;
+    }
 
-#chat-window::-webkit-scrollbar {
-    display: none;
-}
+    #chat-window::-webkit-scrollbar {
+        display: none;
+    }
 
-#chat-window {
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* IE and Edge */
-}
-#default-message {
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: #666;
-    text-align: center;
-    margin-top: 20px;
-}
+    #chat-window {
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* IE and Edge */
+    }
+    
+    /* Focus effect */
+    .default-questions button:focus {
+        outline: none;
+        border: 2px solid #a0c4e9; /* Light blue border on focus for accessibility */
+    }
+    
+    /* Default message */
+    #default-message {
+        font-size: 1.2rem;
+        display: flex;
+        font-weight: bold;
+        color: #666;
+        text-align: center;
+        margin-top: 20px;
+        align-items: center;
+        flex-direction: column;
+        justify-content: center;
+        
+    }
+    
+    .message-container {
+        display: flex;
+        align-items: center;  /* Centers the icon and message vertically */
+        margin-bottom: 10px;   /* Optional, for spacing between messages */
+    }
+    #floating-btn {
+        position: fixed;
+        bottom: 20px;  /* Distance from the bottom */
+        right: 20px;   /* Distance from the right */
+        padding: 10px 15px;
+        border-radius: 50%;
+        background-color: #007bff; /* Change color as needed */
+        color: white;
+        font-size: 24px;
+        border: none;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s ease;
+        cursor: pointer;
+    }
+    
+    #floating-btn:hover {
+        transform: scale(1.1);
+        background-color: #0056b3; /* Hover color */
+    }
+    .default-questions{
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
 
+    }
+    .default-questions button {
+        border: none;
+        border-radius: 15px;
+        margin: 10px;
+        padding: 7px 15px;
+        background-color: #fff;
+        font-size: 0.9rem;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1), 0px 1px 3px rgba(0, 0, 0, 0.08); /* Adding shadow */
+        transition: all 0.3s ease; /* Smooth transition effect */
+    }
+    
+    .default-questions button:hover {
+        box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.2), 0px 2px 5px rgba(0, 0, 0, 0.15); /* Enhance shadow on hover */
+        cursor: pointer; /* Optional: Change cursor on hover */
+    }
+    .guide-buttons button {
+        border-radius: 15px;
+        color: #000;
+        margin: 10px;
+        padding: 7px 15px;
+        background-color: #fff;
+        font-size: 1rem;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1), 0px 1px 3px rgba(0, 0, 0, 0.08); /* Adding shadow */
+        transition: all 0.3s ease; /* Smooth transition effect */
+    }
+    
+    .guide-buttons button:hover {
+        box-shadow: 0px 6px 8px rgba(0, 0, 0, 0.2), 0px 2px 5px rgba(0, 0, 0, 0.15); /* Enhance shadow on hover */
+        cursor: pointer; /* Optional: Change cursor on hover */
+    }
+    
+    
 </style>
-
 {% endblock %}
 
 {% block content %}
-
 <div id="chat-container">
-    <div id="slide1" class="d-flex flex-column justify-content-between">
-        <p class="text-center" style="font-size: 1.5rem;font-weight: bolder;"> <i class="bi bi-wechat me-2"></i>ENS gpt</p>
-        <div class="default-questions">
-            <button onclick="sendQuestion('what\'s up')">what's up</button>
-            <button onclick="sendQuestion('What is this system?')">What is this system?</button>
-            <button onclick="sendQuestion('contact enseignant agoujil')">contact enseignant Agoujil</button>
-            <button onclick="sendQuestion('number of students in filiere Systemes intelligents')">number of students in master SIE ?</button>
-            <button onclick="sendQuestion('tell me about module AI')">tell me about module AI</button>
-        </div>
-        <p class="text-center" style="font-size: 0.8rem;color:gray;">EnsGPT peut faire des erreurs. Envisagez de vérifier les informations importantes.</p>
+    <!-- Logo container -->
+    <div id="logo-container">
+        <i class="fas fa-robot"></i> EnsBot
     </div>
-    <div id="slide2">
-        <div id="chat-window">
-            <div id="chat-messages">
-                <div id="default-message" class="message bot-message ">Comment puis-je vous aider ?</div>
+    
+
+    <!-- Chat window -->
+    <div id="chat-window">
+        <div id="chat-messages"  style="min-height: 100%;">
+            <div id="default-message" class="h-100" >
+                <p>Comment puis-je vous aider ?</p>
+                <div class="default-questions mt-2">
+                    <button type="button" onclick="sendQuestion('what\'s up')">
+                        <i class="fas fa-smile me-2" style="color: #118B50;"></i> what's up
+                    </button>
+                    <button type="button" onclick="sendQuestion('contact enseignant agoujil')">
+                        <i class="fas fa-address-book me-2" style="color: #640D5F;"></i> Contact enseignant Agoujil
+                    </button>
+                    <button type="button" onclick="sendQuestion('number of students in filiere Systemes intelligents')">
+                        <i class="fas fa-users me-2" style="color: #3D3BF3;"></i> Number of students in master SIE?
+                    </button>
+                    <button type="button" onclick="sendQuestion('tell me about module AI')">
+                        <i class="fas fa-brain me-2" style="color: #F72C5B;"></i> Tell me about module AI
+                    </button>
+                    <button data-bs-toggle="modal" data-bs-target="#guideModal" type="button" onclick="sendQuestion('how to contact ENS Meknes')" class="btn  mb-2 custom-btn-background">
+                        <i class="fas fa-phone-alt me-2" style="color: #AE445A;"></i> Numéro de contact
+                    </button>
+                </div>
             </div>
         </div>
-        <div id="chat-input-container">
-            <input type="text" id="chat-input" placeholder="Ask me anything..." autocomplete="on" />
-            <button title="send" id="send-btn" class="btn btn-sm"><i class="bi bi-arrow-up"></i></button>
+    </div>
+
+    <!-- Chat input -->
+    <div id="chat-input-container">
+        <input type="text" id="chat-input" placeholder="Ask me anything..." autocomplete="on" />
+        <button title="send" id="send-btn" class="btn btn-sm"><i class="bi bi-arrow-up"></i></button>
+    </div>
+    <p class="text-center" style="font-size: 0.8rem; color: gray;">
+        EnsGPT peut faire des erreurs. Envisagez de vérifier les informations importantes.
+    </p>
+</div>
+<button type="button" title="btn" id="floating-btn" class="btn btn-primary"  data-bs-toggle="modal" data-bs-target="#guideModal">
+    <i class="fas fa-question-circle"></i>
+</button> 
+<!-- Modal Bootstrap pour le guide -->
+<div class="modal fade" id="guideModal" tabindex="-1" aria-labelledby="guideModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="guideModalLabel"><i class="fas fa-comment-dots" style="color: #1230AE;"></i> Guide du Chatbot</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+                <p>Voici quelques questions que vous pouvez poser au chatbot :</p>
+                <div class="guide-buttons ">
+                    <!-- System Information -->
+                    <button data-bs-toggle="modal" data-bs-target="#guideModal" type="button" onclick="sendQuestion('System details')" class="btn  mb-2 custom-btn-background">
+                        <i class="fas fa-info-circle me-2" style="color: #3D3BF3;"></i> Qu'est-ce que ce système ?
+                    </button>
+                    <!-- Developer and Creator Info -->
+                    <button data-bs-toggle="modal" data-bs-target="#guideModal" type="button" onclick="sendQuestion('who created you')" class="btn  mb-2 custom-btn-background">
+                        <i class="fas fa-code me-2" style="color: #5CB338;"></i> Développeur
+                    </button>
+                    
+                    <!-- Contact and Support -->
+                    <button data-bs-toggle="modal" data-bs-target="#guideModal" type="button" onclick="sendQuestion('What is your contact no')" class="btn  mb-2 custom-btn-background">
+                        <i class="fas fa-phone-alt me-2" style="color: #8B5DFF;"></i> Comment contacter le support ?
+                    </button>
+                    <button data-bs-toggle="modal" data-bs-target="#guideModal" type="button" onclick="sendQuestion('how to contact ENS Meknes')" class="btn  mb-2 custom-btn-background">
+                        <i class="fas fa-phone-alt me-2" style="color: #AE445A;"></i> Numéro de contact
+                    </button>
+                    
+                    <!-- Module Information -->
+                    <button data-bs-toggle="modal" data-bs-target="#guideModal" type="button" onclick="sendQuestion('tell me about module Python')" class="btn  mb-2 custom-btn-background">
+                        <i class="fas fa-brain me-2" style="color: #9694FF;"></i> Parlez-moi du module Python
+                    </button>
+                    <button data-bs-toggle="modal" data-bs-target="#guideModal" type="button" onclick="sendQuestion('tell me about module AI')" class="btn  mb-2 custom-btn-background">
+                        <i class="fas fa-book me-2" style="color: #78B3CE;"></i> Informations sur le module AI
+                    </button>
+
+                    <!-- Students and Filière Information -->
+                    <button data-bs-toggle="modal" data-bs-target="#guideModal" type="button" onclick="sendQuestion('number of students in filiere Systemes intelligents')" class="btn  mb-2 custom-btn-background">
+                        <i class="fas fa-users me-2" style="color: #8B5DFF;"></i> Combien d'étudiants dans le programme Systèmes Intelligents ?
+                    </button>
+                    <button data-bs-toggle="modal" data-bs-target="#guideModal" type="button" onclick="sendQuestion('students in filiere English')" class="btn  mb-2 custom-btn-background">
+                        <i class="fas fa-users me-2" style="color: #B03052;"></i> Étudiants dans le Master English
+                    </button>
+                    <button data-bs-toggle="modal" data-bs-target="#guideModal" type="button" onclick="sendQuestion('details of filiere Systemes intelligents')" class="btn  mb-2 custom-btn-background">
+                        <i class="fas fa-info-circle me-2" style="color: #FFE31A;"></i> Informations sur la filière Systèmes Intelligents
+                    </button>
+
+                    <!-- Teacher Information -->
+                    <button data-bs-toggle="modal" data-bs-target="#guideModal" type="button" onclick="sendQuestion('email of enseignant agoujil')" class="btn  mb-2 custom-btn-background">
+                        <i class="fas fa-list-ul me-2" style="color: #133E87;"></i> Email de l'enseignant Dr. Agoujil
+                    </button>
+                    <button data-bs-toggle="modal" data-bs-target="#guideModal" type="button" onclick="sendQuestion('email of enseignant bouba')" class="btn  mb-2 custom-btn-background">
+                        <i class="fas fa-envelope me-2" style="color: #4CC9FE;"></i> Email de l'enseignant Dr. Bouba
+                    </button>
+                    <button data-bs-toggle="modal" data-bs-target="#guideModal" type="button" onclick="sendQuestion('who teaches module python')" class="btn  mb-2 custom-btn-background">
+                        <i class="fas fa-chalkboard-teacher me-2" style="color: #D4BDAC;"></i> Professeur du module Python
+                    </button>
+                    
+                    <!-- Notes and Grades -->
+                    <button data-bs-toggle="modal" data-bs-target="#guideModal" type="button" onclick="sendQuestion('average note for module python')" class="btn  mb-2 custom-btn-background">
+                        <i class="fas fa-calculator me-2" style="color: #257180;"></i> Moyenne du module Python
+                    </button>
+                    <button  data-bs-toggle="modal" data-bs-target="#guideModal" type="button" onclick="sendQuestion('show me notes for student Bouba')" class="btn  mb-2 custom-btn-background">
+                        <i class="fas fa-file-alt me-2" style="color: #FF6500;"></i> Notes de l'étudiant Bouba Ahmed
+                    </button>
+
+                    <!-- Location and Hours -->
+                    <button data-bs-toggle="modal" data-bs-target="#guideModal" type="button" onclick="sendQuestion('timing of ENS Meknes')" class="btn  mb-2 custom-btn-background">
+                        <i class="fas fa-clock me-2" style="color: #8FD14F;"></i> Horaires ENS Meknes
+                    </button>
+                    
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -228,7 +380,7 @@
             sendMessage();
         }
     });
-
+ 
     function sendMessage() {
         const userMessage = document.getElementById('chat-input').value.trim();
         const messagesDiv = document.getElementById('chat-messages');
@@ -237,13 +389,19 @@
 
         if (!userMessage) return;
         if (defaultMessage) {
-                defaultMessage.style.display = 'none';
-            }
+            defaultMessage.style.display = 'none';
+        }
 
         const timestamp = new Date().toLocaleTimeString();
 
         // Display user's message
-        messagesDiv.innerHTML += `<div class="message user-message">${userMessage} <span class='text-light'>${timestamp}</span></div>`;
+        messagesDiv.innerHTML += `<div class="text-center" style="font-size:0.8rem;">${timestamp}</div>`;
+        messagesDiv.innerHTML += `
+                <div class="message user-message">
+                    ${userMessage}
+                </div>
+        `;
+
 
         // Send message to chatbot backend
         fetch('{% url "chatbot_response" %}', {
@@ -259,8 +417,13 @@
             const botResponse = data.response;
 
             // Display chatbot's response
-            messagesDiv.innerHTML += `<div class="message bot-message">${botResponse} <span>${new Date().toLocaleTimeString()}</span></div>`;
-
+            messagesDiv.innerHTML += `
+                <div class="message-container">
+                    <i class="bi bi-robot icon px-2 py-1" style="color: #8B5DFF;font-size: 1rem;border: 1px solid #8B5DFF; border-radius: 50%"></i>
+                    <div class="message bot-message">${botResponse}</div>
+                </div>
+            `;
+        
             // Automatically scroll to the bottom
             chat.scrollTop = chat.scrollHeight;
         })
@@ -275,7 +438,7 @@
         // Clear input field and keep focus
         document.getElementById('chat-input').value = '';
         document.getElementById('chat-input').focus();
-
+ 
         // Ensure chat window always scrolls to the bottom after sending a message
         setTimeout(() => {
             chat.scrollTo() = chat.scrollHeight;
@@ -286,8 +449,8 @@
         const chatInput = document.getElementById('chat-input');
         chatInput.value = message;
         sendMessage();
+       
     }
+    
 </script>
-
-
 {% endblock %}

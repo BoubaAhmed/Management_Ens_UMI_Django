@@ -30,31 +30,31 @@
         <!-- Navigation links -->
         <nav class="nav flex-column w-75 ">
             <a class="nav-link text-start {% if request.path == '/dashboard/' %}active{% endif %}"  href="{% url 'dashboard' %}">
-                <i class="bi bi-house-door me-3"></i>Home
+                <i class="bi bi-house-door me-3" style="color: #41B3A2;"></i>Home
             </a>
             <a class="nav-link text-start {% if request.path == '/dashboard/utilisateur/' %}active{% endif %}" href="{% url 'utilisateur_list' %}">
-                <i class="bi bi-people me-3"></i>Utilisateurs
+                <i class="bi bi-people me-3" style="color: #8B5DFF;"></i>Utilisateurs
             </a>            
             <a class="nav-link text-start {% if request.path == '/dashboard/etudiant/' %}active{% endif %}" href="{% url 'etudiant_list' %}">
-                <i class="bi bi-person-lines-fill me-3"></i>Etudiants
+                <i class="bi bi-person-lines-fill me-3" style="color: #00712D;"></i>Etudiants
             </a>
             <a class="nav-link text-start {% if request.path == '/dashboard/filiere/' %}active{% endif %}" href="{% url 'filiere_list' %}">
-                <i class="bi bi-bookmark me-3"></i>Filieres
+                <i class="bi bi-bookmark me-3" style="color: #F95454;"></i>Filieres
             </a>
             <a class="nav-link text-start {% if request.path == '/dashboard/module/' %}active{% endif %}" href="{% url 'module_list' %}">
-                <i class="bi bi-grid me-3"></i>Modules
+                <i class="bi bi-grid me-3" style="color: #4C1F7A;"></i>Modules
             </a>
             <a class="nav-link text-start {% if request.path == '/dashboard/note/' %}active{% endif %}" href="{% url 'note_list' %}">
-                <i class="bi bi-pencil-square me-3"></i>Notes
+                <i class="bi bi-pencil-square me-3" style="color: #15B392;"></i>Notes
             </a>
             <a class="nav-link text-start {% if request.path == '/dashboard/groupe/' %}active{% endif %}" href="{% url 'groupe_list' %}">
-                <i class="bi bi-people-fill me-3"></i>Groupes
+                <i class="bi bi-people-fill me-3" style="color: #FF6600;"></i>Groupes
             </a>  
             <a class="nav-link text-start {% if request.path == '/dashboard/assistant/' %}active{% endif %}" href="{% url 'chatbot_assistant' %}">
-                <i class="bi bi-robot me-3"></i>Ens GPT
+                <i class="bi bi-robot me-3" style="color: #48CFCB;"></i>Ens GPT
             </a>  
             <a class="nav-link text-start" href="/">
-                <i class="bi bi-globe me-3"></i>Site web
+                <i class="bi bi-globe me-3" style="color: #8FD14F;"></i>Site web
             </a>  
         </nav>
         
@@ -63,7 +63,7 @@
         {% if user.is_authenticated %}
         <nav class="nav logout-btn flex-column w-75 ">
             <a class="nav-link text-start" href="{% url 'logout' %}">
-                <i class="bi bi-box-arrow-right me-3"></i> Logout  
+                <i class="bi bi-box-arrow-right me-3" style="color: #C7253E;"></i> Logout  
             </a>
         </nav>        
         {% endif %}

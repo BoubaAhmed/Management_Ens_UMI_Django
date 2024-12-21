@@ -74,7 +74,7 @@ html, body {
 }
 
 .nav-link.active {
-    background-color: #5DB996; /* Primary blue for active link */
+    background-color: #0B2F9F; /* Primary blue for active link */
     color: #fff;
     border-radius: 0.5rem;
     transform: scale(1.05); /* Slightly larger when active */

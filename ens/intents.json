@@ -51,7 +51,7 @@
         },
         {
             "tag": "static_faq",
-            "patterns": ["What is this system?","Tell me about this system","What does this project do?","How does this tool work?","System details"],
+            "patterns": ["What is this system?","informations about this system","What does this project do?","How does this tool work?","System details"],
             "responses": [
                 "This system is a comprehensive school management platform designed to efficiently handle student, teacher, and course information.",
                 "Our platform offers powerful tools to manage student records, grades, attendance, modules, and more, all in one place.",
@@ -105,7 +105,7 @@
         },
         {
             "tag": "number",
-            "patterns": ["more info","contact info","how to contact ENS ","ENS  telephone number","ENS  number","What is your contact no","Contact number?",
+            "patterns": ["more info","contact info","how to contact ENS","ENS  telephone number","ENS  number","What is your contact no","Contact number?",
                     "how to call you","ENS  phone no?","how can i contact you","Can i get your phone number","how can i call you","phone number","phone no","call"
             ],
             "responses": [
