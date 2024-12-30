@@ -10,9 +10,10 @@
         border: none;
         display: flex;
         flex-direction: column;
-        background: linear-gradient(to bottom, #ffffff, #f9f9f9);
+        background: #fff;
         overflow: hidden;
         position: relative;
+        padding: 20px;
     }
     .dashboard .staticCards .card h5 {
         font-size: 0.9rem;
@@ -20,19 +21,19 @@
         animation: fadeInUp 0.6s ease;
     }
     .dashboard .staticCards .card h2 {
-        font-family: 'Caveat', sans-serif;
+        font-family: 'Parkinsans', sans-serif;
+        font-size: 0.9rem;
+        text-align: start;
         animation: fadeInUp 0.8s ease;
     }
 
     .dashboard .staticCards .card:hover {
-        transform: scale(1.02) rotateY(5deg) rotateX(5deg);
         box-shadow: 0 12px 20px rgba(0, 0, 0, 0.4);
         cursor: all-scroll;
-        background: linear-gradient(90deg, #f7f7f7, #C5D3E8);
-
     }
 
     .icon-3d {
+        padding: 8px 13px;
         font-size: 20px;
         transition: transform 0.3s ease, color 0.3s ease;
         display: inline-block;
@@ -40,8 +41,7 @@
     }
 
     .card:hover .icon-3d {
-        transform: scale(1.1) rotateY(15deg) rotateX(15deg);
-        color: #ffd700;
+        transform: scale(1.05) rotateY(0deg) rotateX(0deg);
     }
 
     /* Glow effect for icons */
@@ -65,10 +65,6 @@
         transform: translate(-50%, -50%) scale(1.5);
     }
 
-    /* Subtle card hover glow */
-    .dashboard .staticCards .card:hover {
-        border: 1px solid rgba(255, 255, 255, 0.6);
-    }
 
     /* Fade-in animation */
     @keyframes fadeInUp {
@@ -125,48 +121,56 @@
     <div class="row staticCards  ">
         <!-- Total des Utilisateurs -->
         <div class="col-md-3 ">
-            <div class="card  shadow p-2">
-                <div class="d-flex flex-row  align-items-end">
-                    <i class="fas fa-users icon-3d rounded-circle shadow p-2 me-2" style="background-color: #6A669D;color: #fff;"></i>
-                    <h5>Total des Utilisateurs</h5>
+            <div class="card  shadow d-flex flex-row  align-items-center" style="background-color: #A5BFCC;">
+                <div class="me-4">
+                    <i class="bi bi-person-fill icon-3d rounded-circle shadow" style="background-color: #ffffff62;color: #AF1740;"></i>
                 </div>
-                <h2 style="text-align: end;font-size: 1.8rem;" class="me-2">{{ total_users }}</h2>
+                <div>
+                    <h2>{{ new_students }} + </h2>
+                    <h5>Nouvelle Etudiants</h5>
+                </div>
             </div>
         </div>
     
-        <!-- Encadrants -->
-        <div class="col-md-3">
-            <div class="card shadow p-2">
-                <div class="d-flex flex-row  align-items-end">
-                    <i class="fas fa-chalkboard-teacher icon-3d rounded-circle shadow p-2 me-2" style="background-color: #9ABF80;color: #000000;"></i>
-                    <h5>Encadrants</h5>
+        <div class="col-md-3 ">
+            <div class="card  shadow d-flex flex-row  align-items-center" style="background-color: #615EFC;color: #fff;">
+                <div class="me-4">
+                    <i class="bi bi-book icon-3d rounded-circle shadow " style="background-color: #ffffff62;color: #213555;"></i>
                 </div>
-                <h2 style="text-align: end;font-size: 1.8rem;" class="me-2">{{ encadrants_count }}</h2>
+                <div>
+                    <h2>{{ total_modules }} + </h2>
+                    <h5>Nombre de modules</h5>
+                </div>
             </div>
         </div>
     
-        <!-- Enseignants -->
-        <div class="col-md-3">
-            <div class="card shadow p-2">
-                <div class="d-flex flex-row  align-items-end">
-                    <i class="fas fa-book icon-3d rounded-circle shadow p-2 me-2" style="background-color: #1C325B;color: #fff;"></i>
-                    <h5>Enseignants</h5>
+        <div class="col-md-3 ">
+            <div class="card  shadow d-flex flex-row  align-items-center" style="background-color: #608BC1;color: #fff;">
+                <div class="me-4">
+                    <i class="bi bi-grid icon-3d rounded-circle shadow" style="background-color: #ffffff62;color: #fff;"></i>
                 </div>
-                <h2 style="text-align: end;font-size: 1.8rem;" class="me-2">{{ enseignants_count }}</h2>
+                <div>
+                    <h2>{{ total_filiere }} + </h2>
+                    <h5>Nombre de filieres</h5>
+                </div>
             </div>
         </div>
-    
-        <!-- Étudiants Total -->
-        <div class="col-md-3">
-            <div class="card shadow p-2">
-                <div class="d-flex flex-row  align-items-end">
-                    <i class="fas fa-user-graduate icon-3d rounded-circle shadow p-2 me-2" style="background-color: #219B9D;color: #fff;"></i>
-                    <h5>Étudiants Total</h5>
+     
+        <div class="col-md-3 ">
+            <div class="card  shadow d-flex flex-row  align-items-center" style="background-color: #AF1740;color: #fff;">
+                <div class="me-4">
+                    <i class="bi bi-person-x icon-3d rounded-circle shadow" style="background-color: #635db7d0;color: #fff;"></i>
                 </div>
-                <h2 style="text-align: end;font-size: 1.8rem;" class="me-2">{{ total_students }}</h2>
+                <div>
+                    <h2>{{ student_Suspended }} + </h2>
+                    <h5>Etudiants Suspendu</h5>
+                </div>
             </div>
         </div>
     </div>
+
+
+
     <div class="row">
         <div class="col">
             <!-- Graphique des Utilisateurs -->
@@ -271,7 +275,7 @@
             <div class="card shadow p-4 border-0">
                 <h5 class="" style="font-size: 1.1em;color: #4335A7;font-family: 'Parkinsans',sans-serif;">
                     <i class="bi bi-person-fill" style=" margin-right: 8px;"></i>
-                    Top 3 Performing Students per Filière
+                    Top 5 Performing Students
                 </h5>
                 <table class="border-0  table table-rounded  mt-3 " style="font-size: 0.85rem; ">
                     <thead >
@@ -321,28 +325,94 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-    // Graphique des utilisateurs (Bar Chart)
-    const ctxUsers = document.getElementById('usersChart').getContext('2d');
-    new Chart(ctxUsers, {
-        type: 'bar',
-        data: {
-            labels: ['Total', 'Encadrants', 'Enseignants', 'Etudiants'],
-            datasets: [{
-                label: 'Utilisateurs',
-                data: [{{ total_users }}, {{ encadrants_count }}, {{ enseignants_count }}, {{ total_students }}],
-                backgroundColor: ['#074799', '#9ABF80', '#6A669D', '#6A669D'],
-                borderRadius: 10,
-                barPercentage: 0.7,
-            }]
+    // Graphique des utilisateurs (Line Chart)
+const ctxUsers = document.getElementById('usersChart').getContext('2d');
+
+new Chart(ctxUsers, {
+    type: 'line', // Changed from bar to line chart
+    data: {
+        labels: ['Total', 'Encadrants', 'Enseignants', 'Etudiants'],
+        datasets: [{
+            label: 'Utilisateurs',
+            data: [{{ total_users }}, {{ encadrants_count }}, {{ enseignants_count }}, {{ total_students }}],
+            backgroundColor: 'rgba(76, 175, 80, 0.2)', // Light background for the line
+            borderColor: '#4CAF50', // Line color
+            pointBackgroundColor: '#4CAF50', // Point color on the line
+            pointBorderColor: '#FFFFFF', // White point border
+            pointRadius: 6, // Slightly larger points for visibility
+            pointHoverRadius: 8, // Larger points on hover
+            borderWidth: 3, // Thicker line for better visibility
+            fill: true, // Fill the area under the line
+            tension: 0.4, // Smooth curve for the line
+        }]
+    },
+    options: {
+        responsive: true, // Make the chart responsive
+        plugins: {
+            legend: {
+                display: true, // Display the legend
+                position: 'top', // Position the legend at the top
+                labels: {
+                    font: {
+                        size: 14,
+                    },
+                    color: '#000', // Dark color for legend labels
+                }
+            },
+            tooltip: {
+                enabled: true, // Enable tooltips
+                backgroundColor: 'rgba(0, 0, 0, 0.8)', // Dark background for tooltips
+                titleColor: '#FFFFFF', // White title color
+                bodyColor: '#FFFFFF', // White body text
+                borderColor: '#FF5722', // Tooltip border color
+                borderWidth: 1, // Tooltip border width
+                callbacks: {
+                    label: function(tooltipItem) {
+                        return tooltipItem.label + ': ' + tooltipItem.raw + ' utilisateurs'; // Customize tooltip label
+                    }
+                }
+            }
         },
-        options: {
-            plugins: {
-                legend: {
+        scales: {
+            x: {
+                title: {
                     display: false,
+                }
+            },
+            y: {
+                title: {
+                    display: true,
+                    text: 'Nombre d\'Utilisateurs',
+                    font: {
+                        size: 14,
+                    }
                 },
+                ticks: {
+                    beginAtZero: true,
+                    stepSize: 10, // Step size for Y-axis ticks
+                    font: {
+                        size: 12,
+                        weight: 'bold'
+                    },
+                    color: '#333' // Dark color for Y-axis labels
+                },
+                grid: {
+                    display: true,
+                    color: '#f0f0f0', // Light grid lines
+                    borderColor: '#ddd', // Light border for Y-axis grid
+                }
+            }
+        },
+        animation: {
+            duration: 1000, // Animation duration (in ms)
+            easing: 'easeInOutQuad', // Smooth easing for animation
+            onComplete: function() {
+                console.log('Line chart animation completed!');
             }
         }
-    });
+    }
+});
+
 
 // Graphique des étudiants par statut (Pie Chart)
 const ctxStudents = document.getElementById('studentsChart').getContext('2d');
@@ -401,49 +471,63 @@ new Chart(ctxStudents, {
 });
 
 
-    // Graphique des Moyennes des Modules (Line Chart)
-    const ctxNotes = document.getElementById('notesChart').getContext('2d');
+// Graphique des Moyennes des Modules (Line Chart)
+const ctxNotes = document.getElementById('notesChart').getContext('2d');
 
-    const moduleLabels = [
-        {% for note in avg_notes_per_module %}
-            '{{ note.module__nom }}'{% if not forloop.last %},{% endif %}
-        {% endfor %}
-    ];
+// Dynamically populated module labels and data
+const moduleLabels = [
+    {% for note in avg_notes_per_module %}
+        '{{ note.module_nom }}'{% if not forloop.last %},{% endif %}
+    {% endfor %}
+];
 
-    const avgNotesData = [
-        {% for note in avg_notes_per_module %}
-            {{ note.avg_finale|floatformat }}{% if not forloop.last %},{% endif %}
-        {% endfor %}
-    ];
-    
+const avgNotesData = [
+    {% for note in avg_notes_per_module %}
+        {{ note.avg_finale }}{% if not forloop.last %},{% endif %}
+    {% endfor %}
+];
 
-    new Chart(ctxNotes, {
-        type: 'line',
-        data: {
-            labels: moduleLabels,
-            datasets: [{
-                label: 'Moyenne des Notes',
-                backgroundColor: 'rgba(255, 87, 34, 0.2)', // Semi-transparent fill
-                borderColor: '#FF5722', // Line color
-                pointBackgroundColor: '#FF5722', // Point color
-                pointBorderColor: '#FFFFFF', // Point border
-                pointRadius: 5, // Point size
-                pointHoverRadius: 7, // Hover size
-                borderWidth: 2, // Line width
-                tension: 0.4, // Smoothness of the line (0 for straight lines, closer to 1 for smoother curves)
-                data: avgNotesData,
-                fill: true // Fill the area under the line
-            }]
-        },
-        options: {
-            plugins: {
-                legend: {
-                    display: false,
-                }
+new Chart(ctxNotes, {
+    type: 'line',
+    data: {
+        labels: moduleLabels,
+        datasets: [{
+            label: 'Moyenne des Notes',
+            backgroundColor: 'rgba(255, 87, 34, 0.2)', // Semi-transparent fill
+            borderColor: '#FF5722', // Line color
+            pointBackgroundColor: '#FF5722', // Point color
+            pointBorderColor: '#FFFFFF', // Point border
+            pointRadius: 5, // Point size
+            pointHoverRadius: 7, // Hover size
+            borderWidth: 2, // Line width
+            tension: 0.4, // Smoothness of the line (0 for straight lines, closer to 1 for smoother curves)
+            data: avgNotesData,
+            fill: true // Fill the area under the line
+        }]
+    },
+    options: {
+        plugins: {
+            legend: {
+                display: true, // Show legend
             }
-        }    
-    });
-
+        },
+        scales: {
+            x: {
+                title: {
+                    display: true,
+                    text: 'Modules'
+                }
+            },
+            y: {
+                title: {
+                    display: true,
+                    text: 'Moyenne des Notes'
+                },
+                beginAtZero: true // Start the Y-axis at 0
+            }
+        }
+    }
+});
 
     const data = {
         labels: [{% for filiere in filiere_statistics %}"{{ filiere.nom }}",{% endfor %}],

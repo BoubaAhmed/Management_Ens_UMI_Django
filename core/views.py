@@ -59,6 +59,7 @@ def dashboard_view(request):
     total_users = Utilisateur.objects.filter(is_superuser=False).count()
     encadrants_count = Utilisateur.objects.filter(is_encadrant=True).count()
     enseignants_count = Utilisateur.objects.filter(is_enseignant=True, is_encadrant=False).count()
+    total_modules = Module.objects.count()
 
     # ---------------------- Statistiques des étudiants ----------------------
     total_students = Etudiant.objects.count()
@@ -80,6 +81,8 @@ def dashboard_view(request):
             Utilisateur.objects.filter(created_at__year=year, is_superuser=False).count()
         )
 
+    new_students = Etudiant.objects.filter(created_at__year=current_year).count()
+    student_Suspended = Etudiant.objects.filter(statut='suspendu',created_at__year=current_year).count()
     # ---------------------- Top-performing students by Filière ----------------------
     top_five_etudiants = Etudiant.objects.annotate(
         total_grade=Sum(F('note__note_finale'))
@@ -103,8 +106,23 @@ def dashboard_view(request):
         )
 
     # ---------------------- Moyennes des Notes et Performance ----------------------
-    avg_notes_per_module = Note.objects.values('module__nom').annotate(avg_finale=Avg('note_finale'))
+    avg_notes_per_module = (
+        Note.objects.values('module__id', 'module__nom', 'module__filiere__nom')
+        .annotate(avg_finale=Avg('note_finale'))
+        .order_by('module__nom')
+    )
 
+    # Format avg_finale to two decimal places
+    avg_notes_per_module = [
+        {
+            'module_id': note['module__id'],
+            'module_nom': note['module__nom'],
+            'module_filiere_nom': note['module__filiere__nom'],
+            'avg_finale': f"{note['avg_finale']:.2f}" if note['avg_finale'] is not None else None,
+        }
+        for note in avg_notes_per_module
+    ]
+    print(avg_notes_per_module)
     filiere_statistics = Filiere.objects.annotate(student_count=Count('groupe__etudiant'))
 
     # ---------------------- Autres statistiques ----------------------
@@ -126,6 +144,9 @@ def dashboard_view(request):
         'students_per_year': students_per_year,
         'users_per_year': users_per_year,
         'years': years, 
+        'student_Suspended': student_Suspended,
+        'total_modules': total_modules,
+        'new_students': new_students
     }
 
     return render(request, 'core/dashboard.html', context)

@@ -148,7 +148,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {% if etudiant.statut == 'suspendu'  %}
+                                {% if etudiant.statut != 'suspendu'  %}
                                     {% for note in notes %}
                                         <tr>
                                             <td>{{ note.module.nom }}</td>

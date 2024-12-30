@@ -74,7 +74,7 @@ class Utilisateur(AbstractBaseUser, PermissionsMixin):
 class Filiere(models.Model):
     nom = models.CharField(max_length=100)
     description = models.TextField(null=True, blank=True)
-    encadrant = models.ForeignKey(Utilisateur, null=True, on_delete=models.SET_NULL)
+    encadrant = models.ForeignKey(Utilisateur, null=True, on_delete=models.SET_NULL,limit_choices_to={'is_encadrant': True} )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -86,9 +86,9 @@ class Filiere(models.Model):
 class Module(models.Model):
     STATUT_CHOICES = [('s1', 'Semestre 1'), ('s2', 'Semestre 2'), ('s3', 'Semestre 3'), ('s4', 'Semestre 4')]
     semestre = models.CharField(max_length=10, choices=STATUT_CHOICES, default='s1')
-    coefficient = models.PositiveSmallIntegerField(null=True, blank=True)
+    coefficient = models.PositiveSmallIntegerField(null=True, blank=True) 
     filiere = models.ForeignKey(Filiere, on_delete=models.CASCADE)
-    enseignant = models.ForeignKey(Utilisateur, on_delete=models.CASCADE)
+    enseignant = models.ForeignKey(Utilisateur, on_delete=models.CASCADE,limit_choices_to={'is_enseignant': True} )
     code = models.CharField(max_length=10, unique=True)
     nom = models.CharField(max_length=100)
     description = models.TextField(null=True, blank=True)
