@@ -154,7 +154,7 @@ def utilisateur_detail(request, pk):
     return render(request, 'utilisateur/read.html', context)
 
 # Generate a random password
-def generate_password():
+def generate_password(): 
     return ''.join(random.choices(string.ascii_letters + string.digits, k=8))
 
 @login_required

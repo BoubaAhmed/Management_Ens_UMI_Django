@@ -2,12 +2,86 @@
 {% extends 'core/base_dashboard.html' %}
 
 {% block content %}
-<h2>Détails note</h2>
-<p><strong>etudiant :</strong> {{ note.etudiant }}</p>
-<p><strong>groupe :</strong> {{ note.etudiant.groupe }}</p>
-<p><strong>module :</strong> {{ note.module }}</p>
-<p><strong>filiere :</strong> {{ note.filiere }}</p>
-<p><strong>note finale :</strong> {{ note.note_finale }}</p>
+<div class="note-details-container">
+    <h2 class="fade-in">Détails de la note</h2>
+    
+    <div class="details-card">
+        <p><strong>Étudiant :</strong> {{ note.etudiant }}</p>
+        <p><strong>Groupe :</strong> {{ note.etudiant.groupe.nom }}</p>
+        <p><strong>Module :</strong> {{ note.module.nom }}</p>
+        <p><strong>Filière :</strong> {{ note.module.filiere }}</p>
+        <p><strong>Note Devoir Surveillé :</strong> {{ note.note_ds }}</p>
+        <p><strong>Note TPs :</strong> {{ note.note_tp }}</p>
+        <p><strong>Note Exam :</strong> {{ note.note_exam }}</p>
+        <p><strong>Note finale :</strong> {{ note.note_finale }}</p>
+    </div>
 
-<a href="{% url 'note_list' %}">Retour à la liste</a>
+    <a href="{% url 'note_list' %}" class="back-link">Retour à la liste</a>
+</div>
+
+<style>
+/* Global styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 0;
+}
+
+/* Container for the note details */
+.note-details-container {
+    width: 80%;
+    margin: 20px auto;
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    animation: fadeIn 1s forwards;
+}
+
+/* Card style for note details */
+.details-card {
+    margin: 20px 0;
+    padding: 20px;
+    background-color: #f4f4f4;
+    border-radius: 8px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Header animation */
+.fade-in {
+    animation: fadeIn 1s ease-in-out;
+}
+
+/* Animation keyframes for fading in */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Hover effect for links */
+a {
+    color: #3498db;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+a:hover {
+    color: #2980b9;
+    transform: translateY(-3px);
+}
+
+/* Back link styling */
+.back-link {
+    display: inline-block;
+    margin-top: 20px;
+}
+</style>
+
 {% endblock %}

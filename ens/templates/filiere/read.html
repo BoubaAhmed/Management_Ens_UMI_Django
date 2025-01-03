@@ -2,10 +2,80 @@
 {% extends 'core/base_dashboard.html' %}
 
 {% block content %}
-<h2>Détails filiere</h2>
-<p><strong>Nom :</strong> {{ filiere.nom }}</p>
-<p><strong>description :</strong> {{ filiere.description }}</p>
-<p><strong>encadrant :</strong> {{ filiere.encadrant }}</p>
+<div class="filiere-details-container">
+    <h2 class="fade-in">Détails de la filière</h2>
+    
+    <div class="details-card">
+        <p><strong>Nom :</strong> {{ filiere.nom }}</p>
+        <p><strong>Description :</strong> {{ filiere.description }}</p>
+        <p><strong>Encadrant :</strong> {{ filiere.encadrant }}</p>
+    </div>
 
-<a href="{% url 'filiere_list' %}">Retour à la liste</a>
+    <a href="{% url 'filiere_list' %}" class="back-link">Retour à la liste</a>
+</div>
+
+<style>
+/* Global styles */
+body {
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 0;
+}
+
+/* Container for the filière details */
+.filiere-details-container {
+    width: 80%;
+    margin: 20px auto;
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    animation: fadeIn 1s forwards;
+}
+
+/* Card style for filière details */
+.details-card {
+    margin: 20px 0;
+    padding: 20px;
+    background-color: #f4f4f4;
+    border-radius: 8px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Header animation */
+.fade-in {
+    animation: fadeIn 1s ease-in-out;
+}
+
+/* Animation keyframes for fading in */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Hover effect for links */
+a {
+    color: #3498db;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+a:hover {
+    color: #2980b9;
+    transform: translateY(-3px);
+}
+
+/* Back link styling */
+.back-link {
+    display: inline-block;
+    margin-top: 20px;
+}
+</style>
+
 {% endblock %}

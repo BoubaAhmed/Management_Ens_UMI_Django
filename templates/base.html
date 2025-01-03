@@ -25,16 +25,17 @@
         }
         .container-fluid{
             background-color: #ffffff;
+            padding-top: 100px; /* Adjust this value based on your navbar height */
         }
         .dropdown-menu{
             border: none;
-            background-color: #D9EAFD;
+            background-color: #ffffff;
         }
     </style>
 </head>
-<body class="bg-light text-dark w-100  min-vh-100">
+<body class="bg-light text-dark w-100 min-vh-100">
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg  d-flex flex-column p-0">
+    <nav class="navbar navbar-expand-lg fixed-top d-flex flex-column p-0">
         <div class="w-100 d-flex justify-content-between text-light align-items-center px-5 px-lg-5" style="background-color: #1F509A;">
             <div class="nav-item dropdown">
                 <a 
@@ -185,7 +186,7 @@
         </div>
     </nav>
     
-    <div class="container-fluid pt-4">
+    <div class="container-fluid mt-5">
         {% block content %}
         <!-- Content goes here -->
         {% endblock %}
