@@ -81,7 +81,7 @@
     /* Container and layout */
     .container-fluid {
         padding: 0;
-        background-color: #f8f9fa;
+        background-color: #ffffff;
     }
 
     .container {
@@ -111,8 +111,8 @@
     }
      /* Footer */
      footer {
-        background-color: #343a40;
-        color: #fff;
+        background-color: #ffffff;
+        color: #000000;
         text-align: center;
         padding: 20px 0;
         margin-top: 40px;
@@ -129,12 +129,12 @@
 
     /* About Section */
     .about-section {
-        background-color: #f9f9f9;
+        background-color: #ffffff;
     }
 
     /* Contact Section */
     .contact-section {
-        background-color: #343a40;
+        background-color: #ffffff;
         color: #fff;
     }
 
@@ -143,10 +143,10 @@
     }
 </style>
 
-<div class="container-fluid text-center" style="margin-top: 100px;">
+<div class="container-fluid text-center" style="margin-top: 100px;background-color: #fff;">
     <!-- Slider Section -->
-    <div id="imageCarousel" class="carousel slide mb-5" data-bs-ride="carousel" data-bs-interval="3000">
-        <div class="carousel-inner">
+    <div id="imageCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000" style="background-color: #fff;">
+        <div class="carousel-inner rounded">
             {% for slide in slides %}
                 <div class="carousel-item {% if forloop.first %}active{% endif %}">
                     <img src="{{ slide.image }}" class="d-block w-100 " alt="{{ slide.title }}">
@@ -158,7 +158,6 @@
             {% endfor %}
         </div>
 
-        <!-- Carousel Controls -->
         <button class="carousel-control-prev" type="button" data-bs-target="#imageCarousel" data-bs-slide="prev">
             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Previous</span>
@@ -169,24 +168,132 @@
         </button>
     </div>
 
-    <!-- Articles Section -->
-    <div class="container my-5">
+
+    <div id="about-school" class="p-3   " style="margin-top: 8rem;">
+            <div class="row">
+                <div class="col-md-12 text-center mb-4">
+                    <h2 class="fw-bold">Historique</h2>
+                    <p class="text-muted">Découvrez l'histoire de l'Ecole Normale Supérieure de Meknès</p>
+                </div>
+            </div>
+            <div class="row align-items-center">
+                <div class="col-md-5">
+                    <img 
+                        src="static/Assets/images/ens.jpeg" 
+                        alt="ENS Meknès Building" 
+                        class="img-fluid rounded shadow w-75"
+                    >
+                </div>
+                <div class="col-md-7 text-start">
+                    <p>
+                        Créée en 1983, l’Ecole Normale Supérieure de Meknès a entrepris sa mission éducative 
+                        en formant des professeurs dans diverses disciplines. Avec l’ouverture successive de plusieurs 
+                        départements, l’école a renforcé ses capacités pour répondre aux besoins du secteur éducatif.
+                    </p>
+                    <ul>
+                        <li><strong>Langue française:</strong> 2052 enseignants</li>
+                        <li><strong>Langue arabe:</strong> 654 enseignants</li>
+                        <li><strong>Philosophie:</strong> 735 enseignants</li>
+                        <li><strong>Traduction:</strong> 270 enseignants</li>
+                    </ul>
+                    <p>
+                        Depuis son intégration à l’Université Moulay Ismail en 2010, l’ENS de Meknès s’est engagée 
+                        dans le système de formation et de recherche de l’enseignement supérieur, offrant des filières 
+                        diversifiées en licence, master et recherche.
+                    </p>
+                    <p>
+                        En plus de sa vocation éducative, l’école soutient la recherche scientifique et l’innovation 
+                        grâce à ses équipes de recherche accréditées.
+                    </p>
+                </div>
+            </div>
+        </div>
+    
+
+    <div class="" style="margin-top: 8rem;">
         <h2 class="text-center mb-4">Articles</h2>
-        <div class="row">
+        <div class="row mx-auto d-flex align-items-center" style="width: 80%;">
             {% for article in articles %}
                 <div class="col-md-3 col-sm-6 mb-4">
                     <div class="card h-100">
-                        <img src="{{ article.image }}" class="card-img-top" style="height: 200px; object-fit: cover;" alt="{{ article.title }}">
+                        <img src="{{ article.image }}" class="card-img-top" style="height: 150px; object-fit: cover;" alt="{{ article.title }}">
                         <div class="card-body d-flex flex-column">
-                            <h6 class="card-title">{{ article.title }}</h6>
-                            <span class=" text-truncate" style="font-size: small;">{{ article.description | truncatewords:20 | safe  }}</span>
-                            <a href="{{ article.id }}" class="btn btn-outline-primary ms-auto  mt-auto" style="width: max-content;">suite -></a>
+                            <h6 class="card-title ">{{ article.title|slice:":40" }}...</h6>
+                            <p class=" text-truncate" style="font-size: small;">{{ article.description | slice:":20" | safe  }}</p>
+                            <a href="{{ article.id }}" class="btn btn-outline-primary ms-auto  mt-" style="width: max-content;">suite -></a>
                         </div>
                     </div>
                 </div>
             {% endfor %}
         </div>
     </div>
+
+      <section id="administration" class="py-5" style="margin-top: 8rem;">
+        <div class="container">
+          <div class="row text-center mb-4">
+            <div class="col-md-12">
+              <h2 class="fw-bold">Administration</h2>
+              <p class="text-muted">Contactez nos responsables administratifs</p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col p-3 pt-4 text-center m-2  rounded" style="background-color: #A9BFA8;">
+              <h5>Directeur par Intérim</h5>
+              <p><strong>Mohammed AMINE</strong></p>
+              <p><i class="fas fa-phone-alt"></i> +212 5 35 53 38 38 / 85</p>
+              <p><i class="fas fa-envelope"></i> <a href="mailto:directeur.ens@umi.ac.ma" style="text-decoration: none;color: #4535C1;">directeur.ens@umi.ac.ma</a></p>
+            </div>
+            <div class="col p-3 pt-4 text-center m-2 rounded" style="background-color: #4335A7;color: #fff;">
+              <h5>Directeur Adjoint</h5>
+              <p><strong>Abdelaziz ELALAOUI EL AMRANI</strong></p>
+              <p><i class="fas fa-phone-alt"></i> +212 5 35 53 38 38 / 85</p>
+              <p><i class="fas fa-envelope"></i> <a href="mailto:da.ens@umi.ac.ma"  style="text-decoration: none;color: #36C2CE;">da.ens@umi.ac.ma</a></p>
+            </div>
+            <div class="col p-3 pt-4 text-center m-2 rounded" style="background-color: #1A3636;color: #fff;">
+              <h5>Secrétaire Général</h5>
+              <p><strong>Abdelilah ALLA</strong></p>
+              <p><i class="fas fa-phone-alt"></i> +212 5 35 53 38 38 / 85</p>
+              <p><i class="fas fa-envelope"></i> <a href="mailto:sg.ens@umi.ac.ma"  style="text-decoration: none;color: #36C2CE;">sg.ens@umi.ac.ma</a></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="contact-info" class="py-5" style="margin-top: 8rem;">
+        <div class="container">
+            <div class="row text-center mb-4">
+                <div class="col-md-12">
+                    <h2 class="fw-bold">Contactez-nous</h2>
+                    <p>Pour toute question ou information, n'hésitez pas à nous contacter.</p>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-md-4 text-start">
+                    <p><i class="fas fa-map-marker-alt"></i> Adresse: B.P. 3104, Toulal, Meknès, 50000</p>
+                    <p><i class="fas fa-phone-alt"></i> Tél.: +212 5 35 53 38 83 / 85</p>
+                    <p><i class="fas fa-fax"></i> Fax: +212 5 35 46 02 50</p>
+                    <p><i class="fas fa-envelope"></i> Email: <a href="mailto:info@ens-umi.ac.ma" style="text-decoration: none;color: #4535C1;">info@ens-umi.ac.ma</a></p>
+                    <p><i class="fas fa-globe"></i> Site Web: <a href="http://www.ens.umi.ac.ma" style="text-decoration: none;color: #4535C1;">www.ens.umi.ac.ma</a></p>
+                </div>
+                <div class="col-md-6">
+                    <div class="map-container" style="position:relative; overflow:hidden; height:300px; border:1px solid #ccc;">
+                        <iframe 
+                            title="Map showing the location of Ecole Normale Supérieure, Meknès"
+                            src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d6624.133694174614!2d-5.601401265112303!3d33.887932200000016!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xda05afc1679e0e3%3A0x822e1bed2daf192f!2sENS%20de%20Mekn%C3%A8s!5e0!3m2!1sen!2sma!4v1736066650548!5m2!1sen!2sma" 
+                            width="100%" 
+                            height="100%" 
+                            frameborder="0" 
+                            style="border:0;" 
+                            allowfullscreen="" 
+                            aria-hidden="false" 
+                            tabindex="0"
+                        ></iframe> 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
 </div>
 
 <footer>
