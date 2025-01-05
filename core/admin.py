@@ -1,5 +1,9 @@
 from django.contrib import admin
 from .models import Slide, Article
+from django.contrib.auth.models import Group
+
+# Unregister the Group model
+admin.site.unregister(Group)
 
 @admin.register(Slide)
 class SlideAdmin(admin.ModelAdmin):

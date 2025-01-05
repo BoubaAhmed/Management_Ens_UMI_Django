@@ -7,7 +7,7 @@
 <style>
     /* Carousel Styles */
     #imageCarousel .carousel-inner img {
-        max-height: 450px; /* Maintain the height limit */
+        max-height: 500px; /* Maintain the height limit */
         object-fit: cover; /* Ensure the image fits without distortion */
         transition: transform 0.5s ease-in-out; /* Smooth image transition */
     }
@@ -18,20 +18,20 @@
         left: 50%;
         transform: translate(-50%, -50%);
         text-align: center;
-        background: rgba(0, 0, 0, 0.6);
+        background: rgba(3, 7, 12, 0.817);
         padding: 20px;
+        border-radius: 10px;
+        border: 1px solid #8B5DFF;
         max-width: 90%;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
         word-wrap: break-word;
         overflow-wrap: break-word;
         line-height: 1.5;
-        animation: fadeInUp 1s ease-out;
     }
 
     #imageCarousel .carousel-caption h5,
     #imageCarousel .carousel-caption p {
         text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7); /* Better readability */
-        font-size: 1.5rem;
         animation: fadeIn 1s ease-out;
     }
 
@@ -143,16 +143,16 @@
     }
 </style>
 
-<div class="container-fluid text-center" style="margin-top: 100px;background-color: #fff;">
+<div class="container-fluid text-center" style="margin-top: 150px;background-color: #fff;">
     <!-- Slider Section -->
-    <div id="imageCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000" style="background-color: #fff;">
+    <div id="imageCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3500" style="background-color: #fff;margin-top: 6rem;">
         <div class="carousel-inner rounded">
             {% for slide in slides %}
                 <div class="carousel-item {% if forloop.first %}active{% endif %}">
                     <img src="{{ slide.image }}" class="d-block w-100 " alt="{{ slide.title }}">
                     <div class="carousel-caption d-none d-md-block">
                         <h5>{{ slide.title }}</h5>
-                        <div>{{ slide.description | safe }}</div>
+                        <p style="font-size: 0.8rem; padding-top: 1rem;">{{ slide.description | slice:":80" | safe }}</p>
                     </div>
                 </div>
             {% endfor %}
@@ -237,23 +237,23 @@
             </div>
           </div>
           <div class="row">
-            <div class="col p-3 pt-4 text-center m-2  rounded" style="background-color: #A9BFA8;">
-              <h5>Directeur par Intérim</h5>
-              <p><strong>Mohammed AMINE</strong></p>
-              <p><i class="fas fa-phone-alt"></i> +212 5 35 53 38 38 / 85</p>
-              <p><i class="fas fa-envelope"></i> <a href="mailto:directeur.ens@umi.ac.ma" style="text-decoration: none;color: #4535C1;">directeur.ens@umi.ac.ma</a></p>
-            </div>
-            <div class="col p-3 pt-4 text-center m-2 rounded" style="background-color: #4335A7;color: #fff;">
+            <div class="col p-3 pt-4 text-center m-2 rounded" style="background-color: #A9BFA8;">
               <h5>Directeur Adjoint</h5>
               <p><strong>Abdelaziz ELALAOUI EL AMRANI</strong></p>
               <p><i class="fas fa-phone-alt"></i> +212 5 35 53 38 38 / 85</p>
-              <p><i class="fas fa-envelope"></i> <a href="mailto:da.ens@umi.ac.ma"  style="text-decoration: none;color: #36C2CE;">da.ens@umi.ac.ma</a></p>
+              <p><i class="fas fa-envelope"></i> <a href="mailto:da.ens@umi.ac.ma"  style="text-decoration: none;color: #D91656;">da.ens@umi.ac.ma</a></p>
+            </div>
+            <div class="col p-3 pt-4 text-center m-2  rounded" style="background-color: #4335A7;color: #fff;">
+                <h5>Directeur par Intérim</h5>
+                <p><strong>Mohammed AMINE</strong></p>
+                <p><i class="fas fa-phone-alt"></i> +212 5 35 53 38 38 / 85</p>
+                <p><i class="fas fa-envelope"></i> <a href="mailto:directeur.ens@umi.ac.ma" style="text-decoration: none;color: #B3C8CF;">directeur.ens@umi.ac.ma</a></p>
             </div>
             <div class="col p-3 pt-4 text-center m-2 rounded" style="background-color: #1A3636;color: #fff;">
               <h5>Secrétaire Général</h5>
               <p><strong>Abdelilah ALLA</strong></p>
               <p><i class="fas fa-phone-alt"></i> +212 5 35 53 38 38 / 85</p>
-              <p><i class="fas fa-envelope"></i> <a href="mailto:sg.ens@umi.ac.ma"  style="text-decoration: none;color: #36C2CE;">sg.ens@umi.ac.ma</a></p>
+              <p><i class="fas fa-envelope"></i> <a href="mailto:sg.ens@umi.ac.ma"  style="text-decoration: none;color: #B3C8CF;">sg.ens@umi.ac.ma</a></p>
             </div>
           </div>
         </div>
