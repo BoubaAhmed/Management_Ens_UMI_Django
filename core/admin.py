@@ -26,3 +26,6 @@ class ArticleAdmin(admin.ModelAdmin):
     list_filter = ('is_published', 'published_date')  # Add filtering options
     ordering = ['-published_date']  # Default ordering in the admin panel
 
+admin.site.site_header = "Ens Meknes Admin Panel"
+admin.site.site_title = "Admin Panel"
+admin.site.index_title = "Welcome to Ens_Manager"

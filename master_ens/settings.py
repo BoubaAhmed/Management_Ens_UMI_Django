@@ -29,8 +29,9 @@ SECRET_KEY = 'django-insecure-h-@0%v&vzk$6*drgyyiuzic#&78%t)+^(e071v%7rktn68w2c1
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    '192.168.8.103',
-    '127.0.0.1'
+    '192.168.8.101',
+    '127.0.0.1',
+    '100.88.248.186'
 ]
 
 
@@ -39,6 +40,7 @@ AUTH_USER_MODEL = 'ens.Utilisateur'
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -50,6 +52,27 @@ INSTALLED_APPS = [
     'users_auth',
     'ckeditor',
 ]
+
+JAZZMIN_SETTINGS = {
+    "site_title": "Ens Meknes Master",  # Title of the browser tab
+    "site_header": "Admin Panel",  # Header on the top left
+    "welcome_sign": "Welcome to Ens Meknes",  # Welcome message
+    "search_model": "auth.User",  # Model to use for the search bar
+    "site_brand": "Master ENS",  # Brand logo text
+    "show_sidebar": True,  # Show or hide the sidebar
+    "navigation_expanded": True,  # Expand sidebar navigation by default
+    "hide_apps": [],  # List of apps to hide from the sidebar
+    "hide_models": [],  # List of models to hide from the sidebar
+    "order_with_respect_to": ["auth", "my_app"],  # Order of apps in the sidebar
+    "icons": {  # Icons for models and apps (use FontAwesome icons)
+        "auth": "fas fa-cogs",
+        "auth.user": "fas fa-user",
+        "auth.group": "fas fa-users",
+    },
+    "custom_css": None,  # Path to custom CSS for further customization
+    "custom_js": None,  # Path to custom JavaScript
+}
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
